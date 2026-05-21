@@ -104,10 +104,10 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 
 /* ── Quick display grid ── */
 .section-lbl{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);padding:12px 16px 8px}
-.quick-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:0 16px 12px}
-.qbtn{font-family:var(--font);font-size:11px;font-weight:700;background:var(--card);border:1px solid var(--border);border-radius:12px;color:var(--muted);padding:12px 6px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;transition:all .15s}
-.qbtn i{font-size:22px}
-.qbtn:active{border-color:var(--gold);color:var(--gold);background:var(--active)}
+.quick-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;padding:0 16px 12px}
+.qbtn{font-family:var(--font);font-size:9px;font-weight:700;background:var(--card);border:1px solid var(--border);border-radius:10px;color:var(--muted);padding:10px 3px 8px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;transition:all .15s;text-align:center;min-height:54px;letter-spacing:.3px;text-transform:uppercase;line-height:1.2}
+.qbtn i{font-size:18px}
+.qbtn:active,.qbtn.active{border-color:var(--gold);color:var(--gold)!important;background:var(--active)}
 
 /* ── Current slides list ── */
 .slides-section{margin:0 16px 16px}
@@ -325,13 +325,8 @@ select:focus{border-color:var(--gold)}
 
         <!-- Quick display -->
         <div class="section-lbl">Quick Display</div>
-        <div class="quick-grid">
-          <button class="qbtn" onclick="quick('welcome')"><i class="fa-solid fa-hand-wave"></i>Welcome</button>
-          <button class="qbtn" onclick="quick('prayer')"><i class="fa-solid fa-hands-praying"></i>Prayer</button>
-          <button class="qbtn" onclick="quick('offering')"><i class="fa-solid fa-coins"></i>Offering</button>
-          <button class="qbtn" onclick="quick('scripture')"><i class="fa-solid fa-book-open"></i>Scripture</button>
-          <button class="qbtn" onclick="quick('sermon')"><i class="fa-solid fa-person-chalkboard"></i>Sermon</button>
-          <button class="qbtn" onclick="quick('closing')"><i class="fa-solid fa-door-open"></i>Closing</button>
+        <div class="quick-grid" id="quick-grid">
+          <!-- rendered by renderPresenterQD() -->
         </div>
 
         <!-- Current slides -->
@@ -551,14 +546,23 @@ function loadHymns(){
   document.head.appendChild(s);
 }
 
-const QUICK={
-  welcome:{type:'Welcome',title:'Welcome to Worship',sub:'',body:'We are glad you are here.'},
-  prayer: {type:'Prayer',title:'Let Us Pray',sub:'',body:''},
-  offering:{type:'Tithes & Offerings',title:'Giving Back to God',sub:'',body:'Honour the Lord — Proverbs 3:9'},
-  scripture:{type:'Scripture Reading',title:'Scripture Reading',sub:'',body:'Please open your Bibles.'},
-  sermon:{type:'Sermon',title:'Message of the Day',sub:'',body:''},
-  closing:{type:'Closing',title:'Go in Peace',sub:'',body:'The grace of our Lord Jesus Christ be with you all.'},
-};
+// Quick Display — defaults match the operator panel's QD_DEFAULTS
+// Loaded from WS message or built from defaults
+const QD_DEFAULTS_PRESENTER = [
+  {icon:'fa-hand-wave',         label:'Welcome',   colour:'#c8902e', type:'Welcome',            title:'Welcome to Worship',    body:'We are glad you are here.'},
+  {icon:'fa-hands-praying',     label:'Prayer',    colour:'#4a90d9', type:'Prayer',             title:'Let Us Pray',           body:''},
+  {icon:'fa-coins',             label:'Offering',  colour:'#f1c40f', type:'Tithes & Offerings', title:'Giving Back to God',    body:'Honour the Lord. Proverbs 3:9'},
+  {icon:'fa-book-open',         label:'Scripture', colour:'#2ecc71', type:'Scripture Reading',  title:'Scripture Reading',     body:'Please open your Bibles and follow along.'},
+  {icon:'fa-person-chalkboard', label:'Sermon',    colour:'#e74c3c', type:'Sermon',             title:'Message of the Day',    body:''},
+  {icon:'fa-door-open',         label:'Closing',   colour:'#9b59b6', type:'Closing',            title:'Go in Peace',           body:'The grace of our Lord Jesus Christ be with you all.'},
+  {icon:'fa-water',             label:'Baptism',   colour:'#3498db', type:'Baptism',            title:'Baptismal Service',     body:''},
+  {icon:'fa-bread-slice',       label:'Communion', colour:'#c0392b', type:'Communion',          title:'Holy Communion',        body:'Do this in remembrance of Me. Luke 22:19'},
+  {icon:'fa-microphone',        label:'Testimony', colour:'#16a085', type:'Testimony',          title:'Sharing Testimonies',   body:''},
+  {icon:'fa-church',            label:'Pastoral',  colour:'#8e44ad', type:'Pastoral Prayer',    title:'Pastoral Prayer',       body:''},
+  {icon:'fa-star-of-david',     label:'Key Verse', colour:'#1abc9c', type:'Key Verse',          title:'Key Verse',             body:''},
+  {icon:'fa-circle-dot',        label:'Custom',    colour:'#95a5a6', type:'Announcement',       title:'',                      body:''},
+];
+let qdList = [...QD_DEFAULTS_PRESENTER];
 
 // ═══ WEBSOCKET — fixed reconnect logic ═══════════════════════════════════════
 function wsConnect(){
@@ -697,6 +701,7 @@ function join(){
   renderSongs('');
   loadBible();
   loadRecent();
+  renderPresenterQD();
 }
 
 function leave(){
@@ -746,13 +751,26 @@ function toggleBlank(){
     document.getElementById('blank-btn').classList.remove('blanked');
   }
 }
-function quick(k){
-  const s=QUICK[k]; if(!s) return;
+function quick(idx){
+  const btn=qdList[idx]; if(!btn) return;
+  const s={type:btn.type||btn.label, title:btn.title||btn.label, sub:'', body:btn.body||'', ref:''};
   slideSet=[s]; slideIdx=0;
   wsSend({type:'slide',slide:s,slideSet:[s],slideIndex:0});
   updateNav(); renderSli();
-  toast('▶ '+s.title);
+  // Visual feedback
+  document.querySelectorAll('.qbtn').forEach(b=>b.classList.remove('active'));
+  const el=document.querySelectorAll('.qbtn')[idx];
+  if(el){el.classList.add('active');setTimeout(()=>el.classList.remove('active'),1800);}
+  toast('▶ '+(btn.title||btn.label));
   switchTab('control');
+}
+
+function renderPresenterQD(){
+  const grid=document.getElementById('quick-grid'); if(!grid) return;
+  grid.innerHTML=qdList.map((btn,i)=>`
+    <button class="qbtn" onclick="quick(${i})" style="color:${btn.colour||'var(--muted)'}">
+      <i class="fa-solid ${btn.icon}"></i>${btn.label}
+    </button>`).join('');
 }
 
 // ═══ TAB SWITCHING ════════════════════════════════════════════════════════════

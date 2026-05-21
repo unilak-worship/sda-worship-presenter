@@ -1,0 +1,1670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>SDA Worship — Presenter</title>
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&family=Cormorant+Garamond:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #0f1117; --surface: #181c27; --surface2: #1e2235;
+  --border: rgba(255,255,255,0.08); --gold: #c8902e; --gold2: #e8b050;
+  --blue: #4a90d9; --green: #2ecc71; --red: #e05c5c;
+  --text: #e8eaf0; --muted: rgba(232,234,240,0.45);
+  --active: rgba(200,144,46,0.15); --radius: 10px; --font: 'Lato', sans-serif;
+}
+html, body { height: 100%; background: var(--bg); color: var(--text);
+  font-family: var(--font); overflow: hidden; }
+
+/* ── SCREENS ── */
+.screen { display: none; height: 100%; flex-direction: column; }
+.screen.active { display: flex; }
+
+/* ═══════════════════════════════════════════
+   JOIN SCREEN
+═══════════════════════════════════════════ */
+.join-wrap {
+  flex: 1; overflow-y: auto;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 24px 20px; gap: 6px;
+}
+.join-logo {
+  width: 64px; height: 64px; border-radius: 16px;
+  background: var(--gold); display: flex; align-items: center;
+  justify-content: center; font-size: 32px; color: #fff; margin-bottom: 10px;
+}
+.join-title { font-family: 'Cormorant Garamond', serif;
+  font-size: 28px; font-weight: 600; text-align: center; }
+.join-sub { font-size: 13px; color: var(--muted); text-align: center; margin-bottom: 20px; }
+.join-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 16px; padding: 24px; width: 100%; max-width: 400px;
+  display: flex; flex-direction: column; gap: 16px;
+}
+.field-label { font-size: 10px; font-weight: 700; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--muted); margin-bottom: 5px; }
+input[type="text"] {
+  font-family: var(--font); font-size: 14px; background: var(--surface2);
+  border: 1px solid var(--border); border-radius: var(--radius);
+  color: var(--text); padding: 12px 14px; outline: none; width: 100%;
+  transition: border-color 0.2s;
+}
+input[type="text"]:focus { border-color: var(--gold); }
+.code-input { font-size: 24px; font-weight: 900; letter-spacing: 8px;
+  text-align: center; text-transform: uppercase; }
+.join-btn {
+  font-family: var(--font); font-size: 15px; font-weight: 700;
+  background: var(--gold); color: #fff; border: none;
+  border-radius: var(--radius); padding: 14px;
+  cursor: pointer; width: 100%; display: flex;
+  align-items: center; justify-content: center; gap: 8px;
+  transition: background 0.2s;
+}
+.join-btn:active { background: var(--gold2); }
+.join-note { font-size: 11px; color: var(--muted); text-align: center; line-height: 1.6; }
+
+/* ═══════════════════════════════════════════
+   MAIN PRESENTER LAYOUT
+═══════════════════════════════════════════ */
+
+/* ── TOP BAR ── */
+.topbar {
+  background: var(--surface); border-bottom: 1px solid var(--border);
+  padding: 10px 14px; display: flex; align-items: center;
+  justify-content: space-between; gap: 10px; flex-shrink: 0;
+}
+.topbar-info { display: flex; flex-direction: column; gap: 2px; }
+.pres-name { font-size: 14px; font-weight: 700; color: var(--text); }
+.conn-row { display: flex; align-items: center; gap: 5px; }
+.conn-dot { width: 7px; height: 7px; border-radius: 50%;
+  background: #888; flex-shrink: 0; transition: background 0.3s; }
+.conn-dot.online { background: var(--green); box-shadow: 0 0 5px var(--green); animation: pulse 2s infinite; }
+.conn-dot.offline { background: var(--red); }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+.conn-text { font-size: 10px; font-weight: 700; letter-spacing: 0.5px;
+  text-transform: uppercase; color: var(--muted); }
+.conn-text.online { color: var(--green); }
+
+/* Now on screen (top right) */
+.now-pill {
+  background: #06060f; border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 8px; padding: 6px 10px; max-width: 180px;
+  display: flex; flex-direction: column; gap: 1px; flex-shrink: 0;
+}
+.now-type { font-size: 7px; letter-spacing: 2px; text-transform: uppercase;
+  color: rgba(180,155,255,0.5); }
+.now-title { font-family: 'Cormorant Garamond', serif;
+  font-size: 13px; font-weight: 600; color: #fff;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* ── BOTTOM NAV ── */
+.bottom-nav {
+  display: flex; background: var(--surface);
+  border-top: 1px solid var(--border); flex-shrink: 0;
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+.bnav { font-family: var(--font); flex: 1; padding: 10px 4px 8px;
+  font-size: 10px; font-weight: 700; letter-spacing: 0.3px;
+  text-transform: uppercase; background: transparent; border: none;
+  color: var(--muted); cursor: pointer;
+  border-top: 2px solid transparent; transition: all 0.15s;
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+}
+.bnav i { font-size: 19px; }
+.bnav.active { color: var(--gold); border-top-color: var(--gold); }
+
+/* ── TAB PANELS ── */
+.tabs { flex: 1; overflow: hidden; position: relative; }
+.tab { display: none; height: 100%; flex-direction: column; overflow: hidden; }
+.tab.active { display: flex; }
+
+/* ═══════════════════════════════════════════
+   CONTROL TAB
+═══════════════════════════════════════════ */
+.ctrl-scroll { flex: 1; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 12px; }
+
+/* Projector preview */
+.proj-preview {
+  background: #04040e; border-radius: 10px;
+  aspect-ratio: 16/9; position: relative; overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.06); flex-shrink: 0;
+  max-height: 32vw;   /* cap height so it doesn't dominate on large screens */
+}
+.proj-grid {
+  position: absolute; inset: 0;
+  background-image: linear-gradient(rgba(255,255,255,0.012) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.012) 1px, transparent 1px);
+  background-size: 18px 18px;
+}
+.proj-glow { position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 50% 60%, rgba(70,50,160,0.1) 0%, transparent 70%); }
+.proj-content { position: relative; z-index: 2;
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; text-align: center; padding: 12px; height: 100%; }
+.proj-type { font-size: 8px; letter-spacing: 2px; text-transform: uppercase;
+  color: rgba(180,155,255,0.45); margin-bottom: 4px; }
+.proj-title { font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(11px, 3.5vw, 20px); font-weight: 600; color: #fff; line-height: 1.2; }
+.proj-body { font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(9px, 2.2vw, 12px); color: rgba(255,255,255,0.8);
+  margin-top: 4px; font-style: italic; line-height: 1.4; }
+.proj-sub { font-size: 7px; letter-spacing: 1px; color: rgba(180,155,255,0.5); margin-top: 3px; }
+.proj-idle { color: rgba(255,255,255,0.15); font-size: 12px; font-style: italic;
+  font-family: 'Cormorant Garamond', serif; }
+
+/* Nav buttons */
+.nav-row { display: flex; align-items: center; gap: 8px; }
+.nav-btn {
+  font-family: var(--font); flex: 1; font-size: 14px; font-weight: 700;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: var(--radius); color: var(--text);
+  padding: 13px 10px; cursor: pointer; transition: all 0.15s;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+}
+.nav-btn:active { border-color: var(--gold); color: var(--gold); }
+.nav-btn:disabled { opacity: 0.25; pointer-events: none; }
+.slide-ctr { font-size: 13px; font-weight: 700; color: var(--muted);
+  min-width: 52px; text-align: center; }
+
+/* Action buttons */
+.action-row { display: flex; gap: 8px; }
+.act-btn {
+  font-family: var(--font); flex: 1; font-size: 12px; font-weight: 700;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: var(--radius); color: var(--muted);
+  padding: 11px 8px; cursor: pointer; transition: all 0.15s;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+}
+.act-btn:active { border-color: var(--gold); color: var(--gold); }
+.act-btn.blank-active { background: var(--active); border-color: var(--gold); color: var(--gold); }
+.act-btn.leave { color: var(--red); border-color: rgba(224,92,92,0.3); }
+.act-btn.leave:active { background: rgba(224,92,92,0.1); }
+
+/* Quick display grid */
+.section-hdr { font-size: 9px; font-weight: 700; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--gold); margin-bottom: 8px; }
+.quick-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
+.quick-btn {
+  font-family: var(--font); font-size: 10px; font-weight: 700;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 8px; color: var(--muted);
+  padding: 10px 4px; cursor: pointer; transition: all 0.15s;
+  display: flex; flex-direction: column; align-items: center; gap: 5px;
+}
+.quick-btn i { font-size: 20px; }
+.quick-btn:active { border-color: var(--gold); color: var(--gold); background: var(--active); }
+
+/* Current slides list */
+.slides-section { display: flex; flex-direction: column; gap: 4px; }
+.slide-item {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 8px; padding: 10px 12px; cursor: pointer;
+  transition: all 0.13s; display: flex; align-items: center; gap: 10px;
+}
+.slide-item:active { border-color: var(--gold); }
+.slide-item.active-slide { background: var(--active); border-color: var(--gold); }
+.si-lbl { font-size: 9px; font-weight: 700; letter-spacing: 1px;
+  text-transform: uppercase; color: var(--gold); min-width: 54px; flex-shrink: 0; }
+.si-txt { font-size: 12px; color: var(--text); line-height: 1.3;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; }
+
+/* ═══════════════════════════════════════════
+   SONGS TAB
+═══════════════════════════════════════════ */
+.songs-toolbar {
+  padding: 10px 12px; border-bottom: 1px solid var(--border);
+  display: flex; flex-direction: column; gap: 8px; flex-shrink: 0;
+}
+.lang-row { display: flex; gap: 5px; }
+.ltab {
+  font-family: var(--font); font-size: 11px; font-weight: 700;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 20px; color: var(--muted); padding: 5px 14px;
+  cursor: pointer; transition: all 0.15s; flex: 1; text-align: center;
+}
+.ltab.active { background: var(--active); border-color: var(--gold); color: var(--gold); }
+.search-wrap { position: relative; }
+.search-icon { position: absolute; left: 11px; top: 50%;
+  transform: translateY(-50%); color: var(--muted); font-size: 13px; pointer-events: none; }
+.search-inp {
+  font-family: var(--font); font-size: 14px; background: var(--surface2);
+  border: 1px solid var(--border); border-radius: var(--radius); color: var(--text);
+  padding: 11px 12px 11px 36px; outline: none; width: 100%;
+  transition: border-color 0.2s;
+}
+.search-inp:focus { border-color: var(--gold); }
+
+.songs-meta {
+  padding: 6px 12px; border-bottom: 1px solid var(--border);
+  font-size: 10px; font-weight: 700; letter-spacing: 1px;
+  text-transform: uppercase; color: var(--gold); flex-shrink: 0;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.songs-meta-right { font-size: 10px; color: var(--muted); font-weight: 400;
+  letter-spacing: 0; text-transform: none; }
+
+.item-scroll { flex: 1; overflow-y: auto; }
+.item-list { padding: 6px 8px; display: flex; flex-direction: column; gap: 3px; }
+
+/* Hymn card */
+.hymn-card { background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 8px; overflow: hidden; }
+.hymn-card.open { border-color: rgba(200,144,46,0.3); }
+.hymn-hdr {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 12px; cursor: pointer; user-select: none;
+}
+.hymn-hdr:active { background: rgba(255,255,255,0.03); }
+.hymn-num { font-size: 10px; font-weight: 700; color: var(--gold);
+  background: rgba(200,144,46,0.1); border: 1px solid rgba(200,144,46,0.25);
+  border-radius: 4px; padding: 2px 6px; flex-shrink: 0; }
+.hymn-ttl { flex: 1; font-size: 13px; font-weight: 700; color: var(--text);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hymn-chev { color: var(--muted); font-size: 10px; transition: transform 0.2s; flex-shrink: 0; }
+.hymn-card.open .hymn-chev { transform: rotate(180deg); }
+
+.verse-rows { display: none; padding: 4px 8px 8px;
+  gap: 3px; flex-direction: column;
+  background: rgba(0,0,0,0.2); border-top: 1px solid var(--border); }
+.hymn-card.open .verse-rows { display: flex; }
+.verse-row {
+  font-family: var(--font); text-align: left;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 6px; padding: 9px 10px; cursor: pointer;
+  transition: all 0.13s; display: flex; align-items: center;
+  gap: 8px; width: 100%;
+}
+.verse-row:active { border-color: var(--gold); background: rgba(200,144,46,0.06); }
+.verse-row.projecting { background: var(--active); border-color: var(--gold); }
+.vr-lbl { font-size: 10px; font-weight: 700; letter-spacing: 0.5px;
+  text-transform: uppercase; color: var(--gold); min-width: 58px; flex-shrink: 0; }
+.vr-pre { font-size: 12px; color: var(--muted);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; }
+
+/* ═══════════════════════════════════════════
+   BIBLE TAB
+═══════════════════════════════════════════ */
+.bible-toolbar {
+  padding: 10px 12px; border-bottom: 1px solid var(--border);
+  display: flex; flex-direction: column; gap: 8px; flex-shrink: 0;
+}
+.bible-selects { display: flex; gap: 6px; }
+select {
+  font-family: var(--font); font-size: 13px; background: var(--surface2);
+  border: 1px solid var(--border); border-radius: 8px; color: var(--text);
+  padding: 9px 10px; outline: none; cursor: pointer; flex: 1;
+  transition: border-color 0.2s;
+}
+select:focus { border-color: var(--gold); }
+
+.verses-scroll { flex: 1; overflow-y: auto; }
+.verses-list { padding: 6px 8px; display: flex; flex-direction: column; gap: 3px; }
+
+.bv-card {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 8px; padding: 9px 12px; cursor: pointer;
+  transition: all 0.13s; display: flex; align-items: flex-start; gap: 8px;
+}
+.bv-card:active { border-color: var(--gold); }
+.bv-card.projecting { background: var(--active); border-color: var(--gold); }
+.bv-num { font-size: 11px; font-weight: 700; color: var(--gold);
+  min-width: 22px; flex-shrink: 0; padding-top: 1px; }
+.bv-text { font-size: 12px; color: var(--text); line-height: 1.45; flex: 1; }
+
+.bvs-card {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 8px; padding: 10px 12px; cursor: pointer;
+  transition: all 0.13s; margin-bottom: 3px;
+}
+.bvs-card:active { border-color: var(--gold); }
+.bvs-card.projecting { background: var(--active); border-color: var(--gold); }
+.bvs-ref { font-size: 10px; font-weight: 700; color: var(--gold);
+  margin-bottom: 3px; display: flex; justify-content: space-between; align-items: center; }
+.bvs-vtag { font-size: 8px; letter-spacing: 1px; text-transform: uppercase;
+  color: var(--muted); border: 1px solid var(--border);
+  border-radius: 8px; padding: 1px 6px; }
+.bvs-text { font-size: 12px; color: var(--text); line-height: 1.4; }
+.bvs-text mark { background: rgba(200,144,46,0.25); color: var(--gold); border-radius: 2px; }
+
+.bible-meta {
+  padding: 6px 12px; border-bottom: 1px solid var(--border);
+  font-size: 10px; font-weight: 700; letter-spacing: 1px;
+  text-transform: uppercase; color: var(--gold); flex-shrink: 0;
+}
+
+.bible-welcome {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 30px 20px; color: var(--muted); font-size: 13px; text-align: center;
+  gap: 8px;
+}
+.bible-welcome i { font-size: 36px; opacity: 0.25; }
+
+/* Chap grid */
+.chap-grid { display: flex; flex-wrap: wrap; gap: 4px; padding: 8px; }
+.chap-btn {
+  font-family: var(--font); font-size: 12px; font-weight: 700;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 6px; color: var(--muted); padding: 7px 10px;
+  cursor: pointer; min-width: 38px; text-align: center; transition: all 0.13s;
+}
+.chap-btn:active { border-color: var(--gold); color: var(--gold); }
+
+/* Utility */
+.loading { padding: 20px; text-align: center; color: var(--muted); font-size: 12px; }
+.empty { padding: 20px; text-align: center; color: var(--muted); font-size: 13px; }
+
+/* ── SHARE TAB ── */
+.share-scroll {
+  flex: 1; overflow-y: auto; padding: 12px;
+  display: flex; flex-direction: column; gap: 12px;
+}
+.share-section {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 14px;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.share-section-title {
+  font-size: 13px; font-weight: 700; color: var(--text);
+  display: flex; align-items: center; gap: 8px;
+}
+.share-section-title i { color: var(--gold); }
+.share-desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+.share-status-row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 12px; background: var(--surface);
+  border: 1px solid var(--border); border-radius: 8px;
+}
+.share-status-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--muted); flex-shrink: 0;
+  transition: background 0.3s;
+}
+.share-status-dot.active {
+  background: var(--green); box-shadow: 0 0 5px var(--green);
+  animation: pulse 2s infinite;
+}
+.share-status-dot.connecting { background: var(--gold); }
+.share-status-text { font-size: 12px; font-weight: 700; color: var(--muted); }
+.share-status-text.active { color: var(--green); }
+
+.share-primary-btn {
+  font-family: var(--font); font-size: 14px; font-weight: 700;
+  background: var(--gold); color: #fff; border: none;
+  border-radius: var(--radius); padding: 14px;
+  cursor: pointer; width: 100%; display: flex;
+  align-items: center; justify-content: center; gap: 8px;
+  transition: background 0.2s;
+}
+.share-primary-btn:active { background: var(--gold2); }
+.share-primary-btn:disabled { opacity: 0.4; pointer-events: none; }
+
+.share-stop-btn {
+  font-family: var(--font); font-size: 13px; font-weight: 700;
+  background: rgba(224,92,92,0.1); color: var(--red);
+  border: 1px solid rgba(224,92,92,0.3); border-radius: var(--radius);
+  padding: 12px; cursor: pointer; width: 100%;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  transition: all 0.15s;
+}
+.share-stop-btn:active { background: rgba(224,92,92,0.2); }
+
+.share-hint {
+  font-size: 11px; color: var(--muted); line-height: 1.6;
+  padding: 8px 10px; background: var(--surface);
+  border: 1px solid var(--border); border-radius: 8px;
+  display: flex; gap: 8px; align-items: flex-start;
+}
+.share-hint i { color: var(--gold); flex-shrink: 0; margin-top: 2px; }
+
+.upload-drop-area {
+  border: 2px dashed var(--border); border-radius: var(--radius);
+  padding: 20px; text-align: center; cursor: pointer;
+  transition: all 0.15s; display: flex; flex-direction: column;
+  align-items: center;
+}
+.upload-drop-area:active, .upload-drop-area.drag-over {
+  border-color: var(--gold); background: var(--active);
+}
+.upload-progress-bar {
+  height: 6px; background: var(--surface);
+  border-radius: 3px; overflow: hidden;
+  border: 1px solid var(--border);
+}
+.upload-progress-fill {
+  height: 100%; background: var(--gold);
+  border-radius: 3px; transition: width 0.3s;
+}
+.recent-file-item {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; padding: 9px 12px; cursor: pointer;
+  transition: all 0.13s; display: flex; align-items: center; gap: 10px;
+  margin-bottom: 4px;
+}
+.recent-file-item:active { border-color: var(--gold); }
+.rfi-icon { font-size: 18px; color: var(--gold); flex-shrink: 0; }
+.rfi-info { flex: 1; min-width: 0; }
+.rfi-name { font-size: 12px; font-weight: 700; color: var(--text);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rfi-size { font-size: 10px; color: var(--muted); }
+.rfi-play-btn {
+  font-family: var(--font); font-size: 10px; font-weight: 700;
+  background: var(--active); border: 1px solid var(--gold);
+  border-radius: 6px; color: var(--gold);
+  padding: 4px 10px; cursor: pointer; flex-shrink: 0;
+}
+
+/* Toast */
+.toast {
+  position: fixed; bottom: 74px; left: 50%; transform: translateX(-50%);
+  background: var(--surface); border: 1px solid var(--gold);
+  border-radius: 20px; padding: 8px 18px;
+  font-size: 12px; font-weight: 700; color: var(--gold);
+  z-index: 100; opacity: 0; transition: opacity 0.25s;
+  pointer-events: none; white-space: nowrap; max-width: 90vw;
+  text-align: center;
+}
+.toast.show { opacity: 1; }
+
+/* Scrollbars */
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<!-- ═══ JOIN SCREEN ═══ -->
+<div class="screen active" id="screen-join">
+  <div class="join-wrap">
+    <div class="join-logo"><i class="fa-solid fa-cross"></i></div>
+    <div class="join-title">Worship Presenter</div>
+    <div class="join-sub">Connect to the AV operator to control what's on screen</div>
+
+    <div class="join-card">
+      <div>
+        <div class="field-label">Your Name</div>
+        <input type="text" id="inp-name" placeholder="e.g. Pastor Habimana" autocomplete="off">
+      </div>
+      <div>
+        <div class="field-label">Session Code</div>
+        <input type="text" class="code-input" id="inp-code" placeholder="SDA-XXXX"
+          maxlength="8" autocomplete="off" oninput="this.value=this.value.toUpperCase()">
+      </div>
+      <div>
+        <div class="field-label">Server Address</div>
+        <input type="text" id="inp-host" placeholder="192.168.x.x:4040" autocomplete="off">
+        <div style="font-size:10px;color:var(--muted);margin-top:4px">
+          Get this from Settings → Remote Access in the Operator Panel
+        </div>
+      </div>
+      <button class="join-btn" onclick="joinSession()">
+        <i class="fa-solid fa-right-to-bracket"></i> Join Session
+      </button>
+      <div class="join-note">
+        Make sure you are on the same Wi-Fi as the church computer,<br>
+        or use Ngrok/Cloud if on a different network.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MAIN PRESENTER SCREEN ═══ -->
+<div class="screen" id="screen-main">
+
+  <!-- Top bar -->
+  <div class="topbar">
+    <div class="topbar-info">
+      <div class="pres-name" id="disp-name">Presenter</div>
+      <div class="conn-row">
+        <div class="conn-dot" id="conn-dot"></div>
+        <span class="conn-text" id="conn-text">Connecting…</span>
+      </div>
+    </div>
+    <div class="now-pill">
+      <div class="now-type" id="nos-type">STANDBY</div>
+      <div class="now-title" id="nos-title">Nothing on screen</div>
+    </div>
+  </div>
+
+  <!-- Tab panels -->
+  <div class="tabs">
+
+    <!-- ─── CONTROL TAB ─── -->
+    <div class="tab active" id="tab-control">
+      <div class="ctrl-scroll">
+
+        <!-- Projector preview -->
+        <div class="proj-preview">
+          <div class="proj-grid"></div>
+          <div class="proj-glow"></div>
+          <div class="proj-content" id="proj-content">
+            <div class="proj-idle">Nothing projected yet</div>
+          </div>
+        </div>
+
+        <!-- Prev / counter / Next -->
+        <div class="nav-row">
+          <button class="nav-btn" id="btn-prev" onclick="navigate(-1)" disabled>
+            <i class="fa-solid fa-chevron-left"></i> Prev
+          </button>
+          <span class="slide-ctr" id="slide-ctr">—</span>
+          <button class="nav-btn" id="btn-next" onclick="navigate(1)" disabled>
+            Next <i class="fa-solid fa-chevron-right"></i>
+          </button>
+        </div>
+
+        <!-- Blank + Leave -->
+        <div class="action-row">
+          <button class="act-btn" id="blank-btn" onclick="toggleBlank()">
+            <i class="fa-solid fa-eye-slash"></i> Blank Screen
+          </button>
+          <button class="act-btn leave" onclick="leaveSession()">
+            <i class="fa-solid fa-right-from-bracket"></i> Leave
+          </button>
+        </div>
+
+        <!-- Quick display -->
+        <div>
+          <div class="section-hdr">Quick Display</div>
+          <div class="quick-grid">
+            <button class="quick-btn" onclick="quickProject('welcome')">
+              <i class="fa-solid fa-hand-wave"></i>Welcome</button>
+            <button class="quick-btn" onclick="quickProject('prayer')">
+              <i class="fa-solid fa-hands-praying"></i>Prayer</button>
+            <button class="quick-btn" onclick="quickProject('offering')">
+              <i class="fa-solid fa-coins"></i>Offering</button>
+            <button class="quick-btn" onclick="quickProject('scripture')">
+              <i class="fa-solid fa-book-open"></i>Scripture</button>
+            <button class="quick-btn" onclick="quickProject('sermon')">
+              <i class="fa-solid fa-person-chalkboard"></i>Sermon</button>
+            <button class="quick-btn" onclick="quickProject('closing')">
+              <i class="fa-solid fa-door-open"></i>Closing</button>
+          </div>
+        </div>
+
+        <!-- Current slide set -->
+        <div class="slides-section" id="slides-section" style="display:none">
+          <div class="section-hdr">Current Slides</div>
+          <div id="slides-list"></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ─── SONGS TAB ─── -->
+    <div class="tab" id="tab-songs">
+      <div class="songs-toolbar">
+        <div class="lang-row">
+          <button class="ltab active" id="sl-en" onclick="setSongLang('en')">English</button>
+          <button class="ltab" id="sl-rw" onclick="setSongLang('rw')">Kinyarwanda</button>
+          <button class="ltab" id="sl-fr" onclick="setSongLang('fr')">French</button>
+        </div>
+        <div class="search-wrap">
+          <i class="fa-solid fa-magnifying-glass search-icon"></i>
+          <input type="text" class="search-inp" id="song-search"
+            placeholder="Search by title or hymn number…"
+            oninput="filterSongs(this.value)">
+        </div>
+      </div>
+      <div class="songs-meta" id="songs-meta">
+        <span>Loading hymns…</span>
+      </div>
+      <div class="item-scroll">
+        <div class="item-list" id="song-list"></div>
+      </div>
+    </div>
+
+    <!-- ─── BIBLE TAB ─── -->
+    <div class="tab" id="tab-bible">
+      <div class="bible-toolbar">
+        <div class="lang-row">
+          <button class="ltab active" id="bl-en" onclick="setBibleLang('en')">KJV</button>
+          <button class="ltab" id="bl-rw" onclick="setBibleLang('rw')">BYH</button>
+          <button class="ltab" id="bl-fr" onclick="setBibleLang('fr')">LSG</button>
+        </div>
+        <div class="search-wrap">
+          <i class="fa-solid fa-magnifying-glass search-icon"></i>
+          <input type="text" class="search-inp" id="bible-search"
+            placeholder="Reference or keyword (e.g. Yohana 3:16)…"
+            oninput="pressBibleSearch(this.value)">
+        </div>
+        <div class="bible-selects">
+          <select id="bible-book" onchange="onBookChange()">
+            <option value="">— Select Book —</option>
+          </select>
+          <select id="bible-chap" onchange="onChapChange()" disabled>
+            <option value="">— Chap —</option>
+          </select>
+        </div>
+      </div>
+      <div class="bible-meta" id="bible-meta" style="display:none"></div>
+      <div id="bible-body" style="flex:1;overflow:hidden;display:flex;flex-direction:column">
+        <div class="bible-welcome">
+          <i class="fa-solid fa-book-bible"></i>
+          <div>Select a book above<br>or search a reference</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+    <!-- ─── SHARE TAB ─── -->
+    <div class="tab" id="tab-share">
+      <div class="share-scroll">
+
+        <!-- ── SECTION 1: WebRTC Screen Share ── -->
+        <div class="share-section">
+          <div class="share-section-title">
+            <i class="fa-solid fa-desktop"></i> Live Screen Share
+          </div>
+          <div class="share-desc">
+            Share your screen, PowerPoint, or VLC video live to the projector.
+            Works on <strong>laptop</strong> and <strong>desktop</strong> browsers.
+          </div>
+
+          <!-- Status indicator -->
+          <div class="share-status-row" id="rtc-status-row">
+            <div class="share-status-dot" id="rtc-dot"></div>
+            <span class="share-status-text" id="rtc-status">Not sharing</span>
+          </div>
+
+          <!-- Share screen button -->
+          <button class="share-primary-btn" id="share-screen-btn" onclick="startScreenShare()">
+            <i class="fa-solid fa-display"></i>
+            Start Screen Share
+          </button>
+
+          <!-- Stop button (hidden until sharing) -->
+          <button class="share-stop-btn" id="stop-share-btn" onclick="stopScreenShare()" style="display:none">
+            <i class="fa-solid fa-stop"></i> Stop Sharing
+          </button>
+
+          <div class="share-hint">
+            <i class="fa-solid fa-circle-info"></i>
+            The projector screen will switch to your shared screen automatically.
+            To show a PowerPoint: open your PPT in presentation mode, then select
+            that window when prompted.
+          </div>
+        </div>
+
+        <!-- ── SECTION 2: File Upload ── -->
+        <div class="share-section">
+          <div class="share-section-title">
+            <i class="fa-solid fa-file-arrow-up"></i> Upload & Play File
+          </div>
+          <div class="share-desc">
+            Upload a video or image file. It will play on the projector screen.
+            Supported: MP4, WebM, MKV, JPG, PNG
+          </div>
+
+          <!-- Upload area -->
+          <div class="upload-drop-area" id="upload-area" onclick="document.getElementById('file-input').click()"
+            ondragover="event.preventDefault();this.classList.add('drag-over')"
+            ondragleave="this.classList.remove('drag-over')"
+            ondrop="handleFileDrop(event)">
+            <i class="fa-solid fa-cloud-arrow-up" style="font-size:28px;color:var(--gold);opacity:0.7;margin-bottom:8px"></i>
+            <div style="font-size:13px;font-weight:700;color:var(--text)">Tap to select file</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:4px">or drag and drop here</div>
+            <div style="font-size:10px;color:var(--muted);margin-top:6px">MP4 · WebM · MKV · JPG · PNG (max 500MB)</div>
+          </div>
+          <input type="file" id="file-input" accept="video/*,image/*,.mkv"
+            style="display:none" onchange="handleFileSelect(this.files[0])">
+
+          <!-- Upload progress -->
+          <div id="upload-progress-wrap" style="display:none">
+            <div class="upload-progress-bar">
+              <div class="upload-progress-fill" id="upload-fill" style="width:0%"></div>
+            </div>
+            <div style="font-size:11px;color:var(--muted);margin-top:4px;text-align:center" id="upload-label">
+              Uploading…
+            </div>
+          </div>
+
+          <!-- Recent uploads -->
+          <div id="recent-uploads" style="margin-top:4px">
+            <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;
+              text-transform:uppercase;color:var(--muted);margin-bottom:6px">Recent Files</div>
+            <div id="recent-list">
+              <div style="font-size:12px;color:var(--muted);text-align:center;padding:10px">
+                No files uploaded yet
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── SECTION 3: How to open on projector ── -->
+        <div class="share-section">
+          <div class="share-section-title">
+            <i class="fa-solid fa-circle-info"></i> Setup
+          </div>
+          <div style="font-size:12px;color:var(--muted);line-height:1.7">
+            The operator must open the <strong style="color:var(--gold)">Screen Share window</strong>
+            on the projector computer:<br><br>
+            <strong style="color:var(--text)">1.</strong> In the Operator Panel, go to
+            <strong style="color:var(--gold)">Settings → Screen Share</strong><br>
+            <strong style="color:var(--text)">2.</strong> Click <strong style="color:var(--gold)">Open Screen Share Window</strong><br>
+            <strong style="color:var(--text)">3.</strong> Move that window to the projector screen<br>
+            <strong style="color:var(--text)">4.</strong> Then start sharing from here
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+
+  <!-- Bottom nav -->
+  <div class="bottom-nav">
+    <button class="bnav active" id="bnav-control" onclick="switchTab('control')">
+      <i class="fa-solid fa-display"></i>Control
+    </button>
+    <button class="bnav" id="bnav-songs" onclick="switchTab('songs')">
+      <i class="fa-solid fa-music"></i>Songs
+    </button>
+    <button class="bnav" id="bnav-bible" onclick="switchTab('bible')">
+      <i class="fa-solid fa-book-bible"></i>Bible
+    </button>
+    <button class="bnav" id="bnav-share" onclick="switchTab('share')">
+      <i class="fa-solid fa-share-from-square"></i>Share
+    </button>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════════════
+let ws = null, wsReady = false, reconnectTimer = null;
+let presName = '', sessionCode = '', serverHost = '';
+let slideSet = [], slideIdx = 0, isBlank = false;
+let BIBLE_DATA = null, bibleLoading = false, bibleLang = 'en', songLang = 'en';
+let bibleSearchTimer = null;
+
+// ═══════════════════════════════════════════════════════════
+//  HYMN LIBRARY — fallback set + dynamic full load
+// ═══════════════════════════════════════════════════════════
+const HYMNS_EN_FALLBACK = [
+  {id:1,number:"1",title:"Praise to the Lord, the Almighty",verses:[
+    {label:"Verse 1",text:"Praise to the Lord, the Almighty, the King of creation!\nO my soul, praise Him, for He is thy health and salvation!"},
+    {label:"Verse 2",text:"Praise to the Lord, who o'er all things so wondrously reigneth,\nShelters thee under His wings, yea, so gently sustaineth!"}]},
+  {id:2,number:"100",title:"Holy, Holy, Holy! Lord God Almighty",verses:[
+    {label:"Verse 1",text:"Holy, holy, holy! Lord God Almighty!\nEarly in the morning our song shall rise to Thee!"},
+    {label:"Chorus",text:"God in three persons, blessed Trinity!"}]},
+  {id:3,number:"330",title:"Take My Life and Let It Be",verses:[
+    {label:"Verse 1",text:"Take my life, and let it be\nConsecrated, Lord, to Thee."},
+    {label:"Verse 2",text:"Take my hands, and let them move\nAt the impulse of Thy love."}]},
+  {id:4,number:"462",title:"Blessed Assurance",verses:[
+    {label:"Verse 1",text:"Blessed assurance, Jesus is mine!\nO what a foretaste of glory divine!"},
+    {label:"Chorus",text:"This is my story, this is my song,\nPraising my Savior all the day long."}]},
+  {id:5,number:"488",title:"Great Is Thy Faithfulness",verses:[
+    {label:"Verse 1",text:"Great is Thy faithfulness, O God my Father,\nThere is no shadow of turning with Thee."},
+    {label:"Chorus",text:"Great is Thy faithfulness! Morning by morning new mercies I see!"}]},
+];
+const HYMNS_RW_FALLBACK = [
+  {id:101,number:"45",title:"Turirimbe Twese Imana",verses:[
+    {label:"Umurongo 1",text:"Turirimbe twese Imana,\nY'ijuru n'isi n'ibiriho byose."},
+    {label:"Umurongo 2",text:"Iyumvire ijwi ry'Imana,\nRikuririmba ubugingo bwose."}]},
+  {id:102,number:"78",title:"Sabato ni Umunsi w'Imana",verses:[
+    {label:"Umurongo 1",text:"Sabato ni umunsi w'Imana,\nWagenywe kuva mu ntangiriro."},
+    {label:"Chorus",text:"Sabato, Sabato ya Nyagasani,\nNiyo tuzirikana na none."}]},
+];
+const HYMNS_FR_FALLBACK = [
+  {id:201,number:"1",title:"Louez le Seigneur",verses:[
+    {label:"Couplet 1",text:"Louez le Seigneur, Roi de la création."},
+    {label:"Couplet 2",text:"Louez le Seigneur qui règne sur toutes choses."}]},
+];
+
+const HYMN_LIBRARY = {
+  en: [...HYMNS_EN_FALLBACK],
+  rw: [...HYMNS_RW_FALLBACK],
+  fr: [...HYMNS_FR_FALLBACK],
+};
+let hymnsLoaded = false;
+
+// Load full hymn library from server using RELATIVE URL
+// Works automatically since presenter.html is served from the same origin
+async function loadHymnsFromServer() {
+  if (hymnsLoaded) return;
+  // Remove any previous failed attempt
+  const existing = document.getElementById('hymns-script');
+  if (existing) existing.remove();
+
+  return new Promise((resolve) => {
+    const s = document.createElement('script');
+    s.id = 'hymns-script';
+    // Use relative URL — works because presenter.html IS served from the server
+    // e.g. http://192.168.1.67:4040/presenter.html → /hymns_data.js on same origin
+    s.src = '/hymns_data.js?v=' + Date.now(); // cache-bust
+    s.onload = () => {
+      // hymns_data.js exports HYMN_LIBRARY_DATA = { en, rw, fr }
+      if (typeof HYMN_LIBRARY_DATA !== 'undefined') {
+        HYMN_LIBRARY.en = HYMN_LIBRARY_DATA.en || HYMN_LIBRARY.en;
+        HYMN_LIBRARY.rw = HYMN_LIBRARY_DATA.rw || HYMN_LIBRARY.rw;
+        HYMN_LIBRARY.fr = HYMN_LIBRARY_DATA.fr || HYMN_LIBRARY.fr;
+        hymnsLoaded = true;
+        updateSongsMeta();
+        // Re-render if songs tab is visible
+        filterSongs(document.getElementById('song-search')?.value || '');
+        console.log('✓ Hymn library loaded — EN:' + HYMN_LIBRARY.en.length +
+          ' RW:' + HYMN_LIBRARY.rw.length + ' FR:' + HYMN_LIBRARY.fr.length);
+      } else {
+        console.warn('HYMN_LIBRARY_DATA not defined after script load');
+        updateSongsMeta();
+      }
+      resolve();
+    };
+    s.onerror = (err) => {
+      console.warn('hymns_data.js failed to load:', err);
+      // Show fallback count
+      updateSongsMeta();
+      resolve();
+    };
+    document.head.appendChild(s);
+  });
+}
+
+// Try loading immediately — works when page is opened from the server
+// (relative URL resolves correctly)
+loadHymnsFromServer();
+
+// ═══════════════════════════════════════════════════════════
+//  QUICK SLIDES
+// ═══════════════════════════════════════════════════════════
+const QUICK_SLIDES = {
+  welcome:  {type:'Welcome',  title:'Welcome to Worship', sub:'',body:'We are glad you are here.\nMay God bless our time together.', ref:''},
+  prayer:   {type:'Prayer',   title:'Let Us Pray',        sub:'',body:'', ref:''},
+  offering: {type:'Tithes & Offerings',title:'Giving Back to God',sub:'',body:'Honour the Lord with your wealth.\n— Proverbs 3:9', ref:''},
+  scripture:{type:'Scripture Reading',title:'Scripture Reading',sub:'',body:'Please open your Bibles\nand follow along.', ref:''},
+  sermon:   {type:'Sermon',   title:'Message of the Day', sub:'',body:'', ref:''},
+  closing:  {type:'Closing',  title:'Go in Peace',        sub:'',body:'The grace of our Lord Jesus Christ\nbe with you all.', ref:''},
+};
+
+// ═══════════════════════════════════════════════════════════
+//  WEBSOCKET
+// ═══════════════════════════════════════════════════════════
+function connectWS() {
+  clearTimeout(reconnectTimer);
+  // Only connect if we have a valid server host from the join form
+  if (!serverHost && !location.hostname) return;
+  const host = serverHost || location.hostname + ':4040';
+  // Don't reconnect if already open
+  if (ws && (ws.readyState === WebSocket.CONNECTING || ws.readyState === WebSocket.OPEN)) return;
+  try {
+    ws = new WebSocket('ws://' + host);
+    ws.onopen  = () => {
+      wsReady = true;
+      setConn(true);
+      console.log('✓ WS connected to', host);
+    };
+    ws.onclose = (e) => {
+      wsReady = false;
+      setConn(false);
+      // Only reconnect if we intentionally joined a session
+      if (sessionCode) {
+        reconnectTimer = setTimeout(connectWS, 3000);
+      }
+    };
+    ws.onerror = () => { wsReady = false; };
+    ws.onmessage = e => { try { handleMsg(JSON.parse(e.data)); } catch(_) {} };
+  } catch(e) {
+    setConn(false);
+    if (sessionCode) reconnectTimer = setTimeout(connectWS, 3000);
+  }
+}
+
+function wsSend(d) {
+  if (ws && ws.readyState === WebSocket.OPEN) try { ws.send(JSON.stringify(d)); } catch(_) {}
+}
+
+function setConn(on) {
+  document.getElementById('conn-dot').className = 'conn-dot ' + (on ? 'online' : 'offline');
+  const t = document.getElementById('conn-text');
+  t.className = 'conn-text ' + (on ? 'online' : '');
+  t.textContent = on ? 'Connected · ' + sessionCode : 'Reconnecting…';
+}
+
+// ═══════════════════════════════════════════════════════════
+//  INCOMING MESSAGE HANDLER
+// ═══════════════════════════════════════════════════════════
+function handleMsg(msg) {
+  if (msg.type === 'slide' && msg.slide) {
+    const s = msg.slide;
+    // Update "now on screen" pill
+    document.getElementById('nos-type').textContent  = s.type  || '';
+    document.getElementById('nos-title').textContent = s.title || '';
+    // Update projector preview
+    document.getElementById('proj-content').innerHTML =
+      `<div class="proj-type">${s.type||''}</div>
+       <div class="proj-title">${s.title||''}</div>
+       ${s.body ? `<div class="proj-body">${s.body.split('\\n').slice(0,2).join('<br>')}</div>` : ''}
+       ${s.sub  ? `<div class="proj-sub">${s.sub}</div>` : ''}`;
+    // Sync slide set
+    if (msg.slideSet) {
+      slideSet = msg.slideSet;
+      slideIdx  = msg.slideIndex || 0;
+      updateNav();
+      renderSlideList();
+    }
+    isBlank = false;
+    document.getElementById('blank-btn').classList.remove('blank-active');
+  }
+  if (msg.type === 'blank') {
+    document.getElementById('nos-type').textContent  = 'BLANK';
+    document.getElementById('nos-title').textContent = 'Screen is blank';
+    document.getElementById('proj-content').innerHTML =
+      '<div class="proj-idle" style="opacity:0.2">Screen blank</div>';
+    isBlank = true;
+    document.getElementById('blank-btn').classList.add('blank-active');
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+//  JOIN / LEAVE
+// ═══════════════════════════════════════════════════════════
+function joinSession() {
+  const name = document.getElementById('inp-name').value.trim();
+  const code = document.getElementById('inp-code').value.trim().toUpperCase();
+  const host = document.getElementById('inp-host').value.trim();
+  if (!name) { showToast('Please enter your name'); return; }
+  if (!code) { showToast('Please enter the session code'); return; }
+  presName = name; sessionCode = code;
+  serverHost = host || location.hostname + ':4040';
+  document.getElementById('disp-name').textContent = name;
+  document.getElementById('screen-join').classList.remove('active');
+  document.getElementById('screen-main').classList.add('active');
+  connectWS();
+  populateBibleBooks();
+  filterSongs('');
+}
+
+function leaveSession() {
+  sessionCode = ''; // stop auto-reconnect
+  clearTimeout(reconnectTimer);
+  if (ws) try { ws.close(); } catch(_) {}
+  ws = null; wsReady = false; slideSet = []; slideIdx = 0;
+  document.getElementById('screen-main').classList.remove('active');
+  document.getElementById('screen-join').classList.add('active');
+}
+
+// ═══════════════════════════════════════════════════════════
+//  NAVIGATION
+// ═══════════════════════════════════════════════════════════
+function navigate(dir) {
+  const i = slideIdx + dir;
+  if (i < 0 || i >= slideSet.length) return;
+  slideIdx = i;
+  const slide = slideSet[i];
+  wsSend({ type:'slide', slide, slideSet, slideIndex: i });
+  updateNav();
+  renderSlideList();
+}
+
+function goToSlide(i) {
+  slideIdx = i;
+  wsSend({ type:'slide', slide: slideSet[i], slideSet, slideIndex: i });
+  updateNav();
+  renderSlideList();
+}
+
+function updateNav() {
+  document.getElementById('btn-prev').disabled = slideIdx <= 0;
+  document.getElementById('btn-next').disabled = slideIdx >= slideSet.length - 1;
+  document.getElementById('slide-ctr').textContent =
+    slideSet.length > 1 ? (slideIdx+1) + ' / ' + slideSet.length : '—';
+}
+
+function renderSlideList() {
+  const sec = document.getElementById('slides-section');
+  const lst = document.getElementById('slides-list');
+  if (!slideSet.length) { sec.style.display = 'none'; return; }
+  sec.style.display = '';
+  lst.innerHTML = slideSet.map((s, i) => `
+    <div class="slide-item${i===slideIdx?' active-slide':''}" onclick="goToSlide(${i})">
+      <span class="si-lbl">${s.sub || s.type || ''}</span>
+      <span class="si-txt">${(s.body || s.title || '').split('\\n')[0]}</span>
+    </div>`).join('');
+}
+
+function toggleBlank() {
+  isBlank = !isBlank;
+  if (isBlank) {
+    wsSend({ type:'blank' });
+    document.getElementById('blank-btn').classList.add('blank-active');
+  } else {
+    if (slideSet[slideIdx]) wsSend({ type:'slide', slide:slideSet[slideIdx], slideSet, slideIndex:slideIdx });
+    document.getElementById('blank-btn').classList.remove('blank-active');
+  }
+}
+
+function quickProject(key) {
+  const slide = QUICK_SLIDES[key];
+  if (!slide) return;
+  slideSet = [slide]; slideIdx = 0;
+  wsSend({ type:'slide', slide, slideSet, slideIndex:0 });
+  updateNav();
+  renderSlideList();
+  showToast('▶ ' + slide.title);
+  switchTab('control');
+}
+
+// ═══════════════════════════════════════════════════════════
+//  TAB SWITCHING
+// ═══════════════════════════════════════════════════════════
+function switchTab(tab) {
+  ['control','songs','bible','share'].forEach(t => {
+    document.getElementById('tab-' + t)?.classList.toggle('active', t === tab);
+    document.getElementById('bnav-' + t)?.classList.toggle('active', t === tab);
+  });
+  if (tab === 'bible' && !BIBLE_DATA) loadBibleData();
+  if (tab === 'share') loadRecentUploads();
+}
+
+// ═══════════════════════════════════════════════════════════
+//  SONGS
+// ═══════════════════════════════════════════════════════════
+function setSongLang(lang) {
+  songLang = lang;
+  ['en','rw','fr'].forEach(l => document.getElementById('sl-'+l).classList.toggle('active', l===lang));
+  document.getElementById('song-search').value = '';
+  filterSongs('');
+}
+
+function updateSongsMeta() {
+  const hymns = HYMN_LIBRARY[songLang] || [];
+  const meta = document.getElementById('songs-meta');
+  const langNames = { en:'English', rw:'Kinyarwanda', fr:'French' };
+  const loadNote = !hymnsLoaded
+    ? '<span style="color:var(--muted);font-weight:400"> · loading full library…</span>' : '';
+  meta.innerHTML = `<span>${hymns.length} hymns · ${langNames[songLang]||songLang}${loadNote}</span>`;
+}
+
+function filterSongs(q) {
+  updateSongsMeta();
+  const hymns = HYMN_LIBRARY[songLang] || [];
+  const lc = q.toLowerCase().trim();
+  const filtered = lc
+    ? hymns.filter(h => h.title.toLowerCase().includes(lc) || String(h.number).includes(lc))
+    : hymns;
+
+  const list = document.getElementById('song-list');
+  if (!filtered.length) {
+    list.innerHTML = `<div class="empty">No hymns found${q?' for "'+q+'"':''}</div>`;
+    return;
+  }
+  list.innerHTML = filtered.map(h => `
+    <div class="hymn-card" id="ph-${h.id}">
+      <div class="hymn-hdr" onclick="toggleHymn(${h.id})">
+        <span class="hymn-num">#${h.number}</span>
+        <span class="hymn-ttl">${h.title}</span>
+        <i class="fa-solid fa-chevron-down hymn-chev"></i>
+      </div>
+      <div class="verse-rows">
+        ${h.verses.map((v,vi) => `
+          <button class="verse-row" id="vr-${h.id}-${vi}" onclick="projectVerse(${h.id},${vi})">
+            <span class="vr-lbl">${v.label}</span>
+            <span class="vr-pre">${v.text.split('\\n')[0]}</span>
+          </button>`).join('')}
+      </div>
+    </div>`).join('');
+}
+
+function toggleHymn(id) {
+  const card = document.getElementById('ph-' + id);
+  const wasOpen = card.classList.contains('open');
+  document.querySelectorAll('.hymn-card.open').forEach(c => c.classList.remove('open'));
+  if (!wasOpen) card.classList.add('open');
+}
+
+function projectVerse(hymnId, vi) {
+  const hymns = HYMN_LIBRARY[songLang] || [];
+  const hymn = hymns.find(h => h.id === hymnId);
+  if (!hymn) return;
+  const set = hymn.verses.map((v, i) => ({
+    type: 'Song · Hymn ' + hymn.number,
+    title: hymn.title, sub: v.label, body: v.text, ref: '',
+  }));
+  slideSet = set; slideIdx = vi;
+  wsSend({ type:'slide', slide:set[vi], slideSet:set, slideIndex:vi });
+  document.querySelectorAll('.verse-row').forEach(b => b.classList.remove('projecting'));
+  const btn = document.getElementById('vr-'+hymnId+'-'+vi);
+  if (btn) btn.classList.add('projecting');
+  updateNav(); renderSlideList();
+  showToast('▶ ' + hymn.title + ' — ' + hymn.verses[vi].label);
+  switchTab('control');
+}
+
+// ═══════════════════════════════════════════════════════════
+//  BIBLE
+// ═══════════════════════════════════════════════════════════
+async function loadBibleData() {
+  if (BIBLE_DATA || bibleLoading) return;
+  bibleLoading = true;
+  document.getElementById('bible-body').innerHTML =
+    '<div class="loading"><i class="fa-solid fa-spinner fa-spin"></i> Loading Bible…</div>';
+  try {
+    const resp = await fetch('/bible_data.json');
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    BIBLE_DATA = await resp.json();
+    populateBibleBooks();
+  } catch(e) {
+    document.getElementById('bible-body').innerHTML =
+      `<div class="bible-welcome"><i class="fa-solid fa-triangle-exclamation" style="color:var(--red);opacity:0.7"></i>
+       <div>Bible not loaded<br><small>${e.message}</small></div></div>`;
+  }
+  bibleLoading = false;
+}
+
+function setBibleLang(lang) {
+  bibleLang = lang;
+  ['en','rw','fr'].forEach(l => document.getElementById('bl-'+l).classList.toggle('active', l===lang));
+  document.getElementById('bible-search').value = '';
+  if (BIBLE_DATA) populateBibleBooks();
+  else loadBibleData();
+}
+
+function populateBibleBooks() {
+  if (!BIBLE_DATA) return;
+  const books = BIBLE_DATA.books[bibleLang] || BIBLE_DATA.books.en;
+  const sel = document.getElementById('bible-book');
+  sel.innerHTML = '<option value="">— Select Book —</option>' +
+    books.map((b,i) => `<option value="${i+1}">${i+1}. ${b}</option>`).join('');
+  const chapSel = document.getElementById('bible-chap');
+  chapSel.innerHTML = '<option value="">— Chap —</option>';
+  chapSel.disabled = true;
+  document.getElementById('bible-meta').style.display = 'none';
+  document.getElementById('bible-body').innerHTML =
+    `<div class="bible-welcome">
+      <i class="fa-solid fa-book-bible"></i>
+      <div>Select a book above<br>or search a reference like <strong style="color:var(--gold)">Yohana 3:16</strong></div>
+    </div>`;
+}
+
+function onBookChange() {
+  if (!BIBLE_DATA) return;
+  const bn = parseInt(document.getElementById('bible-book').value);
+  if (!bn) return;
+  const langData = BIBLE_DATA[bibleLang] || BIBLE_DATA.en;
+  const bookData = langData[bn-1];
+  const cs = document.getElementById('bible-chap');
+  cs.innerHTML = '<option value="">— Chap —</option>' +
+    Array.from({length:bookData.length},(_,i)=>`<option value="${i+1}">${i+1}</option>`).join('');
+  cs.disabled = false;
+  const books = BIBLE_DATA.books[bibleLang] || BIBLE_DATA.books.en;
+  const bName = books[bn-1] || '';
+  // Show chapter grid
+  const meta = document.getElementById('bible-meta');
+  meta.style.display = '';
+  meta.textContent = bName + ' — ' + bookData.length + ' chapters';
+  let html = '<div class="chap-grid">';
+  for (let c = 1; c <= bookData.length; c++) {
+    html += `<button class="chap-btn" onclick="selectChap(${bn},${c})">${c}</button>`;
+  }
+  html += '</div>';
+  const body = document.getElementById('bible-body');
+  body.innerHTML = '';
+  body.style.overflow = 'auto';
+  body.innerHTML = html;
+}
+
+function selectChap(bn, cn) {
+  document.getElementById('bible-chap').value = cn;
+  loadChapter(bn, cn);
+}
+
+function onChapChange() {
+  const bn = parseInt(document.getElementById('bible-book').value);
+  const cn = parseInt(document.getElementById('bible-chap').value);
+  if (bn && cn) loadChapter(bn, cn);
+}
+
+function loadChapter(bn, cn) {
+  if (!BIBLE_DATA) return;
+  const langData = BIBLE_DATA[bibleLang] || BIBLE_DATA.en;
+  const verses = langData[bn-1]?.[cn-1] || [];
+  const books = BIBLE_DATA.books[bibleLang] || BIBLE_DATA.books.en;
+  const bName = books[bn-1] || '';
+  const ver = { en:'KJV', fr:'LSG', rw:'BYH' }[bibleLang] || 'KJV';
+  // Build slide set
+  slideSet = verses.map((t,i) => ({
+    type:'Scripture · '+ver, title:bName+' '+cn+':'+(i+1),
+    sub:ver, body:'"'+t+'"', ref:bName+' '+cn+':'+(i+1)+' — '+ver,
+  }));
+  const meta = document.getElementById('bible-meta');
+  meta.style.display = '';
+  meta.textContent = bName + ' ' + cn + ' · ' + ver + ' · ' + verses.length + ' verses — tap to project';
+  const body = document.getElementById('bible-body');
+  body.innerHTML = '';
+  body.style.overflow = 'auto';
+  const wrap = document.createElement('div');
+  wrap.className = 'verses-list';
+  verses.forEach((text, i) => {
+    if (!text) return;
+    const vn = i+1;
+    const d = document.createElement('div');
+    d.className = 'bv-card'; d.id = 'bvc-'+bn+'-'+cn+'-'+vn;
+    d.innerHTML = `<span class="bv-num">${vn}</span><span class="bv-text">${text}</span>`;
+    d.onclick = () => projectBibleVerse(bn, cn, vn);
+    wrap.appendChild(d);
+  });
+  body.appendChild(wrap);
+}
+
+function projectBibleVerse(bn, cn, vn) {
+  if (!BIBLE_DATA) return;
+  const t = (BIBLE_DATA[bibleLang]||BIBLE_DATA.en)[bn-1]?.[cn-1]?.[vn-1];
+  if (!t) return;
+  const books = BIBLE_DATA.books[bibleLang]||BIBLE_DATA.books.en;
+  const bName = books[bn-1]||'';
+  const ver = { en:'KJV', fr:'LSG', rw:'BYH' }[bibleLang]||'KJV';
+  const ref = bName+' '+cn+':'+vn;
+  const slide = { type:'Scripture · '+ver, title:ref, sub:ver, body:'"'+t+'"', ref:ref+' — '+ver };
+  slideIdx = vn-1;
+  wsSend({ type:'slide', slide, slideSet, slideIndex:vn-1 });
+  document.querySelectorAll('.bv-card').forEach(c=>c.classList.remove('projecting'));
+  const card = document.getElementById('bvc-'+bn+'-'+cn+'-'+vn);
+  if (card) { card.classList.add('projecting'); card.scrollIntoView({behavior:'smooth',block:'nearest'}); }
+  updateNav(); renderSlideList();
+  showToast('▶ '+ref);
+  switchTab('control');
+}
+
+// Bible search with reference detection
+const PRES_BOOKS = (function(){
+  const m={};
+  const a=(i,al)=>al.forEach(s=>m[s.toLowerCase()]=i);
+  a(0,['genesis','gen','intangiriro']);a(1,['exodus','exo','kuva']);
+  a(2,['leviticus','lev','abalewi']);a(3,['numbers','num','kubara']);
+  a(4,['deuteronomy','deut','gutegeka kwa kabiri','deuteronome']);
+  a(5,['joshua','josh','yosuwa','josue']);a(6,['judges','judg','abacamanza','juges']);
+  a(7,['ruth','rusi']);a(8,['1 samuel','i samuel','i samweli','1 samweli']);
+  a(9,['2 samuel','ii samuel','ii samweli','2 samweli']);
+  a(10,['1 kings','i abami','1 abami','1 rois']);a(11,['2 kings','ii abami','2 abami','2 rois']);
+  a(12,['1 chronicles','i ngoma','1 ngoma']);a(13,['2 chronicles','ii ngoma','2 ngoma']);
+  a(14,['ezra','ezira']);a(15,['nehemiah','nehemiya']);a(16,['esther','esiteri']);
+  a(17,['job','yobu']);a(18,['psalms','psalm','ps','zaburi','psaumes']);
+  a(19,['proverbs','prov','imigani','proverbes']);a(20,['ecclesiastes','umubwiriza']);
+  a(21,['song','indirimbo ya salomo','indirimbo','cantique']);
+  a(22,['isaiah','isa','yesaya','esaie']);a(23,['jeremiah','jer','yeremiya']);
+  a(24,['lamentations','lam','amaganya ya yeremiya','amaganya']);
+  a(25,['ezekiel','ezek','ezekiyeli']);a(26,['daniel','dan','daniyeli']);
+  a(27,['hosea','hoseya']);a(28,['joel','yoweli']);a(29,['amos','amosi']);
+  a(30,['obadiah','obadiya']);a(31,['jonah','yona']);a(32,['micah','mika']);
+  a(33,['nahum','nahumu']);a(34,['habakkuk','habakuki']);a(35,['zephaniah','zefaniya','sophonie']);
+  a(36,['haggai','hagayi']);a(37,['zechariah','zech','zekariya','zacharie']);
+  a(38,['malachi','malaki']);a(39,['matthew','matt','matayo','matthieu']);
+  a(40,['mark','mk','mariko','marc']);a(41,['luke','lk','luka','luc']);
+  a(42,['john','jn','yohana','jean']);a(43,['acts','ibyakozwe','actes']);
+  a(44,['romans','rom','abaroma','romains']);
+  a(45,['1 corinthians','1cor','i abakorinto','1 abakorinto','1 corinthiens']);
+  a(46,['2 corinthians','2cor','ii abakorinto','2 abakorinto','2 corinthiens']);
+  a(47,['galatians','gal','abagalatiya','galates']);a(48,['ephesians','eph','abefeso']);
+  a(49,['philippians','phil','abafilipi']);a(50,['colossians','col','abakolosayi','colossiens']);
+  a(51,['1 thessalonians','1thess','i abatesalonike']);
+  a(52,['2 thessalonians','2thess','ii abatesalonike']);
+  a(53,['1 timothy','1tim','i timoteyo']);a(54,['2 timothy','2tim','ii timoteyo']);
+  a(55,['titus','tito']);a(56,['philemon','filemoni']);
+  a(57,['hebrews','heb','abaheburayo','hebreux']);a(58,['james','yakobo','jacques']);
+  a(59,['1 peter','i petero','1 petero','1 pierre']);a(60,['2 peter','ii petero','2 pierre']);
+  a(61,['1 john','i yohana','1 yohana','1 jean']);a(62,['2 john','ii yohana','2 yohana']);
+  a(63,['3 john','iii yohana','3 yohana']);a(64,['jude','yuda']);
+  a(65,['revelation','rev','ibyahishuwe','apocalypse']);
+  return m;
+})();
+
+function parseRef(q) {
+  const pats = [
+    /^(\d?\s*[A-Za-z\u00C0-\u024F][A-Za-z\u00C0-\u024F\s'''\u2019-]+?)\s+(\d+)[:\s](\d+)$/i,
+    /^(\d?\s*[A-Za-z\u00C0-\u024F][A-Za-z\u00C0-\u024F\s'''\u2019-]+?)\s+(\d+)$/i,
+  ];
+  for (const pat of pats) {
+    const m = q.match(pat);
+    if (!m) continue;
+    const key = m[1].trim().toLowerCase().replace(/\s+/g,' ');
+    let idx = PRES_BOOKS[key];
+    if (idx===undefined && key.length>=2) {
+      for (const [k,v] of Object.entries(PRES_BOOKS)) { if(k.startsWith(key)){idx=v;break;} }
+    }
+    if (idx!==undefined) return {bi:idx, ch:parseInt(m[2]), vn:m[3]?parseInt(m[3]):null};
+  }
+  return null;
+}
+
+function pressBibleSearch(val) {
+  clearTimeout(bibleSearchTimer);
+  const q = val.trim();
+  if (!q || q.length < 2) { if(BIBLE_DATA) populateBibleBooks(); return; }
+  bibleSearchTimer = setTimeout(() => doBibleSearch(q), 380);
+}
+
+async function doBibleSearch(q) {
+  if (!BIBLE_DATA) await loadBibleData();
+  if (!BIBLE_DATA) return;
+  const ref = parseRef(q);
+  if (ref) {
+    const {bi, ch, vn} = ref;
+    document.getElementById('bible-book').value = bi+1;
+    onBookChange();
+    setTimeout(() => {
+      document.getElementById('bible-chap').value = ch;
+      loadChapter(bi+1, ch);
+      if (vn) setTimeout(() => projectBibleVerse(bi+1, ch, vn), 200);
+    }, 80);
+    return;
+  }
+  // Text search
+  const langData = BIBLE_DATA[bibleLang]||BIBLE_DATA.en;
+  const books = BIBLE_DATA.books[bibleLang]||BIBLE_DATA.books.en;
+  const ver = {en:'KJV',fr:'LSG',rw:'BYH'}[bibleLang]||'KJV';
+  const lc = q.toLowerCase();
+  const results = [];
+  for (let b=0; b<langData.length && results.length<40; b++)
+    for (let c=0; c<langData[b].length && results.length<40; c++)
+      for (let v=0; v<langData[b][c].length && results.length<40; v++) {
+        const t=langData[b][c][v];
+        if(t&&t.toLowerCase().includes(lc)) results.push({bn:b+1,cn:c+1,vn:v+1,text:t,bName:books[b]});
+      }
+  slideSet = results.map(r=>({
+    type:'Scripture · '+ver, title:r.bName+' '+r.cn+':'+r.vn,
+    sub:ver, body:'"'+r.text+'"', ref:r.bName+' '+r.cn+':'+r.vn+' — '+ver,
+  }));
+  const esc = q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+  const re = new RegExp('('+esc+')','gi');
+  const meta = document.getElementById('bible-meta');
+  meta.style.display = '';
+  meta.textContent = results.length + ' results for "' + q + '" · ' + ver;
+  const body = document.getElementById('bible-body');
+  body.innerHTML = '';
+  body.style.overflow = 'auto';
+  if (!results.length) {
+    body.innerHTML = `<div class="bible-welcome"><i class="fa-solid fa-magnifying-glass" style="opacity:0.25"></i>
+      <div>No results for "${q}"<br><small style="color:var(--gold)">Try: Yohana 3:16</small></div></div>`;
+    return;
+  }
+  const wrap = document.createElement('div');
+  wrap.className = 'verses-list';
+  results.forEach((r,i) => {
+    const d = document.createElement('div');
+    d.className = 'bvs-card';
+    d.innerHTML = `<div class="bvs-ref"><span>${r.bName} ${r.cn}:${r.vn}</span>
+      <span class="bvs-vtag">${ver}</span></div>
+      <div class="bvs-text">${r.text.replace(re,'<mark>$1</mark>')}</div>`;
+    d.onclick = () => {
+      document.querySelectorAll('.bvs-card').forEach(c=>c.classList.remove('projecting'));
+      d.classList.add('projecting');
+      slideIdx = i;
+      wsSend({type:'slide',slide:slideSet[i],slideSet,slideIndex:i});
+      updateNav(); renderSlideList();
+      showToast('▶ '+r.bName+' '+r.cn+':'+r.vn);
+      switchTab('control');
+    };
+    wrap.appendChild(d);
+  });
+  body.appendChild(wrap);
+}
+
+// ═══════════════════════════════════════════════════════════
+//  TOAST
+// ═══════════════════════════════════════════════════════════
+let toastT;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastT);
+  toastT = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+// ═══════════════════════════════════════════════════════════
+//  SCREEN SHARE — WebRTC
+// ═══════════════════════════════════════════════════════════
+let localStream = null;
+let peerConn    = null;
+let isSharing   = false;
+
+const ICE_SERVERS = {
+  iceServers: [
+    { urls: 'stun:stun.l.google.com:19302' },
+    { urls: 'stun:stun1.l.google.com:19302' },
+  ]
+};
+
+async function startScreenShare() {
+  if (isSharing) return;
+  try {
+    setShareStatus('connecting', 'Requesting screen access…');
+
+    // Ask browser to capture screen/window/tab
+    localStream = await navigator.mediaDevices.getDisplayMedia({
+      video: { frameRate: { ideal: 30 }, cursor: 'always' },
+      audio: true,  // capture system audio if available
+    });
+
+    setShareStatus('connecting', 'Connecting to projector…');
+
+    // Create peer connection
+    peerConn = new RTCPeerConnection(ICE_SERVERS);
+
+    // Add all tracks from captured stream
+    localStream.getTracks().forEach(track => {
+      peerConn.addTrack(track, localStream);
+    });
+
+    // Handle ICE candidates → send to projector via WebSocket
+    peerConn.onicecandidate = (e) => {
+      if (e.candidate) {
+        wsSend({ type:'webrtc-ice', target:'projector', candidate: e.candidate });
+      }
+    };
+
+    peerConn.onconnectionstatechange = () => {
+      if (peerConn.connectionState === 'connected') {
+        setShareStatus('active', 'Sharing live to projector');
+        isSharing = true;
+        document.getElementById('share-screen-btn').style.display = 'none';
+        document.getElementById('stop-share-btn').style.display = 'block';
+      }
+      if (['disconnected','failed','closed'].includes(peerConn.connectionState)) {
+        stopScreenShare();
+      }
+    };
+
+    // Create and send offer
+    const offer = await peerConn.createOffer();
+    await peerConn.setLocalDescription(offer);
+    wsSend({ type:'webrtc-offer', offer });
+
+    // Handle answer from projector
+    const answerHandler = (e) => {
+      try {
+        const msg = JSON.parse(e.data);
+        if (msg.type === 'webrtc-answer' && peerConn) {
+          peerConn.setRemoteDescription(new RTCSessionDescription(msg.answer));
+          ws.removeEventListener('message', answerHandler);
+        }
+        if (msg.type === 'webrtc-ice' && msg.target === 'presenter' && peerConn) {
+          peerConn.addIceCandidate(new RTCIceCandidate(msg.candidate));
+        }
+      } catch(_) {}
+    };
+    ws.addEventListener('message', answerHandler);
+
+    // When user stops sharing via browser's built-in stop button
+    localStream.getVideoTracks()[0].onended = () => stopScreenShare();
+
+    showToast('Screen share starting…');
+
+  } catch(e) {
+    if (e.name === 'NotAllowedError') {
+      showToast('Screen access denied');
+    } else {
+      showToast('Screen share failed: ' + e.message);
+    }
+    setShareStatus('', 'Not sharing');
+    console.error('Screen share error:', e);
+  }
+}
+
+function stopScreenShare() {
+  if (localStream) {
+    localStream.getTracks().forEach(t => t.stop());
+    localStream = null;
+  }
+  if (peerConn) {
+    peerConn.close();
+    peerConn = null;
+  }
+  isSharing = false;
+  setShareStatus('', 'Not sharing');
+  document.getElementById('share-screen-btn').style.display = 'block';
+  document.getElementById('stop-share-btn').style.display = 'none';
+  wsSend({ type: 'share-stop' });
+  showToast('Screen share stopped');
+}
+
+function setShareStatus(state, text) {
+  const dot  = document.getElementById('rtc-dot');
+  const txt  = document.getElementById('rtc-status');
+  if (!dot || !txt) return;
+  dot.className = 'share-status-dot' + (state ? ' ' + state : '');
+  txt.className  = 'share-status-text' + (state === 'active' ? ' active' : '');
+  txt.textContent = text;
+}
+
+// ═══════════════════════════════════════════════════════════
+//  FILE UPLOAD
+// ═══════════════════════════════════════════════════════════
+function handleFileDrop(e) {
+  e.preventDefault();
+  document.getElementById('upload-area').classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if (file) uploadFile(file);
+}
+
+function handleFileSelect(file) {
+  if (file) uploadFile(file);
+}
+
+function getFileIcon(mimeType) {
+  if (!mimeType) return 'fa-file';
+  if (mimeType.startsWith('video/')) return 'fa-file-video';
+  if (mimeType.startsWith('image/')) return 'fa-file-image';
+  return 'fa-file';
+}
+
+function formatSize(bytes) {
+  if (bytes < 1024*1024) return (bytes/1024).toFixed(0) + ' KB';
+  return (bytes/1024/1024).toFixed(1) + ' MB';
+}
+
+async function uploadFile(file) {
+  const host = serverHost || location.hostname + ':4040';
+  const uploadUrl = 'http://' + host + '/upload';
+
+  // Validate type
+  const allowed = ['video/', 'image/'];
+  if (!allowed.some(t => file.type.startsWith(t)) && !file.name.match(/\.(mkv|mp4|webm|avi|mov)$/i)) {
+    showToast('Please select a video or image file');
+    return;
+  }
+
+  const wrap  = document.getElementById('upload-progress-wrap');
+  const fill  = document.getElementById('upload-fill');
+  const label = document.getElementById('upload-label');
+  wrap.style.display = 'block';
+  fill.style.width = '0%';
+  label.textContent = 'Uploading ' + file.name + '…';
+
+  try {
+    // Use XMLHttpRequest for upload progress
+    await new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', uploadUrl);
+      xhr.setRequestHeader('X-Filename', encodeURIComponent(file.name));
+      xhr.setRequestHeader('X-Filetype', file.type || 'application/octet-stream');
+
+      xhr.upload.onprogress = (e) => {
+        if (e.lengthComputable) {
+          const pct = Math.round(e.loaded / e.total * 100);
+          fill.style.width = pct + '%';
+          label.textContent = pct + '% — ' + file.name;
+        }
+      };
+
+      xhr.onload = () => {
+        if (xhr.status === 200) {
+          try {
+            const res = JSON.parse(xhr.responseText);
+            fill.style.width = '100%';
+            label.textContent = '✓ Uploaded — projecting on screen';
+            showToast('▶ Playing: ' + file.name);
+            setTimeout(() => { wrap.style.display = 'none'; }, 3000);
+            loadRecentUploads();
+            resolve(res);
+          } catch(e) { reject(e); }
+        } else {
+          reject(new Error('Upload failed: ' + xhr.status));
+        }
+      };
+      xhr.onerror = () => reject(new Error('Network error'));
+      xhr.send(file);
+    });
+  } catch(e) {
+    label.textContent = '✗ ' + e.message;
+    showToast('Upload failed: ' + e.message);
+    setTimeout(() => { wrap.style.display = 'none'; }, 3000);
+  }
+}
+
+async function loadRecentUploads() {
+  const host = serverHost || location.hostname + ':4040';
+  try {
+    const resp = await fetch('http://' + host + '/uploads-list');
+    if (!resp.ok) return;
+    const files = await resp.json();
+    const list = document.getElementById('recent-list');
+    if (!list) return;
+    if (!files.length) {
+      list.innerHTML = '<div style="font-size:12px;color:var(--muted);text-align:center;padding:10px">No files uploaded yet</div>';
+      return;
+    }
+    list.innerHTML = files.map(f => `
+      <div class="recent-file-item" onclick="playUploadedFile('${f.url}','${f.name}')">
+        <i class="fa-solid ${getFileIcon(f.name.match(/\.(mp4|webm|mkv|avi|mov)$/i)?'video/mp4':'image/jpeg')} rfi-icon"></i>
+        <div class="rfi-info">
+          <div class="rfi-name">${f.name}</div>
+          <div class="rfi-size">${formatSize(f.size)}</div>
+        </div>
+        <button class="rfi-play-btn" onclick="event.stopPropagation();playUploadedFile('${f.url}','${f.name}')">
+          <i class="fa-solid fa-play"></i> Show
+        </button>
+      </div>`).join('');
+  } catch(_) {}
+}
+
+function playUploadedFile(url, fileName) {
+  const ext = fileName.split('.').pop().toLowerCase();
+  const mimeMap = { mp4:'video/mp4', webm:'video/webm', mkv:'video/x-matroska',
+    avi:'video/x-msvideo', mov:'video/quicktime',
+    jpg:'image/jpeg', jpeg:'image/jpeg', png:'image/png' };
+  const mimeType = mimeMap[ext] || 'video/mp4';
+  // Broadcast file-share message to projector
+  wsSend({ type:'file-share', fileUrl:url, mimeType, fileName });
+  showToast('▶ Sending to projector: ' + fileName);
+  switchTab('control');
+}
+
+// ═══════════════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════════════
+// Pre-fill server address if opened from the server
+if (location.hostname && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
+  document.getElementById('inp-host').value = location.hostname + ':4040';
+}
+</script>
+</body>
+</html>

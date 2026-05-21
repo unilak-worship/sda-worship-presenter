@@ -84,7 +84,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 .act-btn{font-family:var(--font);flex:1;font-size:13px;font-weight:700;border-radius:12px;padding:13px 8px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;transition:all .15s;border:none}
 .blank-btn{background:var(--surface);border:1px solid var(--border);color:var(--muted)}
 .blank-btn.blanked{background:rgba(239,68,68,.12);border-color:rgba(239,68,68,.4);color:var(--red)}
-.leave-btn{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);color:var(--red)}
+.leave-btn{background:var(--surface);border:1px solid var(--border);color:var(--muted)}
 
 /* ── Share screen button (prominent) ── */
 .share-hero{margin:0 16px 12px;border:1.5px dashed rgba(200,144,46,.35);border-radius:14px;padding:16px;display:flex;align-items:center;gap:14px;cursor:pointer;background:rgba(200,144,46,.04);transition:all .2s}
@@ -569,22 +569,43 @@ function wsConnect(){
   // Don't open a new connection if already open/connecting
   if(ws && (ws.readyState===WebSocket.OPEN||ws.readyState===WebSocket.CONNECTING)) return;
 
-  const wsHost = host || location.hostname+':4040';
-  // Use wss:// when page is served over https (Render), ws:// for local
-  const proto = location.protocol==='https:' ? 'wss:' : 'ws:';
+  // Build the correct WebSocket URL
+  // If host is explicitly set (from join form), use it with protocol detection
+  // If no host set, use the page's own origin (works for both local and Render)
+  let wsUrl;
+  if(host && host !== location.hostname+(location.port?':'+location.port:'')){
+    // User typed a specific address — use it
+    // Check if it looks like a full URL or just host:port
+    if(host.startsWith('http')){
+      wsUrl = host.replace(/^https?:\/\//,m=>m==='https://'?'wss://':'ws://');
+    } else {
+      // host:port format — use same protocol as page
+      const proto = location.protocol==='https:' ? 'wss:' : 'ws:';
+      wsUrl = proto+'//'+host;
+    }
+  } else {
+    // Connect to the same server serving this page
+    const proto = location.protocol==='https:' ? 'wss:' : 'ws:';
+    const h = location.hostname;
+    const p = location.port;
+    wsUrl = proto+'//'+h+(p&&p!=='80'&&p!=='443'?':'+p:'');
+  }
 
   try{
-    ws=new WebSocket(proto+'//'+wsHost);
-    ws.onopen=()=>{ connected=true; setConn(true); };
+    ws=new WebSocket(wsUrl);
+    ws.onopen=()=>{
+      connected=true;
+      setConn(true);
+      console.log('WS connected to', wsUrl);
+    };
     ws.onclose=()=>{
-      connected=false; setConn(false);
-      ws=null;
-      // Only reconnect if session is still active
+      connected=false; setConn(false); ws=null;
       if(code) reconTimer=setTimeout(wsConnect, 4000);
     };
     ws.onerror=()=>{ ws=null; connected=false; setConn(false); };
     ws.onmessage=e=>{ try{ onMsg(JSON.parse(e.data)); }catch(_){} };
   }catch(e){
+    console.error('WS connect failed:', e);
     setConn(false);
     if(code) reconTimer=setTimeout(wsConnect,4000);
   }
@@ -603,28 +624,58 @@ function setConn(on){
 }
 
 function onMsg(msg){
-  if(msg.type==='slide'&&msg.slide){
-    const s=msg.slide;
-    document.getElementById('nb-type').textContent=s.type||'';
-    document.getElementById('nb-title').textContent=s.title||'';
-    document.getElementById('ns-type').textContent=(s.type||'NOW ON SCREEN').toUpperCase();
-    document.getElementById('ns-title').textContent=s.title||'';
-    document.getElementById('ns-body').textContent=(s.body||'').split('\n')[0]||'';
-    if(msg.slideSet){slideSet=msg.slideSet;slideIdx=msg.slideIndex||0;updateNav();renderSli();}
-    isBlank=false;
+  // ── Slide projected (by operator OR another presenter) ──────────────────
+  if(msg.type==='slide' && msg.slide){
+    const s = msg.slide;
+
+    // Update top-right badge
+    document.getElementById('nb-type').textContent  = s.type  || '';
+    document.getElementById('nb-title').textContent = s.title || '';
+
+    // Update "now on screen" strip in Control tab
+    document.getElementById('ns-type').textContent  = (s.type || 'NOW ON SCREEN').toUpperCase();
+    document.getElementById('ns-title').textContent = s.title || '';
+    const bodyLine = (s.body || '').split('\n')[0] || '';
+    document.getElementById('ns-body').textContent  = bodyLine;
+
+    // Sync slide set so Prev/Next work
+    if(msg.slideSet && msg.slideSet.length > 0){
+      slideSet  = msg.slideSet;
+      slideIdx  = typeof msg.slideIndex === 'number' ? msg.slideIndex : 0;
+    } else if(slideSet.length === 0){
+      // Single slide — wrap it
+      slideSet = [s]; slideIdx = 0;
+    }
+
+    updateNav();
+    renderSli();
+
+    isBlank = false;
     document.getElementById('blank-btn').classList.remove('blanked');
+    return;
   }
+
+  // ── Blank ────────────────────────────────────────────────────────────────
   if(msg.type==='blank'){
-    document.getElementById('nb-type').textContent='BLANK';
-    document.getElementById('nb-title').textContent='Screen is blank';
-    document.getElementById('ns-title').textContent='Screen blank';
-    isBlank=true;
+    document.getElementById('nb-type').textContent  = 'BLANK';
+    document.getElementById('nb-title').textContent = 'Screen is blank';
+    document.getElementById('ns-type').textContent  = 'BLANK';
+    document.getElementById('ns-title').textContent = 'Screen is blank';
+    document.getElementById('ns-body').textContent  = '';
+    isBlank = true;
     document.getElementById('blank-btn').classList.add('blanked');
+    return;
   }
-  // WebRTC signaling
-  if(msg.type==='webrtc-answer'&&pc) pc.setRemoteDescription(new RTCSessionDescription(msg.answer));
-  if(msg.type==='webrtc-ice'&&msg.target==='presenter'&&pc)
+
+  // ── WebRTC signaling (screen share) ─────────────────────────────────────
+  if(msg.type==='webrtc-answer' && pc){
+    pc.setRemoteDescription(new RTCSessionDescription(msg.answer)).catch(_=>{});
+    return;
+  }
+  if(msg.type==='webrtc-ice' && msg.target==='presenter' && pc){
     pc.addIceCandidate(new RTCIceCandidate(msg.candidate)).catch(_=>{});
+    return;
+  }
 }
 
 // ═══ JOIN / LEAVE ═════════════════════════════════════════════════════════════
@@ -635,7 +686,9 @@ function join(){
   if(!n){toast('Enter your name');return;}
   if(!c){toast('Enter the session code');return;}
   name=n; code=c;
-  host=h||(location.hostname+(location.port?':'+location.port:''));
+  // If a host was explicitly entered, store it; otherwise leave blank so
+  // wsConnect uses the page's own origin (correct for both local and Render)
+  host = h || '';
   document.getElementById('pres-name').textContent=name;
   document.getElementById('screen-join').classList.remove('active');
   document.getElementById('screen-main').classList.add('active');
@@ -1094,11 +1147,17 @@ function toast(msg){
 }
 
 // ═══ INIT ════════════════════════════════════════════════════════════════════
-// Pre-fill server address if opened from the church server
-const h=location.hostname;
-const p=location.port;
-if(h&&h!=='localhost'&&h!=='127.0.0.1'){
-  document.getElementById('inp-host').value=h+(p&&p!=='80'&&p!=='443'?':'+p:'');
+// Only pre-fill server address when on local network (not Render cloud)
+// On Render, the presenter connects to the same server it was served from
+const _h=location.hostname;
+const _p=location.port;
+const _isCloud = location.protocol === 'https:' && !_h.includes('192.168') && !_h.includes('10.0');
+if(!_isCloud && _h && _h!=='localhost' && _h!=='127.0.0.1'){
+  // Local network: pre-fill with the church computer address
+  document.getElementById('inp-host').value = _h+(_p&&_p!=='80'&&_p!=='443'?':'+_p:'');
+} else if(_isCloud){
+  // On Render: no host needed — will connect to this same server
+  document.getElementById('inp-host').placeholder = 'Leave blank (using cloud server)';
 }
 </script>
 </body>

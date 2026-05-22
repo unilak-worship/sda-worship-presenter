@@ -87,15 +87,18 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 .leave-btn{background:var(--surface);border:1px solid var(--border);color:var(--muted)}
 
 /* ── Share screen button (prominent) ── */
-.share-hero{margin:0 16px 12px;border:1.5px dashed rgba(200,144,46,.35);border-radius:14px;padding:16px;display:flex;align-items:center;gap:14px;cursor:pointer;background:rgba(200,144,46,.04);transition:all .2s}
-.share-hero:hover,.share-hero:active{background:rgba(200,144,46,.1);border-color:var(--gold)}
-.share-hero-icon{width:46px;height:46px;border-radius:12px;background:linear-gradient(135deg,#c8902e,#e8a84e);display:flex;align-items:center;justify-content:center;font-size:20px;color:#fff;flex-shrink:0}
-.share-hero-text{flex:1}
-.share-hero-title{font-size:14px;font-weight:700;color:var(--text)}
-.share-hero-sub{font-size:11px;color:var(--muted);margin-top:2px;line-height:1.4}
-.share-hero-status{font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;flex-shrink:0}
+.share-bar{margin:0 16px 8px;border:1px solid var(--border);border-radius:12px;padding:10px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;background:var(--card);transition:all .2s}
+.share-bar:hover,.share-bar:active{border-color:var(--gold);background:rgba(200,144,46,.06)}
+.share-bar-icon{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#c8902e,#e8a84e);display:flex;align-items:center;justify-content:center;font-size:17px;color:#fff;flex-shrink:0}
+.share-bar-text{flex:1;min-width:0}
+.share-bar-title{font-size:13px;font-weight:700;color:var(--text)}
+.share-bar-sub{font-size:10px;color:var(--muted);margin-top:1px}
+.share-bar-badge{font-size:9px;font-weight:700;padding:3px 8px;border-radius:20px;flex-shrink:0;letter-spacing:.5px;text-transform:uppercase}
+.share-bar-badge.idle{background:var(--surface);color:var(--muted);border:1px solid var(--border)}
+.share-bar-badge.live{background:rgba(239,68,68,.15);color:var(--red);border:1px solid rgba(239,68,68,.3)}
 .share-hero-status.idle{background:var(--card);color:var(--muted)}
 .share-hero-status.live{background:rgba(239,68,68,.15);color:var(--red)}
+
 
 /* Sharing controls (shown when active) */
 .share-controls{margin:0 16px 12px;display:none;gap:8px}
@@ -276,7 +279,7 @@ select:focus{border-color:var(--gold)}
     <div class="tab active" id="tab-control">
       <div class="ctrl-body">
 
-        <!-- Current slide strip -->
+        <!-- ① NOW ON SCREEN — what's currently projected -->
         <div class="now-strip">
           <div class="now-strip-preview">
             <div class="now-strip-type" id="ns-type">NOW ON SCREEN</div>
@@ -294,26 +297,7 @@ select:focus{border-color:var(--gold)}
           </div>
         </div>
 
-        <!-- Screen share hero button -->
-        <div style="padding:12px 16px 0">
-          <div class="share-hero" id="share-hero" onclick="startShare()">
-            <div class="share-hero-icon"><i class="fa-solid fa-desktop"></i></div>
-            <div class="share-hero-text">
-              <div class="share-hero-title">Share Your Screen</div>
-              <div class="share-hero-sub">Stream your screen, PowerPoint or VLC live to the projector</div>
-            </div>
-            <span class="share-hero-status idle" id="share-hero-status">OFF</span>
-          </div>
-        </div>
-
-        <!-- Stop sharing (visible when active) -->
-        <div class="share-controls" id="share-controls" style="padding:8px 16px 0;gap:8px;display:none">
-          <button class="share-stop-btn" onclick="stopShare()" style="width:100%;font-family:var(--font);font-size:13px;font-weight:700;border-radius:12px;padding:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:var(--red)">
-            <i class="fa-solid fa-stop"></i> Stop Screen Share
-          </button>
-        </div>
-
-        <!-- Blank + Leave -->
+        <!-- ② PRIMARY ACTIONS — Blank + Leave -->
         <div class="actions-row">
           <button class="act-btn blank-btn" id="blank-btn" onclick="toggleBlank()">
             <i class="fa-solid fa-eye-slash"></i> Blank Screen
@@ -323,15 +307,28 @@ select:focus{border-color:var(--gold)}
           </button>
         </div>
 
-        <!-- Quick display -->
-        <div class="section-lbl">Quick Display</div>
-        <div class="quick-grid" id="quick-grid">
-          <!-- rendered by renderPresenterQD() -->
+        <!-- ③ SCREEN SHARE — compact bar -->
+        <div class="share-bar" id="share-bar" onclick="startShare()">
+          <div class="share-bar-icon"><i class="fa-solid fa-desktop"></i></div>
+          <div class="share-bar-text">
+            <div class="share-bar-title">Share Your Screen</div>
+            <div class="share-bar-sub">Stream screen, PowerPoint or VLC live</div>
+          </div>
+          <span class="share-bar-badge idle" id="share-hero-status">OFF</span>
+        </div>
+        <div id="share-controls" style="display:none;padding:0 16px 8px">
+          <button onclick="stopShare()" style="font-family:var(--font);width:100%;font-size:13px;font-weight:700;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);border-radius:10px;color:var(--red);padding:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px">
+            <i class="fa-solid fa-stop"></i> Stop Screen Share
+          </button>
         </div>
 
-        <!-- Current slides -->
+        <!-- ④ QUICK DISPLAY -->
+        <div class="section-lbl">Quick Display</div>
+        <div class="quick-grid" id="quick-grid"></div>
+
+        <!-- ⑤ CURRENT SLIDES — appears when content is loaded -->
         <div class="slides-section" id="slides-section" style="display:none">
-          <div class="section-lbl" style="padding:0 0 8px">Current Slides</div>
+          <div class="section-lbl" style="padding:12px 16px 6px">Current Slides</div>
           <div class="slides-list" id="slides-list"></div>
         </div>
 
@@ -1038,7 +1035,14 @@ function projSR(i){
 }
 
 // ═══ SCREEN SHARE (WebRTC) ════════════════════════════════════════════════════
-const ICE={iceServers:[{urls:'stun:stun.l.google.com:19302'},{urls:'stun:stun1.l.google.com:19302'}]};
+const ICE={iceServers:[
+  {urls:'stun:stun.l.google.com:19302'},
+  {urls:'stun:stun1.l.google.com:19302'},
+  {urls:'stun:openrelay.metered.ca:80'},
+  {urls:'turn:openrelay.metered.ca:80',   username:'openrelayproject',credential:'openrelayproject'},
+  {urls:'turn:openrelay.metered.ca:443',  username:'openrelayproject',credential:'openrelayproject'},
+  {urls:'turn:openrelay.metered.ca:443?transport=tcp',username:'openrelayproject',credential:'openrelayproject'},
+]};
 
 async function startShare(){
   if(sharing) return;
@@ -1081,23 +1085,30 @@ function stopShare(){
 }
 
 function setShareStatus(state,txt){
+  // Update Share tab status
   const dot=document.getElementById('rtc-dot');
   const stxt=document.getElementById('rtc-status');
   const startBtn=document.getElementById('share-start-btn');
   const stopBtn=document.getElementById('share-stop-btn');
-  if(dot){dot.className='share-dot'+(state==='live'?' live':'');}
+  if(dot) dot.className='share-dot'+(state==='live'?' live':'');
   if(stxt){stxt.className='share-status-txt'+(state==='live'?' live':'');stxt.textContent=txt;}
   if(state==='live'){
     startBtn?.classList.add('hidden'); stopBtn?.classList.remove('hidden');
-    // Update hero in control tab
-    const h=document.getElementById('share-hero');
-    const hs=document.getElementById('share-hero-status');
-    if(hs){hs.textContent='LIVE';hs.className='share-hero-status live';}
-    const sc=document.getElementById('share-controls');
-    if(sc) sc.style.display='flex';
-    if(h) h.onclick=null; // disable hero click while sharing
   } else {
     startBtn?.classList.remove('hidden'); stopBtn?.classList.add('hidden');
+  }
+  // Update Control tab share bar
+  const badge=document.getElementById('share-hero-status');
+  const bar=document.getElementById('share-bar');
+  const sc=document.getElementById('share-controls');
+  if(state==='live'){
+    if(badge){badge.textContent='LIVE';badge.className='share-bar-badge live';}
+    if(sc) sc.style.display='block';
+    if(bar) bar.onclick=null;
+  } else {
+    if(badge){badge.textContent='OFF';badge.className='share-bar-badge idle';}
+    if(sc) sc.style.display='none';
+    if(bar) bar.onclick=()=>startShare();
   }
 }
 
@@ -1108,7 +1119,10 @@ function onDrop(e){
   const f=e.dataTransfer.files[0]; if(f) uploadFile(f);
 }
 async function uploadFile(file){
-  const srv='http://'+(host||location.hostname+':4040');
+  // Use relative URL when on HTTPS (Render) to avoid mixed-content block
+  // Use explicit http:// only when on local network
+  const isSecure = location.protocol === 'https:';
+  const srv = isSecure ? '' : 'http://'+(host||location.hostname+':4040');
   const allowed=file.type.startsWith('video/')||file.type.startsWith('image/')||/\.(mkv|mp4|webm|avi|mov)$/i.test(file.name);
   if(!allowed){toast('Please select a video or image file');return;}
   const pw=document.getElementById('prog-wrap');
@@ -1133,7 +1147,8 @@ async function uploadFile(file){
   }catch(e){pl.textContent='✗ '+e.message;toast('Upload failed');setTimeout(()=>{pw.style.display='none';},3000);}
 }
 async function loadRecent(){
-  const srv='http://'+(host||location.hostname+':4040');
+  const isSecure = location.protocol === 'https:';
+  const srv = isSecure ? '' : 'http://'+(host||location.hostname+':4040');
   const rf=document.getElementById('recent-files'); if(!rf) return;
   try{
     const r=await fetch(srv+'/uploads-list'); if(!r.ok) return;

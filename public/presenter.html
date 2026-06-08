@@ -715,8 +715,10 @@ function wsConnect(){
     ws=new WebSocket(wsUrl);
     ws.onopen=()=>{
       connected=true; setConn(true);
-      // Announce ourselves to the server so operator can grant/deny
+      // Always announce on connect/reconnect so operator panel stays updated
       wsSend({ type: 'presenter-join', name: name });
+      // If already granted, don't re-show waiting overlay
+      // The server will re-send our status (granted/waiting) based on its state
     };
     ws.onclose=()=>{connected=false;setConn(false);ws=null;if(code) reconTimer=setTimeout(wsConnect,4000);};
     ws.onerror=()=>{ws=null;connected=false;setConn(false);};
@@ -766,38 +768,55 @@ function onMsg(msg){
   if(msg.type==='presenter-status'){handlePermStatus(msg);return;}
 }
 
+// Track last status to avoid re-rendering duplicate messages
+let _lastPermStatus = null;
+
 function handlePermStatus(msg){
+  // Deduplicate — server may send status twice due to cross-relay
+  if(msg.status === _lastPermStatus) return;
+  _lastPermStatus = msg.status;
+
   const overlay = document.getElementById('perm-overlay');
   const icon    = document.getElementById('perm-icon');
   const title   = document.getElementById('perm-title');
   const pmsg    = document.getElementById('perm-msg');
   const pulse   = document.getElementById('perm-pulse');
+
   switch(msg.status){
     case 'waiting':
       overlay.classList.remove('hidden');
-      icon.className='perm-icon waiting'; icon.innerHTML='<i class="fa-solid fa-hourglass-half"></i>';
+      icon.className='perm-icon waiting';
+      icon.innerHTML='<i class="fa-solid fa-hourglass-half"></i>';
       title.textContent='Waiting for Approval';
-      pmsg.textContent='The operator will approve your request. Please wait…';
+      pmsg.textContent='The operator will approve your request to present. Please wait…';
       if(pulse) pulse.style.display='block';
       break;
+
     case 'granted':
       overlay.classList.add('hidden');
+      _lastPermStatus = 'granted'; // keep as granted so re-connects don't reset
       toast('✓ Access granted — you can now control the projector');
       document.getElementById('preview-live-dot')?.classList.add('show');
       break;
+
     case 'denied':
       overlay.classList.remove('hidden');
-      icon.className='perm-icon denied'; icon.innerHTML='<i class="fa-solid fa-ban"></i>';
+      icon.className='perm-icon denied';
+      icon.innerHTML='<i class="fa-solid fa-ban"></i>';
       title.textContent='Access Denied';
       pmsg.textContent='The operator has denied your request to present.';
       if(pulse) pulse.style.display='none';
       break;
+
     case 'kicked':
       overlay.classList.remove('hidden');
-      icon.className='perm-icon denied'; icon.innerHTML='<i class="fa-solid fa-user-slash"></i>';
+      icon.className='perm-icon denied';
+      icon.innerHTML='<i class="fa-solid fa-user-slash"></i>';
       title.textContent='Access Revoked';
       pmsg.textContent='The operator has removed your presenter access.';
       if(pulse) pulse.style.display='none';
+      // Reset so they can re-request
+      setTimeout(() => { _lastPermStatus = null; }, 3000);
       break;
   }
 }

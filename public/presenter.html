@@ -238,6 +238,42 @@ select:focus{border-color:var(--gold)}
 .file-play-btn{font-family:var(--font);font-size:10px;font-weight:700;background:var(--gold-dim);border:1px solid var(--gold-border);border-radius:7px;color:var(--gold);padding:5px 12px;cursor:pointer;flex-shrink:0;transition:all .15s}
 .file-play-btn:hover{background:var(--gold);color:#fff}
 
+/* ── LIVE SLIDE PREVIEW ── */
+.preview-pane{background:var(--card);border:1.5px solid var(--border2);border-radius:var(--radius-lg);overflow:hidden;flex-shrink:0}
+.preview-pane-hdr{padding:9px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);background:rgba(200,144,46,0.05)}
+.preview-pane-label{font-size:9px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--gold)}
+.preview-live-dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 5px var(--green);animation:pulse .9s infinite;display:none}
+.preview-live-dot.show{display:block}
+.preview-screen{aspect-ratio:16/9;background:#04040e;position:relative;overflow:hidden;cursor:pointer}
+.preview-screen-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px);background-size:20px 20px;pointer-events:none}
+.preview-screen-glow{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 60%,rgba(80,55,180,.15) 0%,transparent 70%);pointer-events:none}
+.preview-slide{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10% 8%;text-align:center;gap:4px}
+.preview-slide-type{font-size:clamp(5px,1.2vw,.6em);font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:rgba(180,155,255,.5);flex-shrink:0}
+.preview-slide-title{font-family:'Georgia',serif;font-size:clamp(8px,2.5vw,1.4em);font-weight:700;color:#fff;line-height:1.2;flex-shrink:0}
+.preview-slide-sub{font-size:clamp(5px,1vw,.5em);color:rgba(180,155,255,.6);letter-spacing:.1em;flex-shrink:0}
+.preview-slide-body{font-family:'Georgia',serif;font-size:clamp(6px,1.8vw,.85em);color:rgba(255,255,255,.88);line-height:1.4;font-style:italic;max-width:95%;flex-shrink:0}
+.preview-slide-divider{width:30px;height:1px;background:rgba(180,155,255,.25);flex-shrink:0;margin:2px 0}
+.preview-blank{position:absolute;inset:0;background:#04040e;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s}
+.preview-blank.show{opacity:1}
+.preview-blank-txt{font-size:.6em;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.15)}
+.preview-standby{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;transition:opacity .4s}
+.preview-standby.hidden{opacity:0;pointer-events:none}
+.preview-standby-cross{font-size:1.6em;color:rgba(255,255,255,.06)}
+.preview-standby-txt{font-size:.45em;letter-spacing:.25em;text-transform:uppercase;color:rgba(255,255,255,.1)}
+
+/* ── PERMISSION STATES ── */
+.perm-overlay{position:fixed;inset:0;background:rgba(10,12,18,.92);z-index:500;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(10px)}
+.perm-card{background:var(--surface);border:1.5px solid var(--border2);border-radius:20px;padding:32px;max-width:360px;width:90%;text-align:center;display:flex;flex-direction:column;align-items:center;gap:18px}
+.perm-icon{width:64px;height:64px;border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0}
+.perm-icon.waiting{background:rgba(230,126,34,.15);color:#e67e22}
+.perm-icon.granted{background:rgba(46,204,113,.15);color:#2ecc71}
+.perm-icon.denied{background:rgba(239,68,68,.12);color:var(--red)}
+.perm-title{font-size:18px;font-weight:800;letter-spacing:-.3px}
+.perm-msg{font-size:13px;color:var(--muted);line-height:1.6}
+.perm-pulse{width:8px;height:8px;border-radius:50%;background:#e67e22;animation:pulse .9s infinite}
+.perm-btn{font-family:var(--font);font-size:13px;font-weight:700;background:var(--card);border:1.5px solid var(--border2);border-radius:10px;color:var(--muted);padding:11px 24px;cursor:pointer;transition:all .15s}
+.perm-btn:hover{border-color:var(--red);color:var(--red)}
+
 /* Utilities */
 .hidden{display:none!important}
 .empty{padding:24px;text-align:center;color:var(--muted);font-size:13px;display:flex;flex-direction:column;gap:8px;align-items:center}
@@ -333,22 +369,46 @@ select:focus{border-color:var(--gold)}
       <div class="tab active" id="tab-control">
         <div class="ctrl-scroll">
 
-          <!-- Now on screen -->
-          <div class="now-card">
-            <div class="now-card-hdr">
-              <span class="now-card-label">Now on Screen</span>
+          <!-- Live projector preview -->
+          <div class="preview-pane">
+            <div class="preview-pane-hdr">
+              <span class="preview-pane-label">Projector Preview</span>
+              <div style="display:flex;align-items:center;gap:8px">
+                <span id="ns-type" style="font-size:9px;font-weight:700;color:var(--muted);letter-spacing:1px;text-transform:uppercase"></span>
+                <div class="preview-live-dot" id="preview-live-dot"></div>
+              </div>
             </div>
-            <div class="now-card-body">
-              <div class="now-info">
-                <div class="now-type" id="ns-type">STANDBY</div>
-                <div class="now-title" id="ns-title">Nothing projected yet</div>
-                <div class="now-body-line" id="ns-body"></div>
+            <!-- 16:9 preview screen -->
+            <div class="preview-screen" onclick="toggleBlank()" title="Click to toggle blank">
+              <div class="preview-screen-grid"></div>
+              <div class="preview-screen-glow"></div>
+              <!-- Standby state -->
+              <div class="preview-standby" id="preview-standby">
+                <div class="preview-standby-cross">✝</div>
+                <div class="preview-standby-txt">SDA Worship — Standby</div>
               </div>
-              <div class="nav-cluster">
-                <button class="navb" id="btn-prev" onclick="nav(-1)" disabled><i class="fa-solid fa-chevron-left"></i></button>
-                <span class="nav-pos" id="nav-ctr">—</span>
-                <button class="navb" id="btn-next" onclick="nav(1)" disabled><i class="fa-solid fa-chevron-right"></i></button>
+              <!-- Slide content -->
+              <div class="preview-slide" id="preview-slide" style="display:none">
+                <div class="preview-slide-type" id="ps-type"></div>
+                <div class="preview-slide-title" id="ps-title"></div>
+                <div class="preview-slide-sub" id="ps-sub"></div>
+                <div class="preview-slide-divider" id="ps-divider" style="display:none"></div>
+                <div class="preview-slide-body" id="ps-body"></div>
               </div>
+              <!-- Blank overlay -->
+              <div class="preview-blank" id="preview-blank">
+                <span class="preview-blank-txt">Blank</span>
+              </div>
+            </div>
+            <!-- Navigation -->
+            <div style="display:flex;align-items:center;gap:8px;padding:10px 14px;border-top:1px solid var(--border)">
+              <button class="navb" id="btn-prev" onclick="nav(-1)" disabled><i class="fa-solid fa-chevron-left"></i></button>
+              <div style="flex:1;text-align:center">
+                <div id="ns-title" style="font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text)"></div>
+                <div id="ns-body" style="font-size:10px;color:var(--muted);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></div>
+              </div>
+              <span class="nav-pos" id="nav-ctr">—</span>
+              <button class="navb" id="btn-next" onclick="nav(1)" disabled><i class="fa-solid fa-chevron-right"></i></button>
             </div>
           </div>
 
@@ -534,6 +594,17 @@ select:focus{border-color:var(--gold)}
 
 </div><!-- /screen-main -->
 
+<!-- ── PERMISSION OVERLAY ── -->
+<div class="perm-overlay hidden" id="perm-overlay">
+  <div class="perm-card">
+    <div class="perm-icon waiting" id="perm-icon"><i class="fa-solid fa-hourglass-half"></i></div>
+    <div class="perm-title" id="perm-title">Waiting for Approval</div>
+    <div class="perm-msg" id="perm-msg">The operator will approve your request to present. Please wait…</div>
+    <div class="perm-pulse" id="perm-pulse"></div>
+    <button class="perm-btn" onclick="leave()"><i class="fa-solid fa-right-from-bracket"></i> Cancel & Leave</button>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -642,7 +713,11 @@ function wsConnect(){
   }
   try{
     ws=new WebSocket(wsUrl);
-    ws.onopen=()=>{connected=true;setConn(true);};
+    ws.onopen=()=>{
+      connected=true; setConn(true);
+      // Announce ourselves to the server so operator can grant/deny
+      wsSend({ type: 'presenter-join', name: name });
+    };
     ws.onclose=()=>{connected=false;setConn(false);ws=null;if(code) reconTimer=setTimeout(wsConnect,4000);};
     ws.onerror=()=>{ws=null;connected=false;setConn(false);};
     ws.onmessage=e=>{try{onMsg(JSON.parse(e.data));}catch(_){}};
@@ -663,13 +738,15 @@ function onMsg(msg){
     const s=msg.slide;
     document.getElementById('nb-type').textContent=s.type||'';
     document.getElementById('nb-title').textContent=s.title||'';
-    document.getElementById('ns-type').textContent=(s.type||'NOW ON SCREEN').toUpperCase();
+    document.getElementById('ns-type').textContent=(s.type||'').toUpperCase();
     document.getElementById('ns-title').textContent=s.title||'';
     document.getElementById('ns-body').textContent=(s.body||'').split('\n')[0]||'';
     if(msg.slideSet&&msg.slideSet.length>0){slideSet=msg.slideSet;slideIdx=typeof msg.slideIndex==='number'?msg.slideIndex:0;}
     else if(slideSet.length===0){slideSet=[s];slideIdx=0;}
-    updateNav();renderSli();
-    isBlank=false;document.getElementById('blank-btn').classList.remove('blanked');
+    updateNav(); renderSli(); renderPreview(s);
+    isBlank=false;
+    document.getElementById('blank-btn').classList.remove('blanked');
+    document.getElementById('preview-blank')?.classList.remove('show');
     return;
   }
   if(msg.type==='blank'){
@@ -678,11 +755,51 @@ function onMsg(msg){
     document.getElementById('ns-type').textContent='BLANK';
     document.getElementById('ns-title').textContent='Screen is blank';
     document.getElementById('ns-body').textContent='';
-    isBlank=true;document.getElementById('blank-btn').classList.add('blanked');
+    isBlank=true;
+    document.getElementById('blank-btn').classList.add('blanked');
+    document.getElementById('preview-blank')?.classList.add('show');
     return;
   }
   if(msg.type==='webrtc-answer'&&pc){pc.setRemoteDescription(new RTCSessionDescription(msg.answer)).catch(_=>{});return;}
   if(msg.type==='webrtc-ice'&&msg.target==='presenter'&&pc){pc.addIceCandidate(new RTCIceCandidate(msg.candidate)).catch(_=>{});return;}
+  // Permission system
+  if(msg.type==='presenter-status'){handlePermStatus(msg);return;}
+}
+
+function handlePermStatus(msg){
+  const overlay = document.getElementById('perm-overlay');
+  const icon    = document.getElementById('perm-icon');
+  const title   = document.getElementById('perm-title');
+  const pmsg    = document.getElementById('perm-msg');
+  const pulse   = document.getElementById('perm-pulse');
+  switch(msg.status){
+    case 'waiting':
+      overlay.classList.remove('hidden');
+      icon.className='perm-icon waiting'; icon.innerHTML='<i class="fa-solid fa-hourglass-half"></i>';
+      title.textContent='Waiting for Approval';
+      pmsg.textContent='The operator will approve your request. Please wait…';
+      if(pulse) pulse.style.display='block';
+      break;
+    case 'granted':
+      overlay.classList.add('hidden');
+      toast('✓ Access granted — you can now control the projector');
+      document.getElementById('preview-live-dot')?.classList.add('show');
+      break;
+    case 'denied':
+      overlay.classList.remove('hidden');
+      icon.className='perm-icon denied'; icon.innerHTML='<i class="fa-solid fa-ban"></i>';
+      title.textContent='Access Denied';
+      pmsg.textContent='The operator has denied your request to present.';
+      if(pulse) pulse.style.display='none';
+      break;
+    case 'kicked':
+      overlay.classList.remove('hidden');
+      icon.className='perm-icon denied'; icon.innerHTML='<i class="fa-solid fa-user-slash"></i>';
+      title.textContent='Access Revoked';
+      pmsg.textContent='The operator has removed your presenter access.';
+      if(pulse) pulse.style.display='none';
+      break;
+  }
 }
 
 // ══════════════ JOIN / LEAVE ══════════════
@@ -742,8 +859,11 @@ function renderSli(){
 function toggleBlank(){
   isBlank=!isBlank;
   document.getElementById('blank-btn').classList.toggle('blanked',isBlank);
+  document.getElementById('preview-blank')?.classList.toggle('show',isBlank);
   if(isBlank) wsSend({type:'blank'});
-  else if(slideSet[slideIdx]) wsSend({type:'slide',slide:slideSet[slideIdx],slideSet,slideIndex:slideIdx});
+  else{
+    if(slideSet[slideIdx]) wsSend({type:'slide',slide:slideSet[slideIdx],slideSet,slideIndex:slideIdx});
+  }
 }
 function quick(i){
   const b=QD[i]; if(!b) return;
@@ -812,7 +932,7 @@ function projectVerse(hid,vi){
   wsSend({type:'slide',slide:set[vi],slideSet:set,slideIndex:vi});
   document.querySelectorAll('.vrow').forEach(b=>b.classList.remove('cur'));
   document.getElementById('vr-'+hid+'-'+vi)?.classList.add('cur');
-  updateNav(); renderSli();
+  updateNav(); renderSli(); renderPreview(set[vi]);
   toast('▶ '+h.title+' — '+h.verses[vi].label);
   switchTab('control');
 }
@@ -1066,6 +1186,32 @@ function playFile(url,name){
   wsSend({type:'file-share',fileUrl:url,mimeType:m[ext]||'video/mp4',fileName:name});
   toast('▶ Sending to projector: '+name);
   switchTab('control');
+}
+
+// ══════════════ LIVE PREVIEW ══════════════
+function renderPreview(slide){
+  if(!slide) return;
+  const standby  = document.getElementById('preview-standby');
+  const slideEl  = document.getElementById('preview-slide');
+  const psType   = document.getElementById('ps-type');
+  const psTitle  = document.getElementById('ps-title');
+  const psSub    = document.getElementById('ps-sub');
+  const psDiv    = document.getElementById('ps-divider');
+  const psBody   = document.getElementById('ps-body');
+
+  if(standby)  standby.classList.add('hidden');
+  if(slideEl)  slideEl.style.display='flex';
+
+  if(psType)  psType.textContent  = slide.type  || '';
+  if(psTitle) psTitle.textContent = slide.title || '';
+  if(psSub)   psSub.textContent   = slide.sub   || '';
+  if(psDiv)   psDiv.style.display = (slide.body && slide.title) ? 'block' : 'none';
+  if(psBody){
+    psBody.innerHTML = (slide.body || '').replace(/\n/g,'<br>');
+    psBody.style.display = slide.body ? 'block' : 'none';
+  }
+  // Highlight the currently active preview screen dot
+  document.getElementById('preview-live-dot')?.classList.add('show');
 }
 
 // ══════════════ TOAST ══════════════

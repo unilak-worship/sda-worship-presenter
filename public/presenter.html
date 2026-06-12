@@ -4,1259 +4,806 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>SDA Worship — Presenter</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&family=Playfair+Display:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#0a0c12;--surface:#13161f;--card:#1a1e2a;--card2:#1f2433;
-  --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.1);
-  --gold:#c8902e;--gold-dim:rgba(200,144,46,0.12);--gold-border:rgba(200,144,46,0.3);
-  --green:#22c55e;--red:#ef4444;--text:#f1f5f9;--muted:#64748b;--muted2:#94a3b8;
-  --font:'Inter',sans-serif;--radius:12px;--radius-lg:16px;
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:       #0f1117;
+  --surface:  #181c27;
+  --surface2: #1e2235;
+  --border:   rgba(255,255,255,0.08);
+  --gold:     #c8902e;
+  --gold-lt:  #e8b050;
+  --text:     #e8eaf0;
+  --muted:    rgba(232,234,240,0.45);
+  --green:    #2ecc71;
+  --red:      #ef4444;
+  --radius:   8px;
+  --font:     'Lato', sans-serif;
 }
-html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--font);overflow:hidden;-webkit-font-smoothing:antialiased}
 
-/* ════════════════════ SCREENS ════════════════════ */
-.screen{display:none;height:100%;flex-direction:column}
-.screen.active{display:flex}
+html, body { height: 100%; overflow: hidden; font-family: var(--font); background: var(--bg); color: var(--text); }
 
-/* ════════════════════ JOIN PAGE ════════════════════ */
-.join-wrap{flex:1;overflow-y:auto;display:flex;align-items:center;justify-content:center;padding:20px;background:var(--bg)}
-.join-inner{width:100%;max-width:460px;display:flex;flex-direction:column;align-items:center;gap:24px}
-.join-brand{display:flex;flex-direction:column;align-items:center;gap:12px}
-.join-cross{width:56px;height:56px;border-radius:16px;background:linear-gradient(135deg,#b8801e,#e8a84e);display:flex;align-items:center;justify-content:center;font-size:24px;color:#fff;box-shadow:0 6px 20px rgba(200,144,46,0.4)}
-.join-title{font-size:22px;font-weight:800;letter-spacing:-0.5px;text-align:center}
-.join-sub{font-size:13px;color:var(--muted);text-align:center;line-height:1.5}
-.join-card{width:100%;background:var(--surface);border:1px solid var(--border2);border-radius:20px;padding:28px;display:flex;flex-direction:column;gap:20px}
-.field{display:flex;flex-direction:column;gap:7px}
-.field label{font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--muted)}
-.field input{font-family:var(--font);font-size:14px;font-weight:500;background:var(--card);border:1.5px solid var(--border);border-radius:10px;color:var(--text);padding:12px 14px;outline:none;transition:border-color .2s,box-shadow .2s;width:100%}
-.field input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(200,144,46,0.1)}
-.field input::placeholder{color:var(--muted)}
-.field small{font-size:11px;color:var(--muted);line-height:1.6}
-.code-inp{font-size:24px!important;font-weight:900!important;letter-spacing:12px!important;text-align:center!important;text-transform:uppercase!important}
-.join-btn{font-family:var(--font);font-size:14px;font-weight:700;background:linear-gradient(135deg,#b8801e,#e8a84e);color:#fff;border:none;border-radius:12px;padding:14px;cursor:pointer;width:100%;display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity .2s,transform .1s;box-shadow:0 4px 16px rgba(200,144,46,0.35)}
-.join-btn:hover{opacity:.92}
-.join-btn:active{transform:scale(.98)}
+/* ── JOIN SCREEN ── */
+#join-screen {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  min-height: 100vh; padding: 24px; gap: 20px;
+}
+.join-logo {
+  width: 60px; height: 60px; background: var(--gold); border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px; color: #fff; flex-shrink: 0;
+}
+.join-title { font-size: 22px; font-weight: 900; color: var(--text); text-align: center; }
+.join-sub   { font-size: 13px; color: var(--muted); text-align: center; max-width: 300px; line-height: 1.5; }
+.join-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+  padding: 24px; width: 100%; max-width: 360px; display: flex; flex-direction: column; gap: 14px;
+}
+.join-field { display: flex; flex-direction: column; gap: 6px; }
+.join-label { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); }
+.join-input {
+  font-family: var(--font); font-size: 15px; background: var(--surface2);
+  border: 1px solid var(--border); border-radius: var(--radius);
+  color: var(--text); padding: 12px 14px; outline: none; transition: border-color .2s; width: 100%;
+}
+.join-input:focus { border-color: var(--gold); }
+.join-btn {
+  font-family: var(--font); font-size: 15px; font-weight: 700;
+  background: var(--gold); color: #fff; border: none; border-radius: var(--radius);
+  padding: 14px; cursor: pointer; transition: background .2s; width: 100%;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.join-btn:hover { background: var(--gold-lt); }
+.join-btn:disabled { opacity: .5; pointer-events: none; }
+.join-error { font-size: 12px; color: var(--red); text-align: center; min-height: 16px; }
 
-/* ════════════════════ MAIN APP LAYOUT ════════════════════ */
-/* Responsive: mobile = stacked tabs, desktop = sidebar */
-.app-layout{flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0}
+/* ── WAITING SCREEN ── */
+#waiting-screen {
+  display: none; flex-direction: column; align-items: center; justify-content: center;
+  min-height: 100vh; padding: 24px; gap: 20px; text-align: center;
+}
+.waiting-spinner {
+  width: 56px; height: 56px; border-radius: 50%;
+  border: 4px solid var(--border); border-top-color: var(--gold);
+  animation: spin 1s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.waiting-title { font-size: 18px; font-weight: 700; }
+.waiting-sub   { font-size: 13px; color: var(--muted); max-width: 280px; line-height: 1.5; }
+.waiting-name  { font-size: 13px; color: var(--gold); font-weight: 700; }
+
+/* ── MAIN APP (after granted) ── */
+#app-screen {
+  display: none; height: 100vh; flex-direction: column; overflow: hidden;
+}
 
 /* Top bar */
-.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 20px;display:flex;align-items:center;justify-content:space-between;height:56px;flex-shrink:0;gap:16px}
-.tb-left{display:flex;align-items:center;gap:14px;min-width:0}
-.tb-brand{display:flex;align-items:center;gap:10px;flex-shrink:0}
-.tb-cross{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#b8801e,#e8a84e);display:flex;align-items:center;justify-content:center;font-size:14px;color:#fff}
-.tb-app-name{font-size:13px;font-weight:800;color:var(--text);display:none}
-.tb-divider{width:1px;height:28px;background:var(--border);flex-shrink:0;display:none}
-.pres-name{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.conn-row{display:flex;align-items:center;gap:5px}
-.conn-dot{width:7px;height:7px;border-radius:50%;background:var(--muted);flex-shrink:0;transition:all .3s}
-.conn-dot.on{background:var(--green);box-shadow:0 0 6px var(--green)}
-.conn-dot.off{background:var(--red)}
-.conn-txt{font-size:10px;font-weight:700;letter-spacing:.3px;text-transform:uppercase;color:var(--muted);white-space:nowrap}
-.conn-txt.on{color:var(--green)}
-.tb-right{flex-shrink:0}
-.now-pill{background:var(--card);border:1px solid var(--border2);border-radius:8px;padding:5px 12px;text-align:right;max-width:220px}
-.now-pill-type{font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);line-height:1}
-.now-pill-title{font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-
-/* Desktop: sidebar layout */
-@media(min-width:768px){
-  .tb-app-name,.tb-divider{display:block}
-  .app-body{flex:1;display:flex;overflow:hidden;min-height:0}
-  .sidebar-nav{width:200px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:12px 8px;gap:2px;flex-shrink:0}
-  .sidebar-nav .snav{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;cursor:pointer;border:none;background:transparent;font-family:var(--font);font-size:13px;font-weight:600;color:var(--muted);text-align:left;width:100%;transition:all .15s}
-  .sidebar-nav .snav i{width:18px;text-align:center;font-size:15px}
-  .sidebar-nav .snav:hover{background:var(--card);color:var(--text)}
-  .sidebar-nav .snav.active{background:var(--gold-dim);color:var(--gold);border:1px solid var(--gold-border)}
-  .sidebar-sep{height:1px;background:var(--border);margin:6px 8px}
-  .sidebar-footer{margin-top:auto;padding:8px}
-  .leave-side-btn{font-family:var(--font);width:100%;padding:9px;border-radius:10px;background:transparent;border:1px solid rgba(239,68,68,.2);color:rgba(239,68,68,.6);font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:7px}
-  .leave-side-btn:hover{background:rgba(239,68,68,.08);border-color:var(--red);color:var(--red)}
-  .bottom-nav{display:none!important}
-  .tab-content{flex:1;overflow:hidden;display:flex;flex-direction:column}
+.app-topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 14px; height: 48px; background: var(--surface);
+  border-bottom: 1px solid var(--border); flex-shrink: 0; gap: 10px;
 }
-@media(max-width:767px){
-  .app-body{flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0}
-  .sidebar-nav{display:none}
-  .tab-content{flex:1;overflow:hidden;display:flex;flex-direction:column}
+.app-logo { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; }
+.app-logo-icon { width: 26px; height: 26px; background: var(--gold); border-radius: 5px; display: flex; align-items: center; justify-content: center; font-size: 13px; color: #fff; }
+.conn-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); box-shadow: 0 0 5px var(--green); flex-shrink: 0; }
+.conn-dot.off { background: var(--red); box-shadow: 0 0 5px var(--red); }
+.app-name-badge { font-size: 11px; font-weight: 700; color: var(--muted); }
+
+/* Main content area */
+.app-body { flex: 1; overflow: hidden; display: flex; }
+
+/* ── DESKTOP: sidebar nav + content ── */
+.sidebar-nav {
+  width: 56px; background: var(--surface); border-right: 1px solid var(--border);
+  display: flex; flex-direction: column; align-items: center; padding: 8px 0; gap: 4px;
+  flex-shrink: 0;
+}
+@media (max-width: 767px) { .sidebar-nav { display: none; } }
+
+.snav-btn {
+  width: 40px; height: 40px; border-radius: var(--radius); display: flex;
+  align-items: center; justify-content: center; font-size: 16px;
+  color: var(--muted); background: transparent; border: none; cursor: pointer;
+  transition: all .15s; position: relative;
+}
+.snav-btn:hover  { background: var(--surface2); color: var(--text); }
+.snav-btn.active { background: rgba(200,144,46,.15); color: var(--gold); }
+.snav-btn .snav-tip {
+  position: absolute; left: 52px; background: var(--surface); border: 1px solid var(--border);
+  border-radius: 6px; padding: 4px 8px; font-size: 11px; font-weight: 700;
+  white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity .1s; z-index: 99;
+}
+.snav-btn:hover .snav-tip { opacity: 1; }
+
+/* Panels */
+.panel { display: none; flex: 1; overflow-y: auto; flex-direction: column; }
+.panel.active { display: flex; }
+
+/* ── SLIDE CONTROL PANEL ── */
+.slide-preview-screen {
+  margin: 14px 14px 10px; background: #06060e; border-radius: 10px;
+  aspect-ratio: 16/9; position: relative; overflow: hidden; flex-shrink: 0;
+  border: 1px solid var(--border);
+}
+.slide-preview-content {
+  position: absolute; inset: 0; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; padding: 12px; text-align: center;
+}
+.spc-type  { font-size: 8px; letter-spacing: 2px; text-transform: uppercase; color: rgba(200,144,46,.6); margin-bottom: 5px; }
+.spc-title { font-family: 'Playfair Display', serif; font-size: 14px; font-weight: 600; color: #fff; line-height: 1.3; }
+.spc-body  { font-size: 10px; color: rgba(255,255,255,.7); margin-top: 4px; line-height: 1.4; font-style: italic; }
+
+/* Nav buttons */
+.nav-row {
+  display: flex; gap: 10px; padding: 0 14px 10px; flex-shrink: 0;
+}
+.nav-big-btn {
+  flex: 1; font-family: var(--font); font-size: 15px; font-weight: 700;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: var(--radius); color: var(--text); padding: 14px;
+  cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
+  transition: all .15s; -webkit-tap-highlight-color: transparent;
+}
+.nav-big-btn:hover:not(:disabled)  { border-color: var(--gold); color: var(--gold); }
+.nav-big-btn:active:not(:disabled) { transform: scale(.97); }
+.nav-big-btn:disabled { opacity: .3; pointer-events: none; }
+
+.blank-row { padding: 0 14px 10px; flex-shrink: 0; }
+.blank-toggle-btn {
+  width: 100%; font-family: var(--font); font-size: 13px; font-weight: 700;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: var(--radius); color: var(--muted); padding: 12px;
+  cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
+  transition: all .15s; -webkit-tap-highlight-color: transparent;
+}
+.blank-toggle-btn.active { background: rgba(239,68,68,.15); border-color: var(--red); color: var(--red); }
+.blank-toggle-btn:hover:not(.active) { border-color: var(--border); color: var(--text); }
+
+.slide-pos-row { text-align: center; font-size: 11px; color: var(--muted); padding: 0 14px 6px; flex-shrink: 0; }
+
+/* Slide list */
+.slide-list { padding: 6px 14px 14px; display: flex; flex-direction: column; gap: 4px; }
+.slide-item {
+  background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 10px 12px; cursor: pointer; transition: all .13s;
+  display: flex; align-items: center; gap: 10px; -webkit-tap-highlight-color: transparent;
+}
+.slide-item:hover  { border-color: rgba(200,144,46,.4); }
+.slide-item.active { background: rgba(200,144,46,.12); border-color: var(--gold); }
+.slide-item-num   { font-size: 10px; font-weight: 700; color: var(--gold); min-width: 20px; }
+.slide-item-label { font-size: 11px; font-weight: 700; color: var(--muted); margin-bottom: 2px; }
+.slide-item-text  { font-size: 12px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* ── PROGRAM PANEL ── */
+.prog-panel-list { padding: 10px 14px; display: flex; flex-direction: column; gap: 6px; }
+.prog-item-row {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 10px 12px; cursor: pointer; transition: all .13s;
+  -webkit-tap-highlight-color: transparent;
+}
+.prog-item-row:hover  { border-color: rgba(200,144,46,.4); }
+.prog-item-row.active { background: rgba(200,144,46,.12); border-color: var(--gold); }
+.pir-dot  { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.pir-info { flex: 1; min-width: 0; }
+.pir-name { font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pir-meta { font-size: 10px; color: var(--muted); margin-top: 1px; }
+.pir-go   {
+  font-family: var(--font); font-size: 11px; font-weight: 700;
+  background: transparent; border: 1px solid var(--border); border-radius: 5px;
+  color: var(--muted); padding: 4px 9px; cursor: pointer; flex-shrink: 0;
+  transition: all .13s;
+}
+.pir-go:hover { border-color: var(--gold); color: var(--gold); }
+
+/* ── NOTES PANEL ── */
+.notes-area {
+  flex: 1; padding: 14px; display: flex; flex-direction: column; gap: 10px;
+}
+.notes-textarea {
+  flex: 1; font-family: var(--font); font-size: 13px; background: var(--surface2);
+  border: 1px solid var(--border); border-radius: var(--radius); color: var(--text);
+  padding: 12px; outline: none; resize: none; line-height: 1.6;
+  transition: border-color .2s;
+}
+.notes-textarea:focus { border-color: var(--gold); }
+.notes-hint { font-size: 11px; color: var(--muted); text-align: center; }
+
+/* ── PANEL HEADER ── */
+.panel-header {
+  padding: 10px 14px 6px; font-size: 10px; font-weight: 700;
+  letter-spacing: 2px; text-transform: uppercase; color: var(--gold);
+  flex-shrink: 0;
 }
 
-/* Bottom nav (mobile only) */
-.bottom-nav{display:flex;background:var(--surface);border-top:1px solid var(--border);flex-shrink:0;padding-bottom:env(safe-area-inset-bottom,0)}
-.bnav{font-family:var(--font);flex:1;padding:9px 4px 7px;font-size:8px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;background:transparent;border:none;color:var(--muted);cursor:pointer;border-top:2px solid transparent;transition:all .15s;display:flex;flex-direction:column;align-items:center;gap:3px}
-.bnav i{font-size:18px}
-.bnav.active{color:var(--gold);border-top-color:var(--gold)}
+/* ── MOBILE: bottom tab bar ── */
+.bottom-tabbar {
+  display: none; background: var(--surface); border-top: 1px solid var(--border);
+  flex-shrink: 0;
+}
+@media (max-width: 767px) { .bottom-tabbar { display: flex; } }
+.btab {
+  flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 3px; padding: 8px 4px; font-size: 9px; font-weight: 700; letter-spacing: .5px;
+  text-transform: uppercase; color: var(--muted); background: none; border: none; cursor: pointer;
+  transition: color .15s; -webkit-tap-highlight-color: transparent;
+}
+.btab i { font-size: 18px; }
+.btab.active { color: var(--gold); }
 
-/* Tabs */
-.tab{display:none;height:100%;flex-direction:column;overflow:hidden}
-.tab.active{display:flex}
+/* ── DENIED / KICKED SCREEN ── */
+#denied-screen {
+  display: none; flex-direction: column; align-items: center; justify-content: center;
+  min-height: 100vh; padding: 24px; gap: 16px; text-align: center;
+}
+.denied-icon { font-size: 48px; color: var(--red); }
+.denied-title { font-size: 20px; font-weight: 700; }
+.denied-sub   { font-size: 13px; color: var(--muted); max-width: 280px; line-height: 1.5; }
+.denied-rejoin-btn {
+  font-family: var(--font); font-size: 13px; font-weight: 700;
+  background: var(--gold); color: #fff; border: none; border-radius: var(--radius);
+  padding: 12px 24px; cursor: pointer; margin-top: 8px;
+}
 
-/* ════════════════════ CONTROL TAB ════════════════════ */
-.ctrl-scroll{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px}
+/* Toast */
+.toast {
+  position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%) translateY(10px);
+  background: var(--surface); border: 1px solid var(--gold); border-radius: var(--radius);
+  padding: 8px 16px; font-size: 12px; font-weight: 700; color: var(--gold);
+  z-index: 1000; opacity: 0; transition: all .3s; pointer-events: none; white-space: nowrap;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-/* Now on screen card */
-.now-card{background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius-lg);overflow:hidden}
-.now-card-hdr{padding:10px 16px;background:rgba(200,144,46,0.06);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:8px}
-.now-card-label{font-size:9px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--gold)}
-.now-card-body{padding:14px 16px;display:flex;align-items:center;gap:14px}
-.now-info{flex:1;min-width:0}
-.now-type{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
-.now-title{font-size:16px;font-weight:800;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.now-body-line{font-size:11px;color:var(--muted2);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.nav-cluster{display:flex;align-items:center;gap:8px;flex-shrink:0}
-.navb{font-family:var(--font);background:var(--card);border:1.5px solid var(--border2);border-radius:9px;color:var(--text);width:38px;height:38px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;transition:all .15s}
-.navb:hover:not(:disabled){border-color:var(--gold);color:var(--gold)}
-.navb:disabled{opacity:.25;pointer-events:none}
-.nav-pos{font-size:11px;font-weight:700;color:var(--muted);min-width:36px;text-align:center}
-
-/* Actions row */
-.actions-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.act-btn{font-family:var(--font);font-size:13px;font-weight:700;border-radius:var(--radius);padding:13px 10px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;transition:all .15s;border:1.5px solid var(--border2);background:var(--card);color:var(--muted2)}
-.act-btn:hover{border-color:var(--border2);background:var(--card2)}
-.act-btn.blanked{background:rgba(239,68,68,.1);border-color:rgba(239,68,68,.3);color:var(--red)}
-
-/* Share bar */
-.share-bar{background:var(--card);border:1.5px solid var(--border2);border-radius:var(--radius-lg);padding:14px 16px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:all .2s}
-.share-bar:hover{border-color:rgba(200,144,46,.4);background:rgba(200,144,46,.04)}
-.share-bar-icon{width:40px;height:40px;border-radius:11px;background:linear-gradient(135deg,#b8801e,#e8a84e);display:flex;align-items:center;justify-content:center;font-size:18px;color:#fff;flex-shrink:0;box-shadow:0 3px 10px rgba(200,144,46,.3)}
-.share-bar-text{flex:1;min-width:0}
-.share-bar-title{font-size:14px;font-weight:700}
-.share-bar-sub{font-size:11px;color:var(--muted);margin-top:2px}
-.share-badge{font-size:9px;font-weight:800;padding:4px 10px;border-radius:20px;flex-shrink:0;letter-spacing:.5px;text-transform:uppercase;border:1.5px solid}
-.share-badge.idle{background:var(--card2);color:var(--muted);border-color:var(--border2)}
-.share-badge.live{background:rgba(239,68,68,.12);color:var(--red);border-color:rgba(239,68,68,.35);animation:pulse .9s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
-.share-stop-row{display:none}
-.share-stop-row.show{display:block}
-.share-stop-btn{font-family:var(--font);width:100%;font-size:13px;font-weight:700;background:rgba(239,68,68,.08);border:1.5px solid rgba(239,68,68,.25);border-radius:var(--radius);color:var(--red);padding:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .15s;margin-top:8px}
-.share-stop-btn:hover{background:rgba(239,68,68,.15);border-color:var(--red)}
-
-/* Section label */
-.sec-label{font-size:9px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
-
-/* Quick display */
-.quick-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.qbtn{font-family:var(--font);font-size:11px;font-weight:700;background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius);color:var(--muted2);padding:13px 6px 10px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:7px;transition:all .15s;text-align:center;line-height:1.2}
-.qbtn:hover{border-color:var(--border2);background:var(--card2)}
-.qbtn:active{transform:scale(.96)}
-.qbtn-icon{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
-
-/* Slides list */
-.slides-wrap{display:none}
-.slides-wrap.show{display:block}
-.sli{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:10px 13px;cursor:pointer;display:flex;align-items:center;gap:10px;transition:all .13s;margin-bottom:4px}
-.sli:hover{border-color:var(--border2)}
-.sli.cur{background:var(--gold-dim);border-color:var(--gold-border)}
-.sli-lbl{font-size:9px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--gold);min-width:52px;flex-shrink:0}
-.sli-txt{font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;color:var(--muted2)}
-
-/* ════════════════════ SONGS TAB ════════════════════ */
-.tab-toolbar{padding:14px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:10px;flex-shrink:0;background:var(--surface)}
-.lang-row{display:flex;gap:6px}
-.ltab{font-family:var(--font);flex:1;font-size:11px;font-weight:700;background:var(--card);border:1.5px solid var(--border);border-radius:20px;color:var(--muted);padding:7px 4px;cursor:pointer;transition:all .15s;text-align:center}
-.ltab.active{background:var(--gold-dim);border-color:var(--gold-border);color:var(--gold)}
-.srch-wrap{position:relative}
-.srch-wrap i{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:13px;pointer-events:none}
-.srch-wrap input{font-family:var(--font);font-size:13px;background:var(--card);border:1.5px solid var(--border);border-radius:10px;color:var(--text);padding:11px 12px 11px 36px;outline:none;width:100%;transition:border-color .2s}
-.srch-wrap input:focus{border-color:var(--gold)}
-.tab-meta{padding:7px 16px;font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);border-bottom:1px solid var(--border);flex-shrink:0;background:var(--surface)}
-.scroll{flex:1;overflow-y:auto}
-.songs-list{padding:10px}
-
-.hymn{background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius);margin-bottom:5px;overflow:hidden;transition:border-color .15s}
-.hymn.open{border-color:var(--gold-border)}
-.hymn-hdr{display:flex;align-items:center;gap:10px;padding:12px 14px;cursor:pointer;user-select:none;gap:10px}
-.hymn-num{font-size:10px;font-weight:800;color:var(--gold);background:var(--gold-dim);border:1px solid var(--gold-border);border-radius:6px;padding:3px 8px;flex-shrink:0}
-.hymn-ttl{flex:1;font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.hymn-chev{color:var(--muted);font-size:11px;transition:transform .2s;flex-shrink:0}
-.hymn.open .hymn-chev{transform:rotate(180deg)}
-.verse-rows{display:none;flex-direction:column;gap:4px;padding:5px 10px 10px;background:rgba(0,0,0,.15);border-top:1px solid var(--border)}
-.hymn.open .verse-rows{display:flex}
-.vrow{font-family:var(--font);text-align:left;background:var(--surface);border:1.5px solid var(--border);border-radius:9px;padding:10px 12px;cursor:pointer;display:flex;align-items:center;gap:10px;width:100%;transition:all .13s}
-.vrow:hover,.vrow.cur{background:var(--gold-dim);border-color:var(--gold-border)}
-.vrow-lbl{font-size:9px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--gold);min-width:60px;flex-shrink:0}
-.vrow-pre{font-size:12px;color:var(--muted2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1}
-
-/* ════════════════════ BIBLE TAB ════════════════════ */
-.bible-sels{display:flex;gap:8px}
-select{font-family:var(--font);font-size:13px;background:var(--card);border:1.5px solid var(--border);border-radius:10px;color:var(--text);padding:10px 12px;outline:none;cursor:pointer;flex:1;transition:border-color .2s}
-select:focus{border-color:var(--gold)}
-.chap-grid{display:flex;flex-wrap:wrap;gap:5px;padding:12px}
-.chap-btn{font-family:var(--font);font-size:12px;font-weight:700;background:var(--card);border:1.5px solid var(--border);border-radius:8px;color:var(--muted);padding:7px 10px;cursor:pointer;min-width:38px;text-align:center;transition:all .13s}
-.chap-btn:hover{border-color:var(--gold);color:var(--gold)}
-.verse-list{padding:10px;display:flex;flex-direction:column;gap:4px}
-.bv{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:11px 13px;cursor:pointer;display:flex;align-items:flex-start;gap:9px;transition:all .13s}
-.bv:hover,.bv.cur{background:var(--gold-dim);border-color:var(--gold-border)}
-.bv-num{font-size:11px;font-weight:800;color:var(--gold);min-width:22px;flex-shrink:0;padding-top:1px}
-.bv-txt{font-size:12px;color:var(--text);line-height:1.5;flex:1}
-.bible-idle{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:12px;padding:32px;color:var(--muted)}
-.bible-idle i{font-size:40px;opacity:.15}
-.bible-idle strong{color:var(--gold)}
-
-/* ════════════════════ SHARE TAB ════════════════════ */
-.share-tab-scroll{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:14px}
-.scard{background:var(--surface);border:1.5px solid var(--border2);border-radius:var(--radius-lg);overflow:hidden}
-.scard-hdr{padding:16px;display:flex;align-items:center;gap:14px;border-bottom:1px solid var(--border)}
-.scard-ico{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
-.scard-info-title{font-size:14px;font-weight:700}
-.scard-info-sub{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.4}
-.scard-body{padding:16px;display:flex;flex-direction:column;gap:12px}
-.status-row{display:flex;align-items:center;gap:10px;padding:11px 14px;background:var(--card);border-radius:10px;border:1px solid var(--border)}
-.status-dot{width:8px;height:8px;border-radius:50%;background:var(--muted);flex-shrink:0;transition:all .3s}
-.status-dot.live{background:var(--red);box-shadow:0 0 8px var(--red);animation:pulse .9s infinite}
-.status-txt{font-size:12px;font-weight:600;color:var(--muted);flex:1}
-.status-txt.live{color:var(--red)}
-.big-btn{font-family:var(--font);font-size:14px;font-weight:700;border:none;border-radius:var(--radius);padding:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .15s;width:100%}
-.big-btn.gold{background:linear-gradient(135deg,#b8801e,#e8a84e);color:#fff;box-shadow:0 4px 14px rgba(200,144,46,.3)}
-.big-btn.gold:hover{opacity:.9}
-.big-btn.stop{background:rgba(239,68,68,.08);border:1.5px solid rgba(239,68,68,.25);color:var(--red)}
-.big-btn.stop:hover{background:rgba(239,68,68,.15)}
-.info-box{font-size:12px;color:var(--muted);line-height:1.7;padding:12px 14px;background:var(--card);border-radius:10px;border:1px solid var(--border)}
-.info-box strong{color:var(--text)}
-
-/* Upload */
-.drop-zone{border:2px dashed var(--border2);border-radius:var(--radius);padding:24px;text-align:center;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px;transition:all .2s}
-.drop-zone:hover,.drop-zone.drag{border-color:var(--gold);background:var(--gold-dim)}
-.drop-zone i{font-size:28px;color:var(--gold);opacity:.7}
-.drop-zone-title{font-size:13px;font-weight:700}
-.drop-zone-sub{font-size:11px;color:var(--muted)}
-.prog-wrap{display:none;flex-direction:column;gap:7px}
-.prog-bar{height:5px;background:var(--card);border-radius:3px;overflow:hidden}
-.prog-fill{height:100%;background:linear-gradient(90deg,var(--gold),#e8a84e);border-radius:3px;transition:width .3s;width:0%}
-.prog-lbl{font-size:11px;color:var(--muted);text-align:center}
-.file-list{display:flex;flex-direction:column;gap:5px}
-.file-item{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:11px 13px;cursor:pointer;display:flex;align-items:center;gap:11px;transition:all .13s}
-.file-item:hover{border-color:var(--gold-border)}
-.file-ico{font-size:18px;color:var(--gold);flex-shrink:0}
-.file-info{flex:1;min-width:0}
-.file-name{font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.file-size{font-size:10px;color:var(--muted)}
-.file-play-btn{font-family:var(--font);font-size:10px;font-weight:700;background:var(--gold-dim);border:1px solid var(--gold-border);border-radius:7px;color:var(--gold);padding:5px 12px;cursor:pointer;flex-shrink:0;transition:all .15s}
-.file-play-btn:hover{background:var(--gold);color:#fff}
-
-/* ── LIVE SLIDE PREVIEW ── */
-.preview-pane{background:var(--card);border:1.5px solid var(--border2);border-radius:var(--radius-lg);overflow:hidden;flex-shrink:0}
-.preview-pane-hdr{padding:9px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);background:rgba(200,144,46,0.05)}
-.preview-pane-label{font-size:9px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--gold)}
-.preview-live-dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 5px var(--green);animation:pulse .9s infinite;display:none}
-.preview-live-dot.show{display:block}
-.preview-screen{aspect-ratio:16/9;background:#04040e;position:relative;overflow:hidden;cursor:pointer}
-.preview-screen-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px);background-size:20px 20px;pointer-events:none}
-.preview-screen-glow{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 60%,rgba(80,55,180,.15) 0%,transparent 70%);pointer-events:none}
-.preview-slide{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10% 8%;text-align:center;gap:4px}
-.preview-slide-type{font-size:clamp(5px,1.2vw,.6em);font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:rgba(180,155,255,.5);flex-shrink:0}
-.preview-slide-title{font-family:'Georgia',serif;font-size:clamp(8px,2.5vw,1.4em);font-weight:700;color:#fff;line-height:1.2;flex-shrink:0}
-.preview-slide-sub{font-size:clamp(5px,1vw,.5em);color:rgba(180,155,255,.6);letter-spacing:.1em;flex-shrink:0}
-.preview-slide-body{font-family:'Georgia',serif;font-size:clamp(6px,1.8vw,.85em);color:rgba(255,255,255,.88);line-height:1.4;font-style:italic;max-width:95%;flex-shrink:0}
-.preview-slide-divider{width:30px;height:1px;background:rgba(180,155,255,.25);flex-shrink:0;margin:2px 0}
-.preview-blank{position:absolute;inset:0;background:#04040e;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s}
-.preview-blank.show{opacity:1}
-.preview-blank-txt{font-size:.6em;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.15)}
-.preview-standby{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;transition:opacity .4s}
-.preview-standby.hidden{opacity:0;pointer-events:none}
-.preview-standby-cross{font-size:1.6em;color:rgba(255,255,255,.06)}
-.preview-standby-txt{font-size:.45em;letter-spacing:.25em;text-transform:uppercase;color:rgba(255,255,255,.1)}
-
-/* ── PERMISSION STATES ── */
-.perm-overlay{position:fixed;inset:0;background:rgba(10,12,18,.92);z-index:500;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(10px)}
-.perm-card{background:var(--surface);border:1.5px solid var(--border2);border-radius:20px;padding:32px;max-width:360px;width:90%;text-align:center;display:flex;flex-direction:column;align-items:center;gap:18px}
-.perm-icon{width:64px;height:64px;border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0}
-.perm-icon.waiting{background:rgba(230,126,34,.15);color:#e67e22}
-.perm-icon.granted{background:rgba(46,204,113,.15);color:#2ecc71}
-.perm-icon.denied{background:rgba(239,68,68,.12);color:var(--red)}
-.perm-title{font-size:18px;font-weight:800;letter-spacing:-.3px}
-.perm-msg{font-size:13px;color:var(--muted);line-height:1.6}
-.perm-pulse{width:8px;height:8px;border-radius:50%;background:#e67e22;animation:pulse .9s infinite}
-.perm-btn{font-family:var(--font);font-size:13px;font-weight:700;background:var(--card);border:1.5px solid var(--border2);border-radius:10px;color:var(--muted);padding:11px 24px;cursor:pointer;transition:all .15s}
-.perm-btn:hover{border-color:var(--red);color:var(--red)}
-
-/* Utilities */
-.hidden{display:none!important}
-.empty{padding:24px;text-align:center;color:var(--muted);font-size:13px;display:flex;flex-direction:column;gap:8px;align-items:center}
-.empty i{font-size:28px;opacity:.2}
-.loading{padding:24px;text-align:center;color:var(--muted);font-size:13px}
-.toast{position:fixed;bottom:72px;left:50%;transform:translateX(-50%);background:rgba(26,30,42,.95);border:1.5px solid var(--gold-border);border-radius:20px;padding:9px 20px;font-size:12px;font-weight:700;color:var(--gold);z-index:999;opacity:0;transition:opacity .25s;pointer-events:none;white-space:nowrap;max-width:90vw;text-align:center;backdrop-filter:blur(10px)}
-.toast.show{opacity:1}
-@media(min-width:768px){.toast{bottom:20px}}
-::-webkit-scrollbar{width:3px}
-::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:2px}
+@media (max-width: 767px) {
+  .slide-preview-screen { margin: 10px 10px 8px; }
+  .nav-row { padding: 0 10px 8px; }
+  .blank-row { padding: 0 10px 8px; }
+  .slide-list { padding: 4px 10px 80px; }
+  .prog-panel-list { padding: 8px 10px 80px; }
+  .notes-area { padding: 10px 10px 80px; }
+}
 </style>
 </head>
 <body>
 
-<!-- ══════════════ JOIN SCREEN ══════════════ -->
-<div class="screen active" id="screen-join">
-<div class="join-wrap">
-  <div class="join-inner">
-    <div class="join-brand">
-      <div class="join-cross"><i class="fa-solid fa-cross"></i></div>
-      <div class="join-title">SDA Worship Presenter</div>
-      <div class="join-sub">Control the projector from your phone, tablet, or laptop</div>
+<!-- ── JOIN SCREEN ── -->
+<div id="join-screen">
+  <div class="join-logo"><i class="fa-solid fa-cross"></i></div>
+  <div class="join-title">SDA Worship — Presenter</div>
+  <div class="join-sub">Enter your name and the session code to join the service.</div>
+  <div class="join-card">
+    <div class="join-field">
+      <label class="join-label" for="join-name">Your Name</label>
+      <input class="join-input" id="join-name" type="text" placeholder="e.g. Elder Kamanzi" autocomplete="off" maxlength="40">
     </div>
-    <div class="join-card">
-      <div class="field">
-        <label>Your Name</label>
-        <input type="text" id="inp-name" placeholder="e.g. Pastor Habimana" autocomplete="off">
-      </div>
-      <div class="field">
-        <label>Session Code</label>
-        <input type="text" class="code-inp" id="inp-code" placeholder="SDA-XXXX"
-          maxlength="8" autocomplete="off" oninput="this.value=this.value.toUpperCase()">
-      </div>
-      <div class="field">
-        <label>Server Address <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--muted);font-size:10px">— optional</span></label>
-        <input type="text" id="inp-host" placeholder="192.168.x.x:4040 (leave blank on cloud)" autocomplete="off">
-        <small>Opening from the Render/cloud link? Leave blank. On local Wi-Fi: enter the church computer's IP shown in Settings → Remote Access.</small>
-      </div>
-      <button class="join-btn" onclick="join()">
-        <i class="fa-solid fa-right-to-bracket"></i> Join Session
-      </button>
+    <div class="join-field">
+      <label class="join-label" for="join-code">Session Code</label>
+      <input class="join-input" id="join-code" type="text" placeholder="e.g. SDA-WXYZ"
+        autocomplete="off" maxlength="12" style="letter-spacing:3px;text-transform:uppercase">
     </div>
+    <div class="join-error" id="join-error"></div>
+    <button class="join-btn" id="join-btn" onclick="doJoin()">
+      <i class="fa-solid fa-arrow-right-to-bracket"></i> Join Session
+    </button>
+  </div>
+  <div style="font-size:11px;color:var(--muted);text-align:center;line-height:1.6">
+    Ask the operator for the session code.<br>
+    You will need approval before controlling slides.
   </div>
 </div>
+
+<!-- ── WAITING SCREEN ── -->
+<div id="waiting-screen">
+  <div class="waiting-spinner"></div>
+  <div class="waiting-title">Waiting for approval</div>
+  <div class="waiting-name" id="waiting-name"></div>
+  <div class="waiting-sub">
+    The operator must approve your request before you can control slides.
+    This usually takes just a moment.
+  </div>
+  <button class="join-btn" style="max-width:200px;margin-top:8px" onclick="cancelJoin()">
+    <i class="fa-solid fa-xmark"></i> Cancel
+  </button>
 </div>
 
-<!-- ══════════════ MAIN APP ══════════════ -->
-<div class="screen" id="screen-main">
+<!-- ── DENIED/KICKED SCREEN ── -->
+<div id="denied-screen">
+  <i class="fa-solid fa-ban denied-icon"></i>
+  <div class="denied-title" id="denied-title">Access Denied</div>
+  <div class="denied-sub" id="denied-sub">The operator has not granted you access.</div>
+  <button class="denied-rejoin-btn" onclick="showJoin()">
+    <i class="fa-solid fa-rotate-left"></i> Back to Join
+  </button>
+</div>
+
+<!-- ── MAIN APP ── -->
+<div id="app-screen">
 
   <!-- Top bar -->
-  <div class="topbar">
-    <div class="tb-left">
-      <div class="tb-brand">
-        <div class="tb-cross"><i class="fa-solid fa-cross"></i></div>
-        <span class="tb-app-name">SDA Worship</span>
-      </div>
-      <div class="tb-divider"></div>
-      <div>
-        <div class="pres-name" id="pres-name">Presenter</div>
-        <div class="conn-row">
-          <div class="conn-dot" id="conn-dot"></div>
-          <span class="conn-txt" id="conn-txt">Connecting…</span>
-        </div>
-      </div>
+  <div class="app-topbar">
+    <div class="app-logo">
+      <div class="app-logo-icon"><i class="fa-solid fa-cross"></i></div>
+      <span>SDA Worship</span>
     </div>
-    <div class="tb-right">
-      <div class="now-pill">
-        <div class="now-pill-type" id="nb-type">STANDBY</div>
-        <div class="now-pill-title" id="nb-title">Nothing on screen</div>
-      </div>
+    <span class="app-name-badge" id="app-name-badge"></span>
+    <div style="display:flex;align-items:center;gap:6px">
+      <div class="conn-dot" id="conn-dot"></div>
+      <span style="font-size:10px;font-weight:700;color:var(--muted)" id="conn-label">Connected</span>
     </div>
   </div>
 
-  <!-- Body -->
   <div class="app-body">
 
-    <!-- Desktop sidebar nav -->
-    <nav class="sidebar-nav">
-      <button class="snav active" id="snav-control" onclick="switchTab('control')"><i class="fa-solid fa-display"></i> Control</button>
-      <button class="snav" id="snav-songs" onclick="switchTab('songs')"><i class="fa-solid fa-music"></i> Songs</button>
-      <button class="snav" id="snav-bible" onclick="switchTab('bible')"><i class="fa-solid fa-book-bible"></i> Bible</button>
-      <button class="snav" id="snav-share" onclick="switchTab('share')"><i class="fa-solid fa-share-from-square"></i> Share</button>
-      <div class="sidebar-sep"></div>
-      <div class="sidebar-footer">
-        <button class="leave-side-btn" onclick="leave()"><i class="fa-solid fa-right-from-bracket"></i> Leave Session</button>
-      </div>
-    </nav>
+    <!-- Sidebar nav (desktop) -->
+    <div class="sidebar-nav">
+      <button class="snav-btn active" data-panel="control" onclick="switchPanel('control')">
+        <i class="fa-solid fa-sliders"></i>
+        <span class="snav-tip">Control</span>
+      </button>
+      <button class="snav-btn" data-panel="program" onclick="switchPanel('program')">
+        <i class="fa-solid fa-list-ol"></i>
+        <span class="snav-tip">Program</span>
+      </button>
+      <button class="snav-btn" data-panel="notes" onclick="switchPanel('notes')">
+        <i class="fa-solid fa-note-sticky"></i>
+        <span class="snav-tip">Notes</span>
+      </button>
+    </div>
 
-    <!-- Tab content -->
-    <div class="tab-content">
+    <!-- ── CONTROL PANEL ── -->
+    <div class="panel active" id="panel-control">
+      <div class="panel-header">Slide Control</div>
 
-      <!-- ── CONTROL ── -->
-      <div class="tab active" id="tab-control">
-        <div class="ctrl-scroll">
-
-          <!-- Live projector preview -->
-          <div class="preview-pane">
-            <div class="preview-pane-hdr">
-              <span class="preview-pane-label">Projector Preview</span>
-              <div style="display:flex;align-items:center;gap:8px">
-                <span id="ns-type" style="font-size:9px;font-weight:700;color:var(--muted);letter-spacing:1px;text-transform:uppercase"></span>
-                <div class="preview-live-dot" id="preview-live-dot"></div>
-              </div>
-            </div>
-            <!-- 16:9 preview screen -->
-            <div class="preview-screen" onclick="toggleBlank()" title="Click to toggle blank">
-              <div class="preview-screen-grid"></div>
-              <div class="preview-screen-glow"></div>
-              <!-- Standby state -->
-              <div class="preview-standby" id="preview-standby">
-                <div class="preview-standby-cross">✝</div>
-                <div class="preview-standby-txt">SDA Worship — Standby</div>
-              </div>
-              <!-- Slide content -->
-              <div class="preview-slide" id="preview-slide" style="display:none">
-                <div class="preview-slide-type" id="ps-type"></div>
-                <div class="preview-slide-title" id="ps-title"></div>
-                <div class="preview-slide-sub" id="ps-sub"></div>
-                <div class="preview-slide-divider" id="ps-divider" style="display:none"></div>
-                <div class="preview-slide-body" id="ps-body"></div>
-              </div>
-              <!-- Blank overlay -->
-              <div class="preview-blank" id="preview-blank">
-                <span class="preview-blank-txt">Blank</span>
-              </div>
-            </div>
-            <!-- Navigation -->
-            <div style="display:flex;align-items:center;gap:8px;padding:10px 14px;border-top:1px solid var(--border)">
-              <button class="navb" id="btn-prev" onclick="nav(-1)" disabled><i class="fa-solid fa-chevron-left"></i></button>
-              <div style="flex:1;text-align:center">
-                <div id="ns-title" style="font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text)"></div>
-                <div id="ns-body" style="font-size:10px;color:var(--muted);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></div>
-              </div>
-              <span class="nav-pos" id="nav-ctr">—</span>
-              <button class="navb" id="btn-next" onclick="nav(1)" disabled><i class="fa-solid fa-chevron-right"></i></button>
-            </div>
-          </div>
-
-          <!-- Actions -->
-          <div class="actions-row">
-            <button class="act-btn" id="blank-btn" onclick="toggleBlank()">
-              <i class="fa-solid fa-eye-slash"></i> Blank Screen
-            </button>
-            <button class="act-btn" onclick="leave()" style="color:rgba(239,68,68,.6);border-color:rgba(239,68,68,.15)" onmouseenter="this.style.color='var(--red)'" onmouseleave="this.style.color='rgba(239,68,68,.6)'">
-              <i class="fa-solid fa-right-from-bracket"></i> Leave
-            </button>
-          </div>
-
-          <!-- Screen share bar -->
-          <div>
-            <div class="share-bar" id="share-bar" onclick="startShare()">
-              <div class="share-bar-icon"><i class="fa-solid fa-desktop"></i></div>
-              <div class="share-bar-text">
-                <div class="share-bar-title">Share Your Screen</div>
-                <div class="share-bar-sub">Stream screen, PowerPoint or VLC live to projector</div>
-              </div>
-              <span class="share-badge idle" id="share-badge">OFF</span>
-            </div>
-            <div class="share-stop-row" id="share-stop-row">
-              <button class="share-stop-btn" onclick="stopShare()">
-                <i class="fa-solid fa-circle-stop"></i> Stop Screen Share
-              </button>
-            </div>
-          </div>
-
-          <!-- Quick display -->
-          <div>
-            <div class="sec-label">Quick Display</div>
-            <div class="quick-grid" id="quick-grid"></div>
-          </div>
-
-          <!-- Current slides -->
-          <div class="slides-wrap" id="slides-wrap">
-            <div class="sec-label">Current Slides</div>
-            <div id="slides-list"></div>
-          </div>
-
+      <!-- Live preview -->
+      <div class="slide-preview-screen">
+        <div class="slide-preview-content">
+          <div class="spc-type"  id="prev-type">—</div>
+          <div class="spc-title" id="prev-title" style="color:rgba(255,255,255,.2);font-style:italic">Nothing on screen</div>
+          <div class="spc-body"  id="prev-body"></div>
         </div>
       </div>
 
-      <!-- ── SONGS ── -->
-      <div class="tab" id="tab-songs">
-        <div class="tab-toolbar">
-          <div class="lang-row">
-            <button class="ltab active" id="sl-en" onclick="setSLang('en')">English</button>
-            <button class="ltab" id="sl-rw" onclick="setSLang('rw')">Kinyarwanda</button>
-            <button class="ltab" id="sl-fr" onclick="setSLang('fr')">Français</button>
-          </div>
-          <div class="srch-wrap">
-            <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" id="song-srch" placeholder="Search by title or number…" oninput="filterSongs(this.value)">
-          </div>
-        </div>
-        <div class="tab-meta" id="songs-meta">Loading…</div>
-        <div class="scroll"><div class="songs-list" id="songs-list"></div></div>
+      <!-- Slide position -->
+      <div class="slide-pos-row" id="slide-pos-row">No slides loaded</div>
+
+      <!-- Prev / Next -->
+      <div class="nav-row">
+        <button class="nav-big-btn" id="prev-btn" onclick="sendNav(-1)" disabled>
+          <i class="fa-solid fa-chevron-left"></i> Prev
+        </button>
+        <button class="nav-big-btn" id="next-btn" onclick="sendNav(1)" disabled>
+          Next <i class="fa-solid fa-chevron-right"></i>
+        </button>
       </div>
 
-      <!-- ── BIBLE ── -->
-      <div class="tab" id="tab-bible">
-        <div class="tab-toolbar">
-          <div class="lang-row">
-            <button class="ltab active" id="bl-en" onclick="setBLang('en')">KJV</button>
-            <button class="ltab" id="bl-rw" onclick="setBLang('rw')">BYH</button>
-            <button class="ltab" id="bl-fr" onclick="setBLang('fr')">LSG</button>
-          </div>
-          <div class="srch-wrap">
-            <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" id="bible-srch" placeholder="Reference or keyword (e.g. Yohana 3:16)…" oninput="bsearch(this.value)">
-          </div>
-          <div class="bible-sels">
-            <select id="b-book" onchange="onBook()"><option value="">— Book —</option></select>
-            <select id="b-chap" onchange="onChap()" disabled><option value="">— Chapter —</option></select>
-          </div>
-        </div>
-        <div class="tab-meta" id="bible-meta" style="display:none"></div>
-        <div class="scroll" id="bible-body">
-          <div class="bible-idle"><i class="fa-solid fa-book-bible"></i>
-            <div>Select a book above or type a reference<br><strong>Yohana 3:16</strong></div>
-          </div>
-        </div>
+      <!-- Blank toggle -->
+      <div class="blank-row">
+        <button class="blank-toggle-btn" id="blank-btn" onclick="toggleBlank()">
+          <i class="fa-solid fa-eye-slash"></i> Blank Screen
+        </button>
       </div>
 
-      <!-- ── SHARE ── -->
-      <div class="tab" id="tab-share">
-        <div class="share-tab-scroll">
-
-          <!-- WebRTC share -->
-          <div class="scard">
-            <div class="scard-hdr">
-              <div class="scard-ico" style="background:linear-gradient(135deg,#1e3a8a,#3b82f6);color:#fff"><i class="fa-solid fa-desktop"></i></div>
-              <div>
-                <div class="scard-info-title">Live Screen Share</div>
-                <div class="scard-info-sub">Stream your screen, PowerPoint or VLC in real-time to the projector</div>
-              </div>
-            </div>
-            <div class="scard-body">
-              <div class="status-row">
-                <div class="status-dot" id="rtc-dot"></div>
-                <span class="status-txt" id="rtc-status">Not sharing</span>
-              </div>
-              <button class="big-btn gold" id="share-start-btn" onclick="startShare()">
-                <i class="fa-solid fa-display"></i> Start Screen Share
-              </button>
-              <button class="big-btn stop hidden" id="share-stop-btn" onclick="stopShare()">
-                <i class="fa-solid fa-circle-stop"></i> Stop Sharing
-              </button>
-              <div class="info-box">
-                <strong>Laptop/Desktop:</strong> Works in Chrome, Edge, Firefox.<br>
-                Open your presentation or video first, then click Start and select that window.<br><br>
-                <strong>Requirement:</strong> The operator must open the Screen Share window from Settings first.
-              </div>
-            </div>
-          </div>
-
-          <!-- File upload -->
-          <div class="scard">
-            <div class="scard-hdr">
-              <div class="scard-ico" style="background:linear-gradient(135deg,#064e3b,#10b981);color:#fff"><i class="fa-solid fa-file-arrow-up"></i></div>
-              <div>
-                <div class="scard-info-title">Upload & Play File</div>
-                <div class="scard-info-sub">Upload a video or image — it plays directly on the projector</div>
-              </div>
-            </div>
-            <div class="scard-body">
-              <div class="drop-zone" id="drop-zone" onclick="document.getElementById('file-inp').click()"
-                ondragover="event.preventDefault();this.classList.add('drag')"
-                ondragleave="this.classList.remove('drag')" ondrop="onDrop(event)">
-                <i class="fa-solid fa-cloud-arrow-up"></i>
-                <div class="drop-zone-title">Click or drag file here</div>
-                <div class="drop-zone-sub">MP4 · WebM · MKV · JPG · PNG — max 500MB</div>
-              </div>
-              <input type="file" id="file-inp" accept="video/*,image/*,.mkv" style="display:none" onchange="uploadFile(this.files[0])">
-              <div class="prog-wrap" id="prog-wrap">
-                <div class="prog-bar"><div class="prog-fill" id="prog-fill"></div></div>
-                <div class="prog-lbl" id="prog-lbl">Uploading…</div>
-              </div>
-              <div>
-                <div class="sec-label" style="margin-bottom:8px">Recent Files</div>
-                <div class="file-list" id="recent-files">
-                  <div class="empty" style="padding:10px"><i class="fa-solid fa-folder-open"></i><span>No files yet</span></div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Setup guide -->
-          <div class="scard">
-            <div class="scard-hdr">
-              <div class="scard-ico" style="background:var(--gold-dim);color:var(--gold)"><i class="fa-solid fa-circle-info"></i></div>
-              <div>
-                <div class="scard-info-title">Setup Guide</div>
-                <div class="scard-info-sub">How to set up screen sharing</div>
-              </div>
-            </div>
-            <div class="scard-body">
-              <div class="info-box" style="line-height:2">
-                <strong>1.</strong> Operator Panel → Settings → Remote Access<br>
-                <strong>2.</strong> Click <span style="color:var(--gold);font-weight:700">Open Screen Share Window</span><br>
-                <strong>3.</strong> Move that window to the projector display<br>
-                <strong>4.</strong> Then click <strong>Start Screen Share</strong> above
-              </div>
-            </div>
-          </div>
-
+      <!-- Slide list -->
+      <div class="slide-list" id="slide-list">
+        <div style="text-align:center;padding:20px;color:var(--muted);font-size:12px">
+          Slides will appear here when the operator projects content.
         </div>
       </div>
+    </div>
 
-    </div><!-- /tab-content -->
+    <!-- ── PROGRAM PANEL ── -->
+    <div class="panel" id="panel-program">
+      <div class="panel-header">Program Order</div>
+      <div class="prog-panel-list" id="prog-panel-list">
+        <div style="text-align:center;padding:30px;color:var(--muted);font-size:12px">
+          Program will sync from the operator when available.
+        </div>
+      </div>
+    </div>
+
+    <!-- ── NOTES PANEL ── -->
+    <div class="panel" id="panel-notes">
+      <div class="panel-header">Sermon Notes</div>
+      <div class="notes-area">
+        <textarea class="notes-textarea" id="notes-ta"
+          placeholder="Type your sermon notes or reminders here…&#10;&#10;These are private — only visible on this device."></textarea>
+        <div class="notes-hint">Notes are saved locally on this device only.</div>
+      </div>
+    </div>
+
   </div><!-- /app-body -->
 
-  <!-- Mobile bottom nav -->
-  <div class="bottom-nav">
-    <button class="bnav active" id="bnav-control" onclick="switchTab('control')"><i class="fa-solid fa-display"></i>Control</button>
-    <button class="bnav" id="bnav-songs" onclick="switchTab('songs')"><i class="fa-solid fa-music"></i>Songs</button>
-    <button class="bnav" id="bnav-bible" onclick="switchTab('bible')"><i class="fa-solid fa-book-bible"></i>Bible</button>
-    <button class="bnav" id="bnav-share" onclick="switchTab('share')"><i class="fa-solid fa-share-from-square"></i>Share</button>
+  <!-- Mobile bottom tab bar -->
+  <div class="bottom-tabbar">
+    <button class="btab active" data-panel="control" onclick="switchPanel('control')">
+      <i class="fa-solid fa-sliders"></i>
+      <span>Control</span>
+    </button>
+    <button class="btab" data-panel="program" onclick="switchPanel('program')">
+      <i class="fa-solid fa-list-ol"></i>
+      <span>Program</span>
+    </button>
+    <button class="btab" data-panel="notes" onclick="switchPanel('notes')">
+      <i class="fa-solid fa-note-sticky"></i>
+      <span>Notes</span>
+    </button>
   </div>
 
-</div><!-- /screen-main -->
-
-<!-- ── PERMISSION OVERLAY ── -->
-<div class="perm-overlay hidden" id="perm-overlay">
-  <div class="perm-card">
-    <div class="perm-icon waiting" id="perm-icon"><i class="fa-solid fa-hourglass-half"></i></div>
-    <div class="perm-title" id="perm-title">Waiting for Approval</div>
-    <div class="perm-msg" id="perm-msg">The operator will approve your request to present. Please wait…</div>
-    <div class="perm-pulse" id="perm-pulse"></div>
-    <button class="perm-btn" onclick="leave()"><i class="fa-solid fa-right-from-bracket"></i> Cancel & Leave</button>
-  </div>
-</div>
+</div><!-- /app-screen -->
 
 <div class="toast" id="toast"></div>
 
 <script>
-// ══════════════ STATE ══════════════
-let ws=null,connected=false,reconTimer=null,code='',host='',name='';
-let slideSet=[],slideIdx=0,isBlank=false;
-let BIBLE=null,bibleLoading=false,bLang='en',sLang='en';
-let localStream=null,pc=null,sharing=false;
-let hymnsLoaded=false,bsTimer=null,toastT=null;
+'use strict';
 
-// ══════════════ HYMN LIBRARY ══════════════
-const HYMNS_BASE={
-  en:[
-    {id:1,number:'1',title:'Praise to the Lord, the Almighty',verses:[
-      {label:'Verse 1',text:'Praise to the Lord, the Almighty, the King of creation!\nO my soul, praise Him, for He is thy health and salvation!'},
-      {label:'Verse 2',text:'Praise to the Lord, who o\'er all things so wondrously reigneth,\nShelters thee under His wings, yea, so gently sustaineth!'},
-      {label:'Verse 3',text:'Praise to the Lord! O let all that is in me adore Him!\nAll that hath life and breath, come now with praises before Him!'}]},
-    {id:2,number:'100',title:'Holy, Holy, Holy! Lord God Almighty',verses:[
-      {label:'Verse 1',text:'Holy, holy, holy! Lord God Almighty!\nEarly in the morning our song shall rise to Thee.'},
-      {label:'Verse 2',text:'Holy, holy, holy! All the saints adore Thee,\nCasting down their golden crowns around the glassy sea.'},
-      {label:'Verse 3',text:'Holy, holy, holy! God in three persons, blessed Trinity!'}]},
-    {id:3,number:'462',title:'Blessed Assurance',verses:[
-      {label:'Verse 1',text:'Blessed assurance, Jesus is mine!\nO what a foretaste of glory divine!'},
-      {label:'Chorus',text:'This is my story, this is my song,\nPraising my Savior all the day long.'},
-      {label:'Verse 2',text:'Perfect submission, perfect delight!\nVisions of rapture now burst on my sight.'}]},
-    {id:4,number:'488',title:'Great Is Thy Faithfulness',verses:[
-      {label:'Verse 1',text:'Great is Thy faithfulness, O God my Father,\nThere is no shadow of turning with Thee.'},
-      {label:'Chorus',text:'Great is Thy faithfulness! Morning by morning new mercies I see!\nAll I have needed Thy hand hath provided — great is Thy faithfulness, Lord, unto me!'}]},
-  ],
-  rw:[
-    {id:101,number:'45',title:'Turirimbe Twese Imana',verses:[
-      {label:'Umurongo 1',text:'Turirimbe twese Imana,\nY\'ijuru n\'isi n\'ibiriho byose.'},
-      {label:'Umurongo 2',text:'Iyumvire ijwi ry\'Imana,\nRikuririmba ubugingo bwose.'}]},
-    {id:102,number:'78',title:'Sabato ni Umunsi w\'Imana',verses:[
-      {label:'Umurongo 1',text:'Sabato ni umunsi w\'Imana,\nWagenywe kuva mu ntangiriro.'},
-      {label:'Chorus',text:'Sabato, Sabato ya Nyagasani,\nNiyo tuzirikana na none.'}]},
-    {id:103,number:'230',title:'Wibuke Imigisha Wahawe',verses:[
-      {label:'Umurongo 1',text:'Wibuke imigisha wahawe,\nWisoze iby\'igiciro.'},
-      {label:'Chorus',text:'Bareka imigisha wahawe na Imana,\nBara imigisha wahawe buri munsi.'}]},
-  ],
-  fr:[
-    {id:201,number:'1',title:'Louez le Seigneur',verses:[
-      {label:'Couplet 1',text:'Louez le Seigneur, Roi de la création.'},
-      {label:'Couplet 2',text:'Louez le Seigneur qui règne sur toutes choses.'}]},
-    {id:202,number:'54',title:'O Dieu, Ta Bonté',verses:[
-      {label:'Couplet 1',text:'O Dieu, ta bonté m\'environne,\nTa grâce est ma lumière.'}]},
-  ],
-};
-const HYMNS={en:[...HYMNS_BASE.en],rw:[...HYMNS_BASE.rw],fr:[...HYMNS_BASE.fr]};
+// ── STATE ─────────────────────────────────────────────────────────────────────
+let _ws       = null;
+let _myId     = null;
+let _myName   = '';
+let _myCode   = '';
+let _granted  = false;
+let _isBlank  = false;
+let _slideSet = [];
+let _slideIdx = 0;
 
-function loadHymns(){
-  if(hymnsLoaded||document.getElementById('hymns-s')) return;
-  const s=document.createElement('script');
-  s.id='hymns-s'; s.src='/hymns_data.js?v='+Date.now();
-  s.onload=()=>{
-    if(typeof HYMN_LIBRARY_DATA!=='undefined'){
-      HYMNS.en=HYMN_LIBRARY_DATA.en||HYMNS.en;
-      HYMNS.rw=HYMN_LIBRARY_DATA.rw||HYMNS.rw;
-      HYMNS.fr=HYMN_LIBRARY_DATA.fr||HYMNS.fr;
-      hymnsLoaded=true; renderSongs('');
+// ── SCREEN SWITCHING ──────────────────────────────────────────────────────────
+function showScreen(id) {
+  ['join-screen','waiting-screen','denied-screen','app-screen'].forEach(s => {
+    const el = document.getElementById(s);
+    if (el) el.style.display = (s === id) ? 'flex' : 'none';
+  });
+}
+
+function showJoin() {
+  _granted = false; _ws && _ws.close(); _ws = null; _myId = null;
+  document.getElementById('join-error').textContent = '';
+  showScreen('join-screen');
+}
+
+function cancelJoin() { showJoin(); }
+
+// ── JOIN ──────────────────────────────────────────────────────────────────────
+function doJoin() {
+  const nameEl = document.getElementById('join-name');
+  const codeEl = document.getElementById('join-code');
+  const errEl  = document.getElementById('join-error');
+  const name   = nameEl.value.trim();
+  const code   = codeEl.value.trim().toUpperCase();
+
+  if (!name) { errEl.textContent = 'Please enter your name.'; nameEl.focus(); return; }
+  if (!code) { errEl.textContent = 'Please enter the session code.'; codeEl.focus(); return; }
+
+  errEl.textContent = '';
+  document.getElementById('join-btn').disabled = true;
+
+  _myName = name; _myCode = code;
+  document.getElementById('waiting-name').textContent = 'Joining as: ' + name;
+
+  connectWS();
+}
+
+// ── WEBSOCKET ─────────────────────────────────────────────────────────────────
+function connectWS() {
+  const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
+  const host  = location.hostname || 'localhost';
+  const port  = location.port || '4040';
+
+  // Use same host:port as the page was served from, or default WS port
+  const wsUrl = proto + '//' + host + ':' + port;
+
+  try {
+    _ws = new WebSocket(wsUrl);
+  } catch(e) {
+    document.getElementById('join-btn').disabled = false;
+    document.getElementById('join-error').textContent = 'Cannot connect to server: ' + host;
+    return;
+  }
+
+  _ws.onopen = () => {
+    setConnDot(true);
+    // Send join with all required fields
+    wsSend({
+      type:  'presenter-join',
+      name:  _myName,
+      code:  _myCode,
+      id:    _myId || undefined,   // send existing id on reconnect
+    });
+    showScreen('waiting-screen');
+  };
+
+  _ws.onmessage = e => {
+    try { handleMsg(JSON.parse(e.data)); } catch(_) {}
+  };
+
+  _ws.onclose = () => {
+    setConnDot(false);
+    // If we were granted and working, auto-reconnect
+    if (_granted) {
+      setTimeout(reconnect, 3000);
+      showToast('Connection lost — reconnecting…');
+    } else if (_myId) {
+      // Was in waiting state — reconnect to check
+      setTimeout(reconnect, 3000);
     }
   };
-  document.head.appendChild(s);
+
+  _ws.onerror = () => {
+    document.getElementById('join-btn').disabled = false;
+    document.getElementById('join-error').textContent = 'Server unreachable. Check your network.';
+    showScreen('join-screen');
+  };
 }
 
-// ══════════════ QUICK DISPLAY ══════════════
-const QD=[
-  {label:'Welcome',   icon:'fa-star',         colour:'#c8902e', type:'Welcome',           title:'Welcome to Worship',   body:'We are glad you are here.\nMay God bless our time together.'},
-  {label:'Prayer',    icon:'fa-hands-praying', colour:'#4a90d9', type:'Prayer',            title:'Let Us Pray',          body:''},
-  {label:'Pastoral',  icon:'fa-church',        colour:'#8e44ad', type:'Pastoral Prayer',   title:'Pastoral Prayer',      body:''},
-  {label:'Key Verse', icon:'fa-key',           colour:'#1abc9c', type:'Key Verse',         title:'Key Verse',            body:''},
-  {label:'Scripture', icon:'fa-book-open',     colour:'#2ecc71', type:'Scripture Reading', title:'Scripture Reading',    body:'Please open your Bibles.'},
-  {label:'Sermon',    icon:'fa-microphone',    colour:'#e74c3c', type:'Sermon',            title:'Message of the Day',   body:''},
-  {label:'Offering',  icon:'fa-coins',         colour:'#f1c40f', type:'Tithes & Offerings',title:'Tithes & Offerings',   body:'Honour the Lord — Proverbs 3:9'},
-  {label:'Baptism',   icon:'fa-water',         colour:'#3498db', type:'Baptism',           title:'Baptismal Service',    body:''},
-  {label:'Closing',   icon:'fa-door-open',     colour:'#9b59b6', type:'Closing',           title:'Go in Peace',          body:'The grace of our Lord Jesus Christ be with you all.'},
-];
-
-function renderPresenterQD(){
-  const g=document.getElementById('quick-grid'); if(!g) return;
-  g.innerHTML=QD.map((b,i)=>{
-    const hex=b.colour||'#c8902e';
-    const r=parseInt(hex.slice(1,3),16),gr=parseInt(hex.slice(3,5),16),bl=parseInt(hex.slice(5,7),16);
-    return `<button class="qbtn" onclick="quick(${i})" title="${b.title}">
-      <div class="qbtn-icon" style="background:rgba(${r},${gr},${bl},.18);color:${hex}">
-        <i class="fa-solid ${b.icon}"></i>
-      </div>
-      ${b.label}
-    </button>`;
-  }).join('');
+function reconnect() {
+  if (_ws && _ws.readyState === WebSocket.OPEN) return;
+  connectWS();
 }
 
-// ══════════════ WEBSOCKET ══════════════
-function wsConnect(){
-  if(!code) return;
-  clearTimeout(reconTimer);
-  if(ws&&(ws.readyState===WebSocket.OPEN||ws.readyState===WebSocket.CONNECTING)) return;
-  let wsUrl;
-  if(host){
-    wsUrl=host.startsWith('http')||host.startsWith('ws')
-      ?host.replace(/^https?:\/\//,m=>m==='https://'?'wss://':'ws://')
-      :(location.protocol==='https:'?'wss://':'ws://')+host;
+function wsSend(data) {
+  if (_ws && _ws.readyState === WebSocket.OPEN) {
+    try { _ws.send(JSON.stringify(data)); } catch(_) {}
+  }
+}
+
+function setConnDot(on) {
+  const dot = document.getElementById('conn-dot');
+  const lbl = document.getElementById('conn-label');
+  if (dot) dot.className = 'conn-dot' + (on ? '' : ' off');
+  if (lbl) lbl.textContent = on ? 'Connected' : 'Disconnected';
+}
+
+// ── MESSAGE HANDLER ───────────────────────────────────────────────────────────
+function handleMsg(msg) {
+  if (!msg || !msg.type) return;
+
+  switch (msg.type) {
+
+    // ── Server assigns us an id and tells us our status ──────────────────────
+    case 'presenter-status': {
+      const id = msg.id ?? msg.presId;
+      if (id != null) _myId = String(id);
+
+      if (msg.status === 'granted') {
+        _granted = true;
+        // Store id for reconnect
+        try { localStorage.setItem('sda_presenter_id', String(_myId)); } catch(_) {}
+        activateApp();
+
+      } else if (msg.status === 'waiting') {
+        _granted = false;
+        showScreen('waiting-screen');
+
+      } else if (msg.status === 'kicked' || msg.status === 'revoked') {
+        _granted = false;
+        const titleEl = document.getElementById('denied-title');
+        const subEl   = document.getElementById('denied-sub');
+        if (titleEl) titleEl.textContent = msg.status === 'kicked' ? 'Access Removed' : 'Access Revoked';
+        if (subEl)   subEl.textContent   = 'The operator has removed your presenter access.';
+        showScreen('denied-screen');
+        showToast('Access ' + msg.status);
+      }
+      break;
+    }
+
+    // ── Slide update from operator ────────────────────────────────────────────
+    case 'slide': {
+      const slideSet = msg.slideSet || (msg.slide ? [msg.slide] : []);
+      const idx      = typeof msg.slideIndex === 'number' ? msg.slideIndex : 0;
+      _slideSet = slideSet;
+      _slideIdx = idx;
+      updateSlideUI();
+      break;
+    }
+
+    // ── Blank/unblank from operator ───────────────────────────────────────────
+    case 'blank': {
+      _isBlank = true;
+      const btn = document.getElementById('blank-btn');
+      if (btn) { btn.classList.add('active'); btn.innerHTML = '<i class="fa-solid fa-eye"></i> Show Screen'; }
+      break;
+    }
+    case 'unblank': {
+      _isBlank = false;
+      const btn = document.getElementById('blank-btn');
+      if (btn) { btn.classList.remove('active'); btn.innerHTML = '<i class="fa-solid fa-eye-slash"></i> Blank Screen'; }
+      break;
+    }
+
+    // ── Program sync from operator ────────────────────────────────────────────
+    case 'program-sync':
+    case 'program': {
+      if (msg.program) renderProgram(msg.program);
+      break;
+    }
+  }
+}
+
+// ── ACTIVATE APP (after grant) ────────────────────────────────────────────────
+function activateApp() {
+  showScreen('app-screen');
+  document.getElementById('app-name-badge').textContent = _myName;
+  setConnDot(true);
+  updateSlideUI();
+  showToast('✓ Access granted — you can now control slides');
+  // Load saved notes
+  try {
+    const saved = localStorage.getItem('sda_presenter_notes');
+    if (saved) document.getElementById('notes-ta').value = saved;
+  } catch(_) {}
+}
+
+// ── SLIDE UI ──────────────────────────────────────────────────────────────────
+function updateSlideUI() {
+  const slide    = _slideSet[_slideIdx];
+  const total    = _slideSet.length;
+  const prevBtn  = document.getElementById('prev-btn');
+  const nextBtn  = document.getElementById('next-btn');
+  const posRow   = document.getElementById('slide-pos-row');
+  const typeEl   = document.getElementById('prev-type');
+  const titleEl  = document.getElementById('prev-title');
+  const bodyEl   = document.getElementById('prev-body');
+  const listEl   = document.getElementById('slide-list');
+
+  if (prevBtn) prevBtn.disabled = (_slideIdx <= 0);
+  if (nextBtn) nextBtn.disabled = (_slideIdx >= total - 1);
+
+  if (posRow) posRow.textContent = total > 0
+    ? 'Slide ' + (_slideIdx + 1) + ' of ' + total
+    : 'No slides loaded';
+
+  if (slide) {
+    if (typeEl)  typeEl.textContent  = slide.type  || '';
+    if (titleEl) {
+      titleEl.textContent  = slide.hymnTitle || slide.title || slide.ref || '';
+      titleEl.style.color  = '#fff';
+      titleEl.style.fontStyle = 'normal';
+    }
+    if (bodyEl) {
+      const body = slide.body || slide.verseLabel || '';
+      bodyEl.textContent = body.length > 80 ? body.slice(0, 80) + '…' : body;
+    }
   } else {
-    const h=location.hostname,p=location.port;
-    wsUrl=(location.protocol==='https:'?'wss://':'ws://')+h+(p&&p!=='80'&&p!=='443'?':'+p:'');
+    if (typeEl)  typeEl.textContent  = '—';
+    if (titleEl) { titleEl.textContent = 'Nothing on screen'; titleEl.style.color = 'rgba(255,255,255,.2)'; titleEl.style.fontStyle = 'italic'; }
+    if (bodyEl)  bodyEl.textContent  = '';
   }
-  try{
-    ws=new WebSocket(wsUrl);
-    ws.onopen=()=>{
-      connected=true; setConn(true);
-      // Always announce on connect/reconnect so operator panel stays updated
-      wsSend({ type: 'presenter-join', name: name });
-      // If already granted, don't re-show waiting overlay
-      // The server will re-send our status (granted/waiting) based on its state
-    };
-    ws.onclose=()=>{connected=false;setConn(false);ws=null;if(code) reconTimer=setTimeout(wsConnect,4000);};
-    ws.onerror=()=>{ws=null;connected=false;setConn(false);};
-    ws.onmessage=e=>{try{onMsg(JSON.parse(e.data));}catch(_){}};
-  }catch(e){setConn(false);if(code) reconTimer=setTimeout(wsConnect,4000);}
-}
 
-function wsSend(d){if(ws&&ws.readyState===WebSocket.OPEN) try{ws.send(JSON.stringify(d));}catch(_){}}
-
-function setConn(on){
-  document.getElementById('conn-dot').className='conn-dot '+(on?'on':'off');
-  const t=document.getElementById('conn-txt');
-  t.className='conn-txt '+(on?'on':'');
-  t.textContent=on?'Connected · '+code:'Reconnecting…';
-}
-
-function onMsg(msg){
-  if(msg.type==='slide'&&msg.slide){
-    const s=msg.slide;
-    document.getElementById('nb-type').textContent=s.type||'';
-    document.getElementById('nb-title').textContent=s.title||'';
-    document.getElementById('ns-type').textContent=(s.type||'').toUpperCase();
-    document.getElementById('ns-title').textContent=s.title||'';
-    document.getElementById('ns-body').textContent=(s.body||'').split('\n')[0]||'';
-    if(msg.slideSet&&msg.slideSet.length>0){slideSet=msg.slideSet;slideIdx=typeof msg.slideIndex==='number'?msg.slideIndex:0;}
-    else if(slideSet.length===0){slideSet=[s];slideIdx=0;}
-    updateNav(); renderSli(); renderPreview(s);
-    isBlank=false;
-    document.getElementById('blank-btn').classList.remove('blanked');
-    document.getElementById('preview-blank')?.classList.remove('show');
-    return;
-  }
-  if(msg.type==='blank'){
-    document.getElementById('nb-type').textContent='BLANK';
-    document.getElementById('nb-title').textContent='Screen is blank';
-    document.getElementById('ns-type').textContent='BLANK';
-    document.getElementById('ns-title').textContent='Screen is blank';
-    document.getElementById('ns-body').textContent='';
-    isBlank=true;
-    document.getElementById('blank-btn').classList.add('blanked');
-    document.getElementById('preview-blank')?.classList.add('show');
-    return;
-  }
-  if(msg.type==='webrtc-answer'&&pc){pc.setRemoteDescription(new RTCSessionDescription(msg.answer)).catch(_=>{});return;}
-  if(msg.type==='webrtc-ice'&&msg.target==='presenter'&&pc){pc.addIceCandidate(new RTCIceCandidate(msg.candidate)).catch(_=>{});return;}
-  // Permission system
-  if(msg.type==='presenter-status'){handlePermStatus(msg);return;}
-}
-
-// Track last status to avoid re-rendering duplicate messages
-let _lastPermStatus = null;
-
-function handlePermStatus(msg){
-  // Deduplicate — server may send status twice due to cross-relay
-  if(msg.status === _lastPermStatus) return;
-  _lastPermStatus = msg.status;
-
-  const overlay = document.getElementById('perm-overlay');
-  const icon    = document.getElementById('perm-icon');
-  const title   = document.getElementById('perm-title');
-  const pmsg    = document.getElementById('perm-msg');
-  const pulse   = document.getElementById('perm-pulse');
-
-  switch(msg.status){
-    case 'waiting':
-      overlay.classList.remove('hidden');
-      icon.className='perm-icon waiting';
-      icon.innerHTML='<i class="fa-solid fa-hourglass-half"></i>';
-      title.textContent='Waiting for Approval';
-      pmsg.textContent='The operator will approve your request to present. Please wait…';
-      if(pulse) pulse.style.display='block';
-      break;
-
-    case 'granted':
-      overlay.classList.add('hidden');
-      _lastPermStatus = 'granted'; // keep as granted so re-connects don't reset
-      toast('✓ Access granted — you can now control the projector');
-      document.getElementById('preview-live-dot')?.classList.add('show');
-      break;
-
-    case 'denied':
-      overlay.classList.remove('hidden');
-      icon.className='perm-icon denied';
-      icon.innerHTML='<i class="fa-solid fa-ban"></i>';
-      title.textContent='Access Denied';
-      pmsg.textContent='The operator has denied your request to present.';
-      if(pulse) pulse.style.display='none';
-      break;
-
-    case 'kicked':
-      overlay.classList.remove('hidden');
-      icon.className='perm-icon denied';
-      icon.innerHTML='<i class="fa-solid fa-user-slash"></i>';
-      title.textContent='Access Revoked';
-      pmsg.textContent='The operator has removed your presenter access.';
-      if(pulse) pulse.style.display='none';
-      // Reset so they can re-request
-      setTimeout(() => { _lastPermStatus = null; }, 3000);
-      break;
+  // Render slide list
+  if (listEl) {
+    if (!_slideSet.length) {
+      listEl.innerHTML = '<div style="text-align:center;padding:20px;color:var(--muted);font-size:12px">Slides will appear here when the operator projects content.</div>';
+    } else {
+      listEl.innerHTML = _slideSet.map((s, i) => `
+        <div class="slide-item${i === _slideIdx ? ' active' : ''}" onclick="jumpToSlide(${i})">
+          <span class="slide-item-num">${i + 1}</span>
+          <div style="flex:1;min-width:0">
+            <div class="slide-item-label">${s.verseLabel || s.type || ''}</div>
+            <div class="slide-item-text">${s.hymnTitle || s.title || s.ref || s.body?.split('\n')[0] || ''}</div>
+          </div>
+        </div>`).join('');
+    }
   }
 }
 
-// ══════════════ JOIN / LEAVE ══════════════
-function join(){
-  const n=document.getElementById('inp-name').value.trim();
-  const c=document.getElementById('inp-code').value.trim().toUpperCase();
-  const h=document.getElementById('inp-host').value.trim();
-  if(!n){toast('Please enter your name');return;}
-  if(!c){toast('Please enter the session code');return;}
-  name=n; code=c; host=h||'';
-  document.getElementById('pres-name').textContent=name;
-  document.getElementById('screen-join').classList.remove('active');
-  document.getElementById('screen-main').classList.add('active');
-  wsConnect();
-  loadHymns();
-  renderSongs('');
-  renderPresenterQD();
-  loadBible();
-  loadRecent();
-}
-function leave(){
-  code=''; clearTimeout(reconTimer);
-  if(ws){try{ws.close();}catch(_){}} ws=null;
-  stopShare();
-  connected=false; slideSet=[]; slideIdx=0; isBlank=false;
-  document.getElementById('screen-main').classList.remove('active');
-  document.getElementById('screen-join').classList.add('active');
+// ── NAVIGATION ────────────────────────────────────────────────────────────────
+function sendNav(dir) {
+  if (!_granted) { showToast('Waiting for operator approval'); return; }
+  const newIdx = _slideIdx + dir;
+  if (newIdx < 0 || newIdx >= _slideSet.length) return;
+  _slideIdx = newIdx;
+  updateSlideUI();
+  wsSend({ type: 'slide', slide: _slideSet[_slideIdx], slideSet: _slideSet, slideIndex: _slideIdx });
 }
 
-// ══════════════ NAVIGATION ══════════════
-function nav(dir){
-  const i=slideIdx+dir;
-  if(i<0||i>=slideSet.length) return;
-  slideIdx=i; wsSend({type:'slide',slide:slideSet[i],slideSet,slideIndex:i});
-  updateNav(); renderSli();
-}
-function goSli(i){
-  slideIdx=i; wsSend({type:'slide',slide:slideSet[i],slideSet,slideIndex:i});
-  updateNav(); renderSli();
-}
-function updateNav(){
-  document.getElementById('btn-prev').disabled=slideIdx<=0;
-  document.getElementById('btn-next').disabled=slideIdx>=slideSet.length-1;
-  document.getElementById('nav-ctr').textContent=slideSet.length>1?(slideIdx+1)+'/'+slideSet.length:'—';
-}
-function renderSli(){
-  const w=document.getElementById('slides-wrap');
-  const l=document.getElementById('slides-list');
-  if(!slideSet.length){w.classList.remove('show');return;}
-  w.classList.add('show');
-  l.innerHTML=slideSet.map((s,i)=>`
-    <div class="sli${i===slideIdx?' cur':''}" onclick="goSli(${i})">
-      <span class="sli-lbl">${s.sub||s.type||''}</span>
-      <span class="sli-txt">${(s.body||s.title||'').split('\n')[0]}</span>
-    </div>`).join('');
-}
-function toggleBlank(){
-  isBlank=!isBlank;
-  document.getElementById('blank-btn').classList.toggle('blanked',isBlank);
-  document.getElementById('preview-blank')?.classList.toggle('show',isBlank);
-  if(isBlank) wsSend({type:'blank'});
-  else{
-    if(slideSet[slideIdx]) wsSend({type:'slide',slide:slideSet[slideIdx],slideSet,slideIndex:slideIdx});
-  }
-}
-function quick(i){
-  const b=QD[i]; if(!b) return;
-  const s={type:b.type,title:b.title,sub:'',body:b.body,ref:''};
-  slideSet=[s]; slideIdx=0;
-  wsSend({type:'slide',slide:s,slideSet:[s],slideIndex:0});
-  updateNav(); renderSli();
-  toast('▶ '+b.title);
-  switchTab('control');
+function jumpToSlide(idx) {
+  if (!_granted) { showToast('Waiting for operator approval'); return; }
+  if (idx < 0 || idx >= _slideSet.length) return;
+  _slideIdx = idx;
+  updateSlideUI();
+  wsSend({ type: 'slide', slide: _slideSet[_slideIdx], slideSet: _slideSet, slideIndex: _slideIdx });
 }
 
-// ══════════════ TAB SWITCHING ══════════════
-function switchTab(t){
-  ['control','songs','bible','share'].forEach(x=>{
-    document.getElementById('tab-'+x).classList.toggle('active',x===t);
-    const bn=document.getElementById('bnav-'+x);
-    const sn=document.getElementById('snav-'+x);
-    if(bn) bn.classList.toggle('active',x===t);
-    if(sn) sn.classList.toggle('active',x===t);
-  });
-  if(t==='share') loadRecent();
-}
-
-// ══════════════ SONGS ══════════════
-function setSLang(l){
-  sLang=l;
-  ['en','rw','fr'].forEach(x=>document.getElementById('sl-'+x).classList.toggle('active',x===l));
-  document.getElementById('song-srch').value='';
-  renderSongs('');
-}
-function filterSongs(q){renderSongs(q);}
-function renderSongs(q){
-  const list=HYMNS[sLang]||[];
-  const lc=q.toLowerCase().trim();
-  const f=lc?list.filter(h=>h.title.toLowerCase().includes(lc)||String(h.number).includes(lc)):list;
-  const names={en:'English',rw:'Kinyarwanda',fr:'Français'};
-  document.getElementById('songs-meta').textContent=f.length+' hymns · '+names[sLang]+(hymnsLoaded?'':' · loading full library…');
-  const sl=document.getElementById('songs-list');
-  if(!f.length){sl.innerHTML='<div class="empty"><i class="fa-solid fa-music"></i><span>No hymns found</span></div>';return;}
-  sl.innerHTML=f.map(h=>`
-    <div class="hymn" id="ph-${h.id}">
-      <div class="hymn-hdr" onclick="toggleH(${h.id})">
-        <span class="hymn-num">#${h.number}</span>
-        <span class="hymn-ttl">${h.title}</span>
-        <i class="fa-solid fa-chevron-down hymn-chev"></i>
-      </div>
-      <div class="verse-rows">${h.verses.map((v,vi)=>`
-        <button class="vrow" id="vr-${h.id}-${vi}" onclick="projectVerse(${h.id},${vi})">
-          <span class="vrow-lbl">${v.label}</span>
-          <span class="vrow-pre">${v.text.split('\n')[0]}</span>
-        </button>`).join('')}
-      </div>
-    </div>`).join('');
-}
-function toggleH(id){
-  const c=document.getElementById('ph-'+id);
-  const was=c.classList.contains('open');
-  document.querySelectorAll('.hymn.open').forEach(x=>x.classList.remove('open'));
-  if(!was){c.classList.add('open');c.scrollIntoView({behavior:'smooth',block:'nearest'});}
-}
-function projectVerse(hid,vi){
-  const list=HYMNS[sLang]||[];
-  const h=list.find(x=>x.id===hid); if(!h) return;
-  const set=h.verses.map(v=>({type:'Song · Hymn '+h.number,title:h.title,sub:v.label,body:v.text,ref:''}));
-  slideSet=set; slideIdx=vi;
-  wsSend({type:'slide',slide:set[vi],slideSet:set,slideIndex:vi});
-  document.querySelectorAll('.vrow').forEach(b=>b.classList.remove('cur'));
-  document.getElementById('vr-'+hid+'-'+vi)?.classList.add('cur');
-  updateNav(); renderSli(); renderPreview(set[vi]);
-  toast('▶ '+h.title+' — '+h.verses[vi].label);
-  switchTab('control');
-}
-
-// ══════════════ BIBLE ══════════════
-function setBLang(l){
-  bLang=l;
-  ['en','rw','fr'].forEach(x=>document.getElementById('bl-'+x).classList.toggle('active',x===l));
-  document.getElementById('bible-srch').value='';
-  if(BIBLE) fillBooks();
-}
-async function loadBible(){
-  if(BIBLE||bibleLoading) return;
-  bibleLoading=true;
-  setBibleBody('<div class="loading"><i class="fa-solid fa-spinner fa-spin"></i> Loading Bible…</div>');
-  const urls=['/bible_data.json'];
-  const h2=host.replace(/^wss?:\/\//,'').split('/')[0];
-  if(h2&&h2!==location.host) urls.push('http://'+h2+'/bible_data.json');
-  for(const url of urls){
-    try{const r=await fetch(url);if(!r.ok) continue;BIBLE=await r.json();fillBooks();bibleLoading=false;return;}catch(_){}
-  }
-  setBibleBody('<div class="bible-idle"><i class="fa-solid fa-book-bible"></i><div>Bible not available on this server.<br><small style="color:var(--muted)">Works when connected to church Wi-Fi.</small></div></div>');
-  bibleLoading=false;
-}
-function setBibleBody(h){const b=document.getElementById('bible-body');if(b)b.innerHTML=h;}
-function fillBooks(){
-  if(!BIBLE) return;
-  const books=BIBLE.books[bLang]||BIBLE.books.en;
-  const sel=document.getElementById('b-book');
-  sel.innerHTML='<option value="">— Book —</option>'+books.map((b,i)=>`<option value="${i+1}">${i+1}. ${b}</option>`).join('');
-  document.getElementById('b-chap').innerHTML='<option value="">— Chapter —</option>';
-  document.getElementById('b-chap').disabled=true;
-  document.getElementById('bible-meta').style.display='none';
-  setBibleBody('<div class="bible-idle"><i class="fa-solid fa-book-bible"></i><div>Select a book above or type a reference<br><strong>Yohana 3:16</strong></div></div>');
-}
-function onBook(){
-  if(!BIBLE) return;
-  const bn=parseInt(document.getElementById('b-book').value); if(!bn) return;
-  const ld=BIBLE[bLang]||BIBLE.en, bd=ld[bn-1];
-  const cs=document.getElementById('b-chap');
-  cs.innerHTML='<option value="">— Chapter —</option>'+Array.from({length:bd.length},(_,i)=>`<option value="${i+1}">${i+1}</option>`).join('');
-  cs.disabled=false;
-  const books=BIBLE.books[bLang]||BIBLE.books.en;
-  const meta=document.getElementById('bible-meta');
-  meta.style.display=''; meta.textContent=books[bn-1]+' — '+bd.length+' chapters';
-  setBibleBody('<div class="chap-grid">'+Array.from({length:bd.length},(_,i)=>`<button class="chap-btn" onclick="selChap(${bn},${i+1})">${i+1}</button>`).join('')+'</div>');
-}
-function selChap(bn,cn){document.getElementById('b-chap').value=cn;loadChap(bn,cn);}
-function onChap(){const bn=parseInt(document.getElementById('b-book').value),cn=parseInt(document.getElementById('b-chap').value);if(bn&&cn)loadChap(bn,cn);}
-function loadChap(bn,cn){
-  if(!BIBLE) return;
-  const ld=BIBLE[bLang]||BIBLE.en,verses=ld[bn-1]?.[cn-1]||[];
-  const books=BIBLE.books[bLang]||BIBLE.books.en,bName=books[bn-1]||'';
-  const ver={en:'KJV',fr:'LSG',rw:'BYH'}[bLang]||'KJV';
-  slideSet=verses.map((t,i)=>({type:'Scripture · '+ver,title:bName+' '+cn+':'+(i+1),sub:ver,body:'"'+t+'"',ref:''}));
-  const meta=document.getElementById('bible-meta');
-  meta.style.display=''; meta.textContent=bName+' '+cn+' · '+ver+' · '+verses.length+' verses — tap to project';
-  setBibleBody('<div class="verse-list">'+verses.map((t,i)=>!t?'':
-    `<div class="bv" id="bvi-${bn}-${cn}-${i+1}" onclick="projVerse(${bn},${cn},${i+1})">
-      <span class="bv-num">${i+1}</span><span class="bv-txt">${t}</span></div>`
-  ).join('')+'</div>');
-}
-function projVerse(bn,cn,vn){
-  if(!BIBLE) return;
-  const t=(BIBLE[bLang]||BIBLE.en)[bn-1]?.[cn-1]?.[vn-1]; if(!t) return;
-  const books=BIBLE.books[bLang]||BIBLE.books.en;
-  const ver={en:'KJV',fr:'LSG',rw:'BYH'}[bLang]||'KJV';
-  const ref=books[bn-1]+' '+cn+':'+vn;
-  const s={type:'Scripture · '+ver,title:ref,sub:ver,body:'"'+t+'"',ref:ref+' — '+ver};
-  slideIdx=vn-1;
-  wsSend({type:'slide',slide:s,slideSet,slideIndex:vn-1});
-  document.querySelectorAll('.bv').forEach(c=>c.classList.remove('cur'));
-  const card=document.getElementById('bvi-'+bn+'-'+cn+'-'+vn);
-  if(card){card.classList.add('cur');card.scrollIntoView({behavior:'smooth',block:'nearest'});}
-  updateNav(); renderSli();
-  toast('▶ '+ref); switchTab('control');
-}
-
-// Bible reference book map
-const BK=(()=>{const m={};const a=(i,al)=>al.forEach(s=>m[s.toLowerCase()]=i);
-a(0,['genesis','gen','intangiriro','genese']);a(1,['exodus','exo','kuva','exode']);
-a(2,['leviticus','lev','abalewi','levitique']);a(3,['numbers','num','kubara','nombres']);
-a(4,['deuteronomy','deut','gutegeka','deuteronome']);a(5,['joshua','josh','yosuwa','josue']);
-a(6,['judges','judg','abacamanza','juges']);a(7,['ruth','rusi']);
-a(8,['1 samuel','1 samweli']);a(9,['2 samuel','2 samweli']);
-a(10,['1 kings','1 abami','1 rois']);a(11,['2 kings','2 abami','2 rois']);
-a(12,['1 chronicles','1 ngoma','1 chroniques']);a(13,['2 chronicles','2 ngoma','2 chroniques']);
-a(14,['ezra','ezira']);a(15,['nehemiah','nehemiya']);a(16,['esther','esiteri']);
-a(17,['job','yobu']);a(18,['psalms','psalm','ps','zaburi','psaumes']);
-a(19,['proverbs','prov','imigani','proverbes']);a(20,['ecclesiastes','umubwiriza']);
-a(21,['song','cantique']);a(22,['isaiah','isa','yesaya','esaie']);
-a(23,['jeremiah','jer','yeremiya']);a(24,['lamentations','lam','amaganya']);
-a(25,['ezekiel','ezek','ezekiyeli']);a(26,['daniel','dan','daniyeli']);
-a(27,['hosea','hoseya']);a(28,['joel','yoweli']);a(29,['amos','amosi']);
-a(30,['obadiah','obadiya']);a(31,['jonah','yona']);a(32,['micah','mika']);
-a(33,['nahum','nahumu']);a(34,['habakkuk','habakuki']);a(35,['zephaniah','zefaniya','sophonie']);
-a(36,['haggai','hagayi']);a(37,['zechariah','zech','zekariya','zacharie']);a(38,['malachi','malaki']);
-a(39,['matthew','matt','matayo','matthieu']);a(40,['mark','mk','mariko','marc']);
-a(41,['luke','lk','luka','luc']);a(42,['john','jn','yohana','jean']);
-a(43,['acts','ibyakozwe','actes']);a(44,['romans','rom','abaroma','romains']);
-a(45,['1 corinthians','1cor','1 abakorinto','1 corinthiens']);a(46,['2 corinthians','2cor','2 corinthiens']);
-a(47,['galatians','gal','abagalatiya','galates']);a(48,['ephesians','eph','abefeso']);
-a(49,['philippians','phil','abafilipi','philippiens']);a(50,['colossians','col','abakolosayi','colossiens']);
-a(51,['1 thessalonians','1 abatesalonike']);a(52,['2 thessalonians','2 abatesalonike']);
-a(53,['1 timothy','1 timoteyo']);a(54,['2 timothy','2 timoteyo']);
-a(55,['titus','tito']);a(56,['philemon','filemoni']);a(57,['hebrews','heb','abaheburayo','hebreux']);
-a(58,['james','yakobo','jacques']);a(59,['1 peter','1 petero','1 pierre']);
-a(60,['2 peter','2 petero','2 pierre']);a(61,['1 john','1 yohana','1 jean']);
-a(62,['2 john','2 yohana']);a(63,['3 john','3 yohana']);
-a(64,['jude','yuda']);a(65,['revelation','rev','ibyahishuwe','apocalypse']);
-return m;})();
-
-function parseRef(q){
-  const pats=[/^(\d?\s*[A-Za-z\u00C0-\u024F][A-Za-z\u00C0-\u024F\s-]+?)\s+(\d+)[:\s](\d+)$/i,/^(\d?\s*[A-Za-z\u00C0-\u024F][A-Za-z\u00C0-\u024F\s-]+?)\s+(\d+)$/i];
-  for(const p of pats){const m=q.match(p);if(!m)continue;const k=m[1].trim().toLowerCase().replace(/\s+/g,' ');let idx=BK[k];if(idx===undefined&&k.length>=2)for(const[ke,v]of Object.entries(BK)){if(ke.startsWith(k)){idx=v;break;}}if(idx!==undefined)return{bi:idx,ch:parseInt(m[2]),vn:m[3]?parseInt(m[3]):null};}return null;
-}
-function bsearch(v){
-  clearTimeout(bsTimer);
-  if(!v||v.trim().length<2){if(BIBLE)fillBooks();return;}
-  bsTimer=setTimeout(()=>doBSearch(v.trim()),380);
-}
-async function doBSearch(q){
-  if(!BIBLE){await loadBible();if(!BIBLE)return;}
-  const ref=parseRef(q);
-  if(ref){document.getElementById('b-book').value=ref.bi+1;onBook();setTimeout(()=>{document.getElementById('b-chap').value=ref.ch;loadChap(ref.bi+1,ref.ch);if(ref.vn)setTimeout(()=>projVerse(ref.bi+1,ref.ch,ref.vn),150);},80);return;}
-  const ld=BIBLE[bLang]||BIBLE.en,books=BIBLE.books[bLang]||BIBLE.books.en;
-  const ver={en:'KJV',fr:'LSG',rw:'BYH'}[bLang]||'KJV';
-  const lc=q.toLowerCase(),res=[];
-  for(let b=0;b<ld.length&&res.length<40;b++)for(let c=0;c<ld[b].length&&res.length<40;c++)for(let v=0;v<ld[b][c].length&&res.length<40;v++){const t=ld[b][c][v];if(t&&t.toLowerCase().includes(lc))res.push({bn:b+1,cn:c+1,vn:v+1,text:t,bName:books[b]});}
-  slideSet=res.map(r=>({type:'Scripture · '+ver,title:r.bName+' '+r.cn+':'+r.vn,sub:ver,body:'"'+r.text+'"',ref:''}));
-  const esc=q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),re=new RegExp('('+esc+')','gi');
-  const meta=document.getElementById('bible-meta');meta.style.display='';meta.textContent=res.length+' results for "'+q+'" · '+ver;
-  if(!res.length){setBibleBody('<div class="bible-idle"><i class="fa-solid fa-magnifying-glass"></i><div>No results for "'+q+'"</div></div>');return;}
-  setBibleBody('<div class="verse-list">'+res.map((r,i)=>`<div class="bv" onclick="projSR(${i})"><span class="bv-num">${r.cn}:${r.vn}</span><span class="bv-txt">${r.text.replace(re,'<mark style="background:rgba(200,144,46,.25);color:var(--gold)">$1</mark>')}</span></div>`).join('')+'</div>');
-}
-function projSR(i){const s=slideSet[i];if(!s)return;slideIdx=i;wsSend({type:'slide',slide:s,slideSet,slideIndex:i});updateNav();renderSli();toast('▶ '+s.title);switchTab('control');}
-
-// ══════════════ SCREEN SHARE (WebRTC + TURN) ══════════════
-const ICE={iceServers:[
-  {urls:'stun:stun.l.google.com:19302'},
-  {urls:'stun:stun1.l.google.com:19302'},
-  {urls:'stun:openrelay.metered.ca:80'},
-  {urls:'turn:openrelay.metered.ca:80',   username:'openrelayproject',credential:'openrelayproject'},
-  {urls:'turn:openrelay.metered.ca:443',  username:'openrelayproject',credential:'openrelayproject'},
-  {urls:'turn:openrelay.metered.ca:443?transport=tcp',username:'openrelayproject',credential:'openrelayproject'},
-]};
-
-async function startShare(){
-  if(sharing) return;
-  try{
-    setShareStatus('connecting','Requesting screen access…');
-    localStream=await navigator.mediaDevices.getDisplayMedia({video:{frameRate:{ideal:30},cursor:'always'},audio:true});
-    pc=new RTCPeerConnection(ICE);
-    localStream.getTracks().forEach(t=>pc.addTrack(t,localStream));
-    pc.onicecandidate=e=>{if(e.candidate) wsSend({type:'webrtc-ice',target:'projector',candidate:e.candidate});};
-    pc.onconnectionstatechange=()=>{
-      if(pc.connectionState==='connected'){sharing=true;setShareStatus('live','Sharing live to projector');}
-      if(['disconnected','failed','closed'].includes(pc.connectionState)) stopShare();
-    };
-    const offer=await pc.createOffer();
-    await pc.setLocalDescription(offer);
-    wsSend({type:'webrtc-offer',offer});
-    localStream.getVideoTracks()[0].onended=()=>stopShare();
-    toast('Screen sharing started — waiting for connection…');
-  }catch(e){
-    if(e.name==='NotAllowedError') toast('Screen access was denied');
-    else toast('Screen share failed: '+e.message);
-    setShareStatus('idle','Not sharing');
-  }
-}
-function stopShare(){
-  if(localStream){localStream.getTracks().forEach(t=>t.stop());localStream=null;}
-  if(pc){pc.close();pc=null;}
-  sharing=false;
-  setShareStatus('idle','Not sharing');
-  wsSend({type:'share-stop'});
-  toast('Screen sharing stopped');
-}
-function setShareStatus(state,txt){
-  // Share tab indicators
-  const dot=document.getElementById('rtc-dot');
-  const stxt=document.getElementById('rtc-status');
-  const startBtn=document.getElementById('share-start-btn');
-  const stopBtn=document.getElementById('share-stop-btn');
-  if(dot) dot.className='status-dot'+(state==='live'?' live':'');
-  if(stxt){stxt.className='status-txt'+(state==='live'?' live':'');stxt.textContent=txt;}
-  if(state==='live'){startBtn?.classList.add('hidden');stopBtn?.classList.remove('hidden');}
-  else{startBtn?.classList.remove('hidden');stopBtn?.classList.add('hidden');}
-  // Control tab share bar
-  const badge=document.getElementById('share-badge');
-  const stopRow=document.getElementById('share-stop-row');
-  const bar=document.getElementById('share-bar');
-  if(state==='live'){
-    if(badge){badge.textContent='LIVE';badge.className='share-badge live';}
-    stopRow?.classList.add('show');
-    if(bar) bar.onclick=null;
+function toggleBlank() {
+  if (!_granted) { showToast('Waiting for operator approval'); return; }
+  _isBlank = !_isBlank;
+  const btn = document.getElementById('blank-btn');
+  if (_isBlank) {
+    wsSend({ type: 'blank' });
+    if (btn) { btn.classList.add('active'); btn.innerHTML = '<i class="fa-solid fa-eye"></i> Show Screen'; }
   } else {
-    if(badge){badge.textContent='OFF';badge.className='share-badge idle';}
-    stopRow?.classList.remove('show');
-    if(bar) bar.onclick=()=>startShare();
+    wsSend({ type: 'unblank' });
+    if (btn) { btn.classList.remove('active'); btn.innerHTML = '<i class="fa-solid fa-eye-slash"></i> Blank Screen'; }
   }
 }
 
-// ══════════════ FILE UPLOAD ══════════════
-function onDrop(e){e.preventDefault();document.getElementById('drop-zone').classList.remove('drag');const f=e.dataTransfer.files[0];if(f)uploadFile(f);}
-async function uploadFile(file){
-  if(!file) return;
-  const isSecure=location.protocol==='https:';
-  const baseUrl=isSecure?'':('http://'+(host.replace(/^wss?:\/\//,'').split('/')[0]||location.hostname+':4040'));
-  if(!file.type.startsWith('video/')&&!file.type.startsWith('image/')&&!/\.(mkv|mp4|webm|avi|mov)$/i.test(file.name)){toast('Please select a video or image file');return;}
-  if(file.size>500*1024*1024){toast('File too large — max 500MB');return;}
-  const pw=document.getElementById('prog-wrap'),pf=document.getElementById('prog-fill'),pl=document.getElementById('prog-lbl');
-  pw.style.display='flex'; pf.style.width='0%'; pl.textContent='Uploading '+file.name+'…';
-  try{
-    await new Promise((res,rej)=>{
-      const x=new XMLHttpRequest();
-      x.open('POST',baseUrl+'/upload');
-      x.setRequestHeader('X-Filename',encodeURIComponent(file.name));
-      x.setRequestHeader('X-Filetype',file.type||'application/octet-stream');
-      x.upload.onprogress=e=>{if(e.lengthComputable){const p=Math.round(e.loaded/e.total*100);pf.style.width=p+'%';pl.textContent=p+'% — '+file.name;}};
-      x.onload=()=>x.status===200?res(JSON.parse(x.responseText)):rej(new Error('Server error: '+x.status));
-      x.onerror=()=>rej(new Error('Network error'));
-      x.send(file);
+// ── PROGRAM PANEL ─────────────────────────────────────────────────────────────
+const TYPE_COLORS = {
+  song:'#c8902e', bible:'#4a90d9', prayer:'#9b59b6', sermon:'#e67e22',
+  choir:'#2ecc71', offering:'#2ecc71', announce:'#3498db', default:'#95a5a6',
+};
+
+function renderProgram(program) {
+  const list = document.getElementById('prog-panel-list');
+  if (!list || !program) return;
+  let html = '';
+  program.forEach(section => {
+    html += `<div style="font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);padding:10px 0 5px">${section.section}</div>`;
+    (section.items || []).forEach((item, i) => {
+      const color = TYPE_COLORS[item.type] || TYPE_COLORS.default;
+      html += `
+        <div class="prog-item-row" onclick="progGoTo(${JSON.stringify(item).replace(/"/g,'&quot;')})">
+          <div class="pir-dot" style="background:${color}"></div>
+          <div class="pir-info">
+            <div class="pir-name">${item.nameEn || ''}</div>
+            <div class="pir-meta">${item.time ? item.time + ' · ' : ''}${item.presenter || ''}</div>
+          </div>
+          <button class="pir-go">Go</button>
+        </div>`;
     });
-    pf.style.width='100%'; pl.textContent='✓ Uploaded and playing on projector';
-    toast('▶ Playing: '+file.name);
-    setTimeout(()=>{pw.style.display='none';},3000);
-    loadRecent();
-  }catch(e){pl.textContent='✗ '+e.message;toast('Upload failed: '+e.message);setTimeout(()=>{pw.style.display='none';},3000);}
-}
-async function loadRecent(){
-  const isSecure=location.protocol==='https:';
-  const baseUrl=isSecure?'':('http://'+(host.replace(/^wss?:\/\//,'').split('/')[0]||location.hostname+':4040'));
-  const rf=document.getElementById('recent-files'); if(!rf) return;
-  try{
-    const r=await fetch(baseUrl+'/uploads-list'); if(!r.ok) return;
-    const files=await r.json();
-    if(!files.length){rf.innerHTML='<div class="empty" style="padding:10px"><i class="fa-solid fa-folder-open"></i><span>No files yet</span></div>';return;}
-    const ico=n=>/\.(mp4|webm|mkv|avi|mov)$/i.test(n)?'fa-file-video':/\.(jpg|jpeg|png)$/i.test(n)?'fa-file-image':'fa-file';
-    const fmt=b=>b<1048576?(b/1024).toFixed(0)+' KB':(b/1048576).toFixed(1)+' MB';
-    rf.innerHTML=files.map(f=>`<div class="file-item" onclick="playFile('${f.url}','${f.name}')">
-      <i class="fa-solid ${ico(f.name)} file-ico"></i>
-      <div class="file-info"><div class="file-name">${f.name}</div><div class="file-size">${fmt(f.size)}</div></div>
-      <button class="file-play-btn"><i class="fa-solid fa-play"></i> Show</button>
-    </div>`).join('');
-  }catch(_){}
-}
-function playFile(url,name){
-  const ext=name.split('.').pop().toLowerCase();
-  const m={mp4:'video/mp4',webm:'video/webm',mkv:'video/x-matroska',avi:'video/x-msvideo',mov:'video/quicktime',jpg:'image/jpeg',jpeg:'image/jpeg',png:'image/png'};
-  wsSend({type:'file-share',fileUrl:url,mimeType:m[ext]||'video/mp4',fileName:name});
-  toast('▶ Sending to projector: '+name);
-  switchTab('control');
+  });
+  list.innerHTML = html || '<div style="text-align:center;padding:20px;color:var(--muted);font-size:12px">Program not loaded yet.</div>';
 }
 
-// ══════════════ LIVE PREVIEW ══════════════
-function renderPreview(slide){
-  if(!slide) return;
-  const standby  = document.getElementById('preview-standby');
-  const slideEl  = document.getElementById('preview-slide');
-  const psType   = document.getElementById('ps-type');
-  const psTitle  = document.getElementById('ps-title');
-  const psSub    = document.getElementById('ps-sub');
-  const psDiv    = document.getElementById('ps-divider');
-  const psBody   = document.getElementById('ps-body');
-
-  if(standby)  standby.classList.add('hidden');
-  if(slideEl)  slideEl.style.display='flex';
-
-  if(psType)  psType.textContent  = slide.type  || '';
-  if(psTitle) psTitle.textContent = slide.title || '';
-  if(psSub)   psSub.textContent   = slide.sub   || '';
-  if(psDiv)   psDiv.style.display = (slide.body && slide.title) ? 'block' : 'none';
-  if(psBody){
-    psBody.innerHTML = (slide.body || '').replace(/\n/g,'<br>');
-    psBody.style.display = slide.body ? 'block' : 'none';
-  }
-  // Highlight the currently active preview screen dot
-  document.getElementById('preview-live-dot')?.classList.add('show');
+function progGoTo(item) {
+  if (!_granted) { showToast('Waiting for operator approval'); return; }
+  // Signal operator to navigate to this program item
+  wsSend({ type: 'program-go', itemId: item.id, item });
 }
 
-// ══════════════ TOAST ══════════════
-function toast(msg){
-  const t=document.getElementById('toast');
-  t.textContent=msg; t.classList.add('show');
-  clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('show'),2400);
+// ── PANEL SWITCHING ───────────────────────────────────────────────────────────
+function switchPanel(id) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.toggle('active', p.id === 'panel-' + id));
+  document.querySelectorAll('.snav-btn, .btab').forEach(b => b.classList.toggle('active', b.dataset.panel === id));
 }
 
-// ══════════════ INIT ══════════════
-const _h=location.hostname,_p=location.port;
-const _isCloud=location.protocol==='https:'&&!_h.includes('192.168')&&!_h.includes('10.');
-if(!_isCloud&&_h&&_h!=='localhost'&&_h!=='127.0.0.1'){
-  document.getElementById('inp-host').value=_h+(_p&&_p!=='80'&&_p!=='443'?':'+_p:'');
-} else if(_isCloud){
-  document.getElementById('inp-host').placeholder='Leave blank — connected to cloud server';
-}
-
-// Keyboard shortcuts for laptop users
-document.addEventListener('keydown',e=>{
-  if(!code) return; // Only active in session
-  if(e.target.tagName==='INPUT') return; // Don't intercept form inputs
-  if(e.key==='ArrowRight'||e.key==='PageDown') nav(1);
-  if(e.key==='ArrowLeft'||e.key==='PageUp') nav(-1);
-  if(e.key==='b'||e.key==='B') toggleBlank();
+// ── KEYBOARD SHORTCUTS ────────────────────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  if (!_granted) return;
+  if (document.getElementById('notes-ta') === document.activeElement) return;
+  if (e.key === 'ArrowRight' || e.key === 'PageDown') { e.preventDefault(); sendNav(1); }
+  else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); sendNav(-1); }
+  else if (e.key === 'b' || e.key === 'B') { e.preventDefault(); toggleBlank(); }
 });
+
+// ── NOTES AUTO-SAVE ───────────────────────────────────────────────────────────
+document.getElementById('notes-ta').addEventListener('input', function() {
+  try { localStorage.setItem('sda_presenter_notes', this.value); } catch(_) {}
+});
+
+// ── TOAST ─────────────────────────────────────────────────────────────────────
+let _toastTimer = null;
+function showToast(msg) {
+  const el = document.getElementById('toast');
+  if (!el) return;
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(() => el.classList.remove('show'), 2800);
+}
+
+// ── ENTER KEY ON JOIN FORM ────────────────────────────────────────────────────
+['join-name', 'join-code'].forEach(id => {
+  document.getElementById(id)?.addEventListener('keydown', e => {
+    if (e.key === 'Enter') doJoin();
+  });
+});
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+(function init() {
+  // Pre-fill name if stored
+  try {
+    const savedName = localStorage.getItem('sda_presenter_name');
+    if (savedName) document.getElementById('join-name').value = savedName;
+  } catch(_) {}
+  // Save name on change
+  document.getElementById('join-name').addEventListener('blur', function() {
+    try { localStorage.setItem('sda_presenter_name', this.value.trim()); } catch(_) {}
+  });
+})();
 </script>
 </body>
 </html>

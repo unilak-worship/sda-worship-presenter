@@ -489,11 +489,11 @@ function doJoin() {
 // ── WEBSOCKET ─────────────────────────────────────────────────────────────────
 function connectWS() {
   const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
-  const host  = location.hostname || 'localhost';
-  const port  = location.port || '4040';
-
-  // Use same host:port as the page was served from, or default WS port
-  const wsUrl = proto + '//' + host + ':' + port;
+  // location.host includes the port ONLY when it's non-standard.
+  // On Render/Railway (https:443) there's no port to append — appending
+  // :4040 was the bug that made the server "unreachable".
+  const host = location.host || 'localhost:4040';
+  const wsUrl = proto + '//' + host;
 
   try {
     _ws = new WebSocket(wsUrl);

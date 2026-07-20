@@ -111,7 +111,8 @@ const NON_STATE_TYPES = new Set([
   'presenter-grant', 'presenter-deny', 'presenter-kick',
   'presenter-status', 'presenter-list', 'program-go', 'file-share',
   'presenter-request', 'presenter-request-result', 'share-stop',
-  'choir-sync', 'program-sync', 'library-sync', 'share-ready',
+  'choir-sync', 'program-sync', 'library-sync',
+  'share-ready', 'share-request', 'share-approved', 'share-denied',
 ]);
 
 // Presenter registry: wsId → { ws, id, name, role, granted, joinedAt }

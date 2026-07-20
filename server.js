@@ -162,6 +162,11 @@ wss.on('connection', (ws) => {
       notifyOperatorPresenterList();
       return;
     }
+    // ── Operator requests the current presenter list ────────────────────────
+    if (msg.type === 'get-presenter-list') {
+      notifyOperatorPresenterList();
+      return;
+    }
 
     // ── Operator grants/denies presenter ───────────────────────────────────
     if (msg.type === 'presenter-grant' || msg.type === 'presenter-deny') {

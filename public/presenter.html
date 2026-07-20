@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>SDA Worship — Presenter</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&family=Playfair+Display:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
@@ -11,325 +11,274 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --bg:       #0f1117;
-  --surface:  #181c27;
-  --surface2: #1e2235;
-  --border:   rgba(255,255,255,0.08);
-  --gold:     #c8902e;
-  --gold-lt:  #e8b050;
-  --text:     #e8eaf0;
-  --muted:    rgba(232,234,240,0.45);
-  --green:    #2ecc71;
-  --red:      #ef4444;
-  --radius:   8px;
-  --font:     'Lato', sans-serif;
+  --bg:#0f1117; --surface:#181c27; --surface2:#1e2235;
+  --border:rgba(255,255,255,.08); --gold:#c8902e; --gold-lt:#e8b050;
+  --text:#e8eaf0; --muted:rgba(232,234,240,.45);
+  --green:#2ecc71; --red:#ef4444; --blue:#4a90d9;
+  --radius:8px; --font:'Lato',sans-serif;
 }
 
-html, body { height: 100%; overflow: hidden; font-family: var(--font); background: var(--bg); color: var(--text); }
+html,body { height:100%; font-family:var(--font); background:var(--bg); color:var(--text); }
+body { overflow:hidden; }
+button,input,select,textarea { font-family:var(--font); }
 
-/* ── JOIN SCREEN ── */
-#join-screen {
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  min-height: 100vh; padding: 24px; gap: 20px;
+/* ── Generic ── */
+.btn {
+  font-size:13px; font-weight:700; background:var(--surface2);
+  border:1px solid var(--border); border-radius:var(--radius); color:var(--text);
+  padding:11px 14px; cursor:pointer; transition:all .15s;
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  -webkit-tap-highlight-color:transparent;
+}
+.btn:hover:not(:disabled) { border-color:var(--gold); color:var(--gold); }
+.btn:active:not(:disabled) { transform:scale(.98); }
+.btn:disabled { opacity:.35; pointer-events:none; }
+.btn.primary { background:var(--gold); color:#fff; border-color:var(--gold); }
+.btn.primary:hover { background:var(--gold-lt); color:#fff; }
+.btn.danger  { background:rgba(239,68,68,.15); border-color:var(--red); color:var(--red); }
+.btn.full { width:100%; }
+.input, .select, .textarea {
+  width:100%; font-size:14px; background:var(--surface2);
+  border:1px solid var(--border); border-radius:var(--radius);
+  color:var(--text); padding:11px 13px; outline:none; transition:border-color .2s;
+}
+.input:focus,.select:focus,.textarea:focus { border-color:var(--gold); }
+.textarea { resize:vertical; min-height:80px; line-height:1.6; }
+.label { font-size:11px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--muted); }
+.field { display:flex; flex-direction:column; gap:6px; }
+.row2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+
+/* ── Centred screens ── */
+.screen-center {
+  display:none; flex-direction:column; align-items:center; justify-content:center;
+  min-height:100vh; padding:24px; gap:18px; text-align:center;
 }
 .join-logo {
-  width: 60px; height: 60px; background: var(--gold); border-radius: 12px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 28px; color: #fff; flex-shrink: 0;
+  width:60px; height:60px; background:var(--gold); border-radius:12px;
+  display:flex; align-items:center; justify-content:center; font-size:28px; color:#fff;
 }
-.join-title { font-size: 22px; font-weight: 900; color: var(--text); text-align: center; }
-.join-sub   { font-size: 13px; color: var(--muted); text-align: center; max-width: 300px; line-height: 1.5; }
+.join-title { font-size:22px; font-weight:900; }
+.join-sub { font-size:13px; color:var(--muted); max-width:320px; line-height:1.5; }
 .join-card {
-  background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
-  padding: 24px; width: 100%; max-width: 360px; display: flex; flex-direction: column; gap: 14px;
+  background:var(--surface); border:1px solid var(--border); border-radius:14px;
+  padding:24px; width:100%; max-width:380px; display:flex; flex-direction:column; gap:14px; text-align:left;
 }
-.join-field { display: flex; flex-direction: column; gap: 6px; }
-.join-label { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); }
-.join-input {
-  font-family: var(--font); font-size: 15px; background: var(--surface2);
-  border: 1px solid var(--border); border-radius: var(--radius);
-  color: var(--text); padding: 12px 14px; outline: none; transition: border-color .2s; width: 100%;
+.join-error { font-size:12px; color:var(--red); text-align:center; min-height:16px; }
+.spinner {
+  width:56px; height:56px; border-radius:50%;
+  border:4px solid var(--border); border-top-color:var(--gold);
+  animation:spin 1s linear infinite;
 }
-.join-input:focus { border-color: var(--gold); }
-.join-btn {
-  font-family: var(--font); font-size: 15px; font-weight: 700;
-  background: var(--gold); color: #fff; border: none; border-radius: var(--radius);
-  padding: 14px; cursor: pointer; transition: background .2s; width: 100%;
-  display: flex; align-items: center; justify-content: center; gap: 8px;
-}
-.join-btn:hover { background: var(--gold-lt); }
-.join-btn:disabled { opacity: .5; pointer-events: none; }
-.join-error { font-size: 12px; color: var(--red); text-align: center; min-height: 16px; }
+@keyframes spin { to { transform:rotate(360deg); } }
 
-/* ── WAITING SCREEN ── */
-#waiting-screen {
-  display: none; flex-direction: column; align-items: center; justify-content: center;
-  min-height: 100vh; padding: 24px; gap: 20px; text-align: center;
-}
-.waiting-spinner {
-  width: 56px; height: 56px; border-radius: 50%;
-  border: 4px solid var(--border); border-top-color: var(--gold);
-  animation: spin 1s linear infinite;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
-.waiting-title { font-size: 18px; font-weight: 700; }
-.waiting-sub   { font-size: 13px; color: var(--muted); max-width: 280px; line-height: 1.5; }
-.waiting-name  { font-size: 13px; color: var(--gold); font-weight: 700; }
-
-/* ── MAIN APP (after granted) ── */
-#app-screen {
-  display: none; height: 100vh; flex-direction: column; overflow: hidden;
-}
-
-/* Top bar */
+/* ── App shell ── */
+#app-screen { display:none; height:100vh; flex-direction:column; overflow:hidden; }
 .app-topbar {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 0 14px; height: 48px; background: var(--surface);
-  border-bottom: 1px solid var(--border); flex-shrink: 0; gap: 10px;
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+  padding:0 14px; height:52px; background:var(--surface);
+  border-bottom:1px solid var(--border); flex-shrink:0;
 }
-.app-logo { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; }
-.app-logo-icon { width: 26px; height: 26px; background: var(--gold); border-radius: 5px; display: flex; align-items: center; justify-content: center; font-size: 13px; color: #fff; }
-.conn-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); box-shadow: 0 0 5px var(--green); flex-shrink: 0; }
-.conn-dot.off { background: var(--red); box-shadow: 0 0 5px var(--red); }
-.app-name-badge { font-size: 11px; font-weight: 700; color: var(--muted); }
+.app-logo { display:flex; align-items:center; gap:8px; font-size:13px; font-weight:700; }
+.app-logo-icon {
+  width:26px; height:26px; background:var(--gold); border-radius:5px;
+  display:flex; align-items:center; justify-content:center; font-size:13px; color:#fff;
+}
+.conn-dot { width:7px; height:7px; border-radius:50%; background:var(--green); box-shadow:0 0 5px var(--green); }
+.conn-dot.off { background:var(--red); box-shadow:0 0 5px var(--red); }
 
-/* Main content area */
-.app-body { flex: 1; overflow: hidden; display: flex; }
+.app-body { flex:1; display:flex; overflow:hidden; }
 
-/* ── DESKTOP: sidebar nav + content ── */
+/* Sidebar (desktop) */
 .sidebar-nav {
-  width: 56px; background: var(--surface); border-right: 1px solid var(--border);
-  display: flex; flex-direction: column; align-items: center; padding: 8px 0; gap: 4px;
-  flex-shrink: 0;
+  width:64px; background:var(--surface); border-right:1px solid var(--border);
+  display:flex; flex-direction:column; align-items:center; padding:8px 0; gap:4px; flex-shrink:0;
 }
-@media (max-width: 767px) { .sidebar-nav { display: none; } }
-
 .snav-btn {
-  width: 40px; height: 40px; border-radius: var(--radius); display: flex;
-  align-items: center; justify-content: center; font-size: 16px;
-  color: var(--muted); background: transparent; border: none; cursor: pointer;
-  transition: all .15s; position: relative;
+  width:48px; height:46px; border-radius:var(--radius); display:flex;
+  flex-direction:column; align-items:center; justify-content:center; gap:3px;
+  font-size:15px; color:var(--muted); background:transparent; border:none; cursor:pointer;
+  transition:all .15s;
 }
-.snav-btn:hover  { background: var(--surface2); color: var(--text); }
-.snav-btn.active { background: rgba(200,144,46,.15); color: var(--gold); }
-.snav-btn .snav-tip {
-  position: absolute; left: 52px; background: var(--surface); border: 1px solid var(--border);
-  border-radius: 6px; padding: 4px 8px; font-size: 11px; font-weight: 700;
-  white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity .1s; z-index: 99;
-}
-.snav-btn:hover .snav-tip { opacity: 1; }
+.snav-btn span { font-size:8px; font-weight:700; letter-spacing:.3px; text-transform:uppercase; }
+.snav-btn:hover { background:var(--surface2); color:var(--text); }
+.snav-btn.active { background:rgba(200,144,46,.15); color:var(--gold); }
 
 /* Panels */
-.panel { display: none; flex: 1; overflow-y: auto; flex-direction: column; }
-.panel.active { display: flex; }
-
-/* ── SLIDE CONTROL PANEL ── */
-.slide-preview-screen {
-  margin: 14px 14px 10px; background: #06060e; border-radius: 10px;
-  aspect-ratio: 16/9; position: relative; overflow: hidden; flex-shrink: 0;
-  border: 1px solid var(--border);
-}
-.slide-preview-content {
-  position: absolute; inset: 0; display: flex; flex-direction: column;
-  align-items: center; justify-content: center; padding: 12px; text-align: center;
-}
-.spc-type  { font-size: 8px; letter-spacing: 2px; text-transform: uppercase; color: rgba(200,144,46,.6); margin-bottom: 5px; }
-.spc-title { font-family: 'Playfair Display', serif; font-size: 14px; font-weight: 600; color: #fff; line-height: 1.3; }
-.spc-body  { font-size: 10px; color: rgba(255,255,255,.7); margin-top: 4px; line-height: 1.4; font-style: italic; }
-
-/* Nav buttons */
-.nav-row {
-  display: flex; gap: 10px; padding: 0 14px 10px; flex-shrink: 0;
-}
-.nav-big-btn {
-  flex: 1; font-family: var(--font); font-size: 15px; font-weight: 700;
-  background: var(--surface2); border: 1px solid var(--border);
-  border-radius: var(--radius); color: var(--text); padding: 14px;
-  cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
-  transition: all .15s; -webkit-tap-highlight-color: transparent;
-}
-.nav-big-btn:hover:not(:disabled)  { border-color: var(--gold); color: var(--gold); }
-.nav-big-btn:active:not(:disabled) { transform: scale(.97); }
-.nav-big-btn:disabled { opacity: .3; pointer-events: none; }
-
-.blank-row { padding: 0 14px 10px; flex-shrink: 0; }
-.blank-toggle-btn {
-  width: 100%; font-family: var(--font); font-size: 13px; font-weight: 700;
-  background: var(--surface2); border: 1px solid var(--border);
-  border-radius: var(--radius); color: var(--muted); padding: 12px;
-  cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
-  transition: all .15s; -webkit-tap-highlight-color: transparent;
-}
-.blank-toggle-btn.active { background: rgba(239,68,68,.15); border-color: var(--red); color: var(--red); }
-.blank-toggle-btn:hover:not(.active) { border-color: var(--border); color: var(--text); }
-
-.slide-pos-row { text-align: center; font-size: 11px; color: var(--muted); padding: 0 14px 6px; flex-shrink: 0; }
-
-/* Slide list */
-.slide-list { padding: 6px 14px 14px; display: flex; flex-direction: column; gap: 4px; }
-.slide-item {
-  background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius);
-  padding: 10px 12px; cursor: pointer; transition: all .13s;
-  display: flex; align-items: center; gap: 10px; -webkit-tap-highlight-color: transparent;
-}
-.slide-item:hover  { border-color: rgba(200,144,46,.4); }
-.slide-item.active { background: rgba(200,144,46,.12); border-color: var(--gold); }
-.slide-item-num   { font-size: 10px; font-weight: 700; color: var(--gold); min-width: 20px; }
-.slide-item-label { font-size: 11px; font-weight: 700; color: var(--muted); margin-bottom: 2px; }
-.slide-item-text  { font-size: 12px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-/* ── PROGRAM PANEL ── */
-.prog-panel-list { padding: 10px 14px; display: flex; flex-direction: column; gap: 6px; }
-.prog-item-row {
-  display: flex; align-items: center; gap: 10px;
-  background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius);
-  padding: 10px 12px; cursor: pointer; transition: all .13s;
-  -webkit-tap-highlight-color: transparent;
-}
-.prog-item-row:hover  { border-color: rgba(200,144,46,.4); }
-.prog-item-row.active { background: rgba(200,144,46,.12); border-color: var(--gold); }
-.pir-dot  { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-.pir-info { flex: 1; min-width: 0; }
-.pir-name { font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.pir-meta { font-size: 10px; color: var(--muted); margin-top: 1px; }
-.pir-go   {
-  font-family: var(--font); font-size: 11px; font-weight: 700;
-  background: transparent; border: 1px solid var(--border); border-radius: 5px;
-  color: var(--muted); padding: 4px 9px; cursor: pointer; flex-shrink: 0;
-  transition: all .13s;
-}
-.pir-go:hover { border-color: var(--gold); color: var(--gold); }
-
-/* ── NOTES PANEL ── */
-.notes-area {
-  flex: 1; padding: 14px; display: flex; flex-direction: column; gap: 10px;
-}
-.notes-textarea {
-  flex: 1; font-family: var(--font); font-size: 13px; background: var(--surface2);
-  border: 1px solid var(--border); border-radius: var(--radius); color: var(--text);
-  padding: 12px; outline: none; resize: none; line-height: 1.6;
-  transition: border-color .2s;
-}
-.notes-textarea:focus { border-color: var(--gold); }
-.notes-hint { font-size: 11px; color: var(--muted); text-align: center; }
-
-/* ── PANEL HEADER ── */
+.panel { display:none; flex:1; overflow-y:auto; flex-direction:column; }
+.panel.active { display:flex; }
 .panel-header {
-  padding: 10px 14px 6px; font-size: 10px; font-weight: 700;
-  letter-spacing: 2px; text-transform: uppercase; color: var(--gold);
-  flex-shrink: 0;
+  padding:12px 16px 8px; font-size:10px; font-weight:700; letter-spacing:2px;
+  text-transform:uppercase; color:var(--gold); flex-shrink:0;
+}
+.panel-inner { padding:0 16px 20px; display:flex; flex-direction:column; gap:12px; }
+
+/* ── CONTROL: two columns on wide screens ── */
+.control-grid { display:flex; flex-direction:column; gap:12px; padding:0 16px 20px; }
+@media (min-width:900px) {
+  .control-grid {
+    display:grid; grid-template-columns:minmax(0,1.35fr) minmax(300px,1fr);
+    gap:16px; align-items:start;
+  }
+  .control-left  { display:flex; flex-direction:column; gap:12px; min-width:0; }
+  .control-right { display:flex; flex-direction:column; gap:10px; min-width:0; }
 }
 
-/* ── MOBILE: bottom tab bar ── */
-.bottom-tabbar {
-  display: none; background: var(--surface); border-top: 1px solid var(--border);
-  flex-shrink: 0;
+.preview-screen {
+  background:#06060e; border:1px solid var(--border); border-radius:10px;
+  aspect-ratio:16/9; position:relative; overflow:hidden;
+  max-height:42vh;
 }
-@media (max-width: 767px) { .bottom-tabbar { display: flex; } }
+.preview-content {
+  position:absolute; inset:0; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; padding:16px; text-align:center; gap:4px;
+}
+.pv-type  { font-size:9px; letter-spacing:2px; text-transform:uppercase; color:rgba(200,144,46,.7); }
+.pv-title { font-family:'Playfair Display',serif; font-size:clamp(15px,2.4vw,22px); font-weight:600; color:#fff; line-height:1.3; }
+.pv-body  { font-size:clamp(10px,1.4vw,13px); color:rgba(255,255,255,.72); line-height:1.5; font-style:italic; max-width:90%; }
+
+.nav-row { display:flex; gap:10px; }
+.nav-row .btn { flex:1; font-size:15px; padding:14px; }
+.slide-pos { text-align:center; font-size:11px; color:var(--muted); }
+
+.list-scroll { display:flex; flex-direction:column; gap:5px; }
+@media (min-width:900px) { .list-scroll { max-height:calc(100vh - 190px); overflow-y:auto; padding-right:4px; } }
+
+.slide-item {
+  background:var(--surface2); border:1px solid var(--border); border-radius:var(--radius);
+  padding:10px 12px; cursor:pointer; transition:all .13s;
+  display:flex; align-items:center; gap:10px; -webkit-tap-highlight-color:transparent;
+}
+.slide-item:hover { border-color:rgba(200,144,46,.4); }
+.slide-item.active { background:rgba(200,144,46,.12); border-color:var(--gold); }
+.slide-num { font-size:10px; font-weight:700; color:var(--gold); min-width:20px; }
+.slide-label { font-size:11px; font-weight:700; color:var(--muted); margin-bottom:2px; }
+.slide-text { font-size:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+/* ── Cards / rows ── */
+.card {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:12px; padding:14px; display:flex; flex-direction:column; gap:12px;
+}
+.card-title { font-size:13px; font-weight:700; display:flex; align-items:center; gap:8px; }
+.card-sub { font-size:11px; color:var(--muted); line-height:1.5; }
+
+.item-row {
+  display:flex; align-items:center; gap:10px;
+  background:var(--surface2); border:1px solid var(--border);
+  border-radius:var(--radius); padding:10px 12px;
+}
+.dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+.item-info { flex:1; min-width:0; }
+.item-name { font-size:13px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.item-meta { font-size:10px; color:var(--muted); margin-top:1px; }
+
+.empty { text-align:center; padding:24px; color:var(--muted); font-size:12px; }
+
+.badge {
+  font-size:9px; font-weight:800; padding:2px 7px; border-radius:10px;
+  text-transform:uppercase; letter-spacing:.5px;
+}
+.badge.pending  { background:rgba(230,126,34,.18); color:#e67e22; }
+.badge.approved { background:rgba(46,204,113,.18); color:var(--green); }
+.badge.rejected { background:rgba(239,68,68,.18); color:var(--red); }
+
+/* ── Screen share ── */
+.share-video {
+  width:100%; background:#06060e; border:1px solid var(--border);
+  border-radius:10px; aspect-ratio:16/9; object-fit:contain;
+}
+.share-status { font-size:12px; color:var(--muted); display:flex; align-items:center; gap:8px; }
+
+/* ── Files ── */
+.drop-zone {
+  border:2px dashed var(--border); border-radius:12px; padding:26px 16px;
+  text-align:center; color:var(--muted); font-size:12px; cursor:pointer; transition:all .15s;
+}
+.drop-zone:hover, .drop-zone.over { border-color:var(--gold); color:var(--gold); background:rgba(200,144,46,.05); }
+.progress { height:5px; background:var(--surface2); border-radius:3px; overflow:hidden; }
+.progress-bar { height:100%; width:0%; background:var(--gold); transition:width .2s; }
+.file-thumb { width:44px; height:32px; object-fit:cover; border-radius:4px; flex-shrink:0; background:#000; }
+
+/* ── Mobile bottom tabs ── */
+.bottom-tabbar { display:none; background:var(--surface); border-top:1px solid var(--border); flex-shrink:0; }
 .btab {
-  flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
-  gap: 3px; padding: 8px 4px; font-size: 9px; font-weight: 700; letter-spacing: .5px;
-  text-transform: uppercase; color: var(--muted); background: none; border: none; cursor: pointer;
-  transition: color .15s; -webkit-tap-highlight-color: transparent;
+  flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:3px; padding:8px 2px; font-size:8px; font-weight:700; letter-spacing:.3px;
+  text-transform:uppercase; color:var(--muted); background:none; border:none; cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
 }
-.btab i { font-size: 18px; }
-.btab.active { color: var(--gold); }
-
-/* ── DENIED / KICKED SCREEN ── */
-#denied-screen {
-  display: none; flex-direction: column; align-items: center; justify-content: center;
-  min-height: 100vh; padding: 24px; gap: 16px; text-align: center;
-}
-.denied-icon { font-size: 48px; color: var(--red); }
-.denied-title { font-size: 20px; font-weight: 700; }
-.denied-sub   { font-size: 13px; color: var(--muted); max-width: 280px; line-height: 1.5; }
-.denied-rejoin-btn {
-  font-family: var(--font); font-size: 13px; font-weight: 700;
-  background: var(--gold); color: #fff; border: none; border-radius: var(--radius);
-  padding: 12px 24px; cursor: pointer; margin-top: 8px;
+.btab i { font-size:16px; }
+.btab.active { color:var(--gold); }
+@media (max-width:767px) {
+  .sidebar-nav { display:none; }
+  .bottom-tabbar { display:flex; }
+  .panel { padding-bottom:6px; }
+  .preview-screen { max-height:32vh; }
 }
 
 /* Toast */
 .toast {
-  position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%) translateY(10px);
-  background: var(--surface); border: 1px solid var(--gold); border-radius: var(--radius);
-  padding: 8px 16px; font-size: 12px; font-weight: 700; color: var(--gold);
-  z-index: 1000; opacity: 0; transition: all .3s; pointer-events: none; white-space: nowrap;
+  position:fixed; bottom:88px; left:50%; transform:translateX(-50%) translateY(10px);
+  background:var(--surface); border:1px solid var(--gold); border-radius:var(--radius);
+  padding:9px 16px; font-size:12px; font-weight:700; color:var(--gold);
+  z-index:1000; opacity:0; transition:all .3s; pointer-events:none;
+  max-width:90vw; text-align:center;
 }
-.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-@media (max-width: 767px) {
-  .slide-preview-screen { margin: 10px 10px 8px; }
-  .nav-row { padding: 0 10px 8px; }
-  .blank-row { padding: 0 10px 8px; }
-  .slide-list { padding: 4px 10px 80px; }
-  .prog-panel-list { padding: 8px 10px 80px; }
-  .notes-area { padding: 10px 10px 80px; }
-}
+.toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
 </style>
 </head>
 <body>
 
-<!-- ── JOIN SCREEN ── -->
-<div id="join-screen">
+<!-- ── JOIN ── -->
+<div class="screen-center" id="join-screen" style="display:flex">
   <div class="join-logo"><i class="fa-solid fa-cross"></i></div>
   <div class="join-title">SDA Worship — Presenter</div>
   <div class="join-sub">Enter your name and the session code to join the service.</div>
   <div class="join-card">
-    <div class="join-field">
-      <label class="join-label" for="join-name">Your Name</label>
-      <input class="join-input" id="join-name" type="text" placeholder="e.g. Elder Kamanzi" autocomplete="off" maxlength="40">
+    <div class="field">
+      <label class="label" for="join-name">Your Name</label>
+      <input class="input" id="join-name" type="text" placeholder="e.g. Elder Kamanzi" autocomplete="off" maxlength="40">
     </div>
-    <div class="join-field">
-      <label class="join-label" for="join-code">Session Code</label>
-      <input class="join-input" id="join-code" type="text" placeholder="e.g. SDA-WXYZ"
+    <div class="field">
+      <label class="label" for="join-code">Session Code</label>
+      <input class="input" id="join-code" type="text" placeholder="e.g. SDA-WXYZ"
         autocomplete="off" maxlength="12" style="letter-spacing:3px;text-transform:uppercase">
     </div>
     <div class="join-error" id="join-error"></div>
-    <button class="join-btn" id="join-btn" onclick="doJoin()">
+    <button class="btn primary full" id="join-btn">
       <i class="fa-solid fa-arrow-right-to-bracket"></i> Join Session
     </button>
   </div>
-  <div style="font-size:11px;color:var(--muted);text-align:center;line-height:1.6">
-    Ask the operator for the session code.<br>
-    You will need approval before controlling slides.
+  <div style="font-size:11px;color:var(--muted);line-height:1.6">
+    Ask the operator for the session code.<br>You need approval before controlling slides.
   </div>
 </div>
 
-<!-- ── WAITING SCREEN ── -->
-<div id="waiting-screen">
-  <div class="waiting-spinner"></div>
-  <div class="waiting-title">Waiting for approval</div>
-  <div class="waiting-name" id="waiting-name"></div>
-  <div class="waiting-sub">
-    The operator must approve your request before you can control slides.
-    This usually takes just a moment.
-  </div>
-  <button class="join-btn" style="max-width:200px;margin-top:8px" onclick="cancelJoin()">
-    <i class="fa-solid fa-xmark"></i> Cancel
-  </button>
+<!-- ── WAITING ── -->
+<div class="screen-center" id="waiting-screen">
+  <div class="spinner"></div>
+  <div style="font-size:18px;font-weight:700">Waiting for approval</div>
+  <div style="font-size:13px;color:var(--gold);font-weight:700" id="waiting-name"></div>
+  <div class="join-sub">The operator must approve your request before you can control slides.</div>
+  <button class="btn full" style="max-width:200px" id="cancel-join-btn"><i class="fa-solid fa-xmark"></i> Cancel</button>
 </div>
 
-<!-- ── DENIED/KICKED SCREEN ── -->
-<div id="denied-screen">
-  <i class="fa-solid fa-ban denied-icon"></i>
-  <div class="denied-title" id="denied-title">Access Denied</div>
-  <div class="denied-sub" id="denied-sub">The operator has not granted you access.</div>
-  <button class="denied-rejoin-btn" onclick="showJoin()">
-    <i class="fa-solid fa-rotate-left"></i> Back to Join
-  </button>
+<!-- ── DENIED ── -->
+<div class="screen-center" id="denied-screen">
+  <i class="fa-solid fa-ban" style="font-size:48px;color:var(--red)"></i>
+  <div style="font-size:20px;font-weight:700" id="denied-title">Access Denied</div>
+  <div class="join-sub" id="denied-sub">The operator has not granted you access.</div>
+  <button class="btn primary" id="back-join-btn"><i class="fa-solid fa-rotate-left"></i> Back to Join</button>
 </div>
 
-<!-- ── MAIN APP ── -->
+<!-- ── APP ── -->
 <div id="app-screen">
-
-  <!-- Top bar -->
   <div class="app-topbar">
     <div class="app-logo">
       <div class="app-logo-icon"><i class="fa-solid fa-cross"></i></div>
       <span>SDA Worship</span>
     </div>
-    <span class="app-name-badge" id="app-name-badge"></span>
+    <span style="font-size:11px;font-weight:700;color:var(--muted)" id="app-name-badge"></span>
     <div style="display:flex;align-items:center;gap:6px">
       <div class="conn-dot" id="conn-dot"></div>
       <span style="font-size:10px;font-weight:700;color:var(--muted)" id="conn-label">Connected</span>
@@ -337,524 +286,658 @@ html, body { height: 100%; overflow: hidden; font-family: var(--font); backgroun
   </div>
 
   <div class="app-body">
-
-    <!-- Sidebar nav (desktop) -->
     <div class="sidebar-nav">
-      <button class="snav-btn active" data-panel="control" onclick="switchPanel('control')">
-        <i class="fa-solid fa-sliders"></i>
-        <span class="snav-tip">Control</span>
-      </button>
-      <button class="snav-btn" data-panel="program" onclick="switchPanel('program')">
-        <i class="fa-solid fa-list-ol"></i>
-        <span class="snav-tip">Program</span>
-      </button>
-      <button class="snav-btn" data-panel="notes" onclick="switchPanel('notes')">
-        <i class="fa-solid fa-note-sticky"></i>
-        <span class="snav-tip">Notes</span>
-      </button>
+      <button class="snav-btn active" data-panel="control"><i class="fa-solid fa-sliders"></i><span>Control</span></button>
+      <button class="snav-btn" data-panel="program"><i class="fa-solid fa-list-ol"></i><span>Program</span></button>
+      <button class="snav-btn" data-panel="announce"><i class="fa-solid fa-bullhorn"></i><span>Notice</span></button>
+      <button class="snav-btn" data-panel="share"><i class="fa-solid fa-display"></i><span>Share</span></button>
+      <button class="snav-btn" data-panel="files"><i class="fa-solid fa-photo-film"></i><span>Files</span></button>
+      <button class="snav-btn" data-panel="notes"><i class="fa-solid fa-note-sticky"></i><span>Notes</span></button>
     </div>
 
-    <!-- ── CONTROL PANEL ── -->
+    <!-- CONTROL -->
     <div class="panel active" id="panel-control">
       <div class="panel-header">Slide Control</div>
-
-      <!-- Live preview -->
-      <div class="slide-preview-screen">
-        <div class="slide-preview-content">
-          <div class="spc-type"  id="prev-type">—</div>
-          <div class="spc-title" id="prev-title" style="color:rgba(255,255,255,.2);font-style:italic">Nothing on screen</div>
-          <div class="spc-body"  id="prev-body"></div>
+      <div class="control-grid">
+        <div class="control-left">
+          <div class="preview-screen">
+            <div class="preview-content">
+              <div class="pv-type"  id="pv-type">—</div>
+              <div class="pv-title" id="pv-title" style="color:rgba(255,255,255,.2);font-style:italic">Nothing on screen</div>
+              <div class="pv-body"  id="pv-body"></div>
+            </div>
+          </div>
+          <div class="slide-pos" id="slide-pos">No slides loaded</div>
+          <div class="nav-row">
+            <button class="btn" id="prev-btn" disabled><i class="fa-solid fa-chevron-left"></i> Prev</button>
+            <button class="btn" id="next-btn" disabled>Next <i class="fa-solid fa-chevron-right"></i></button>
+          </div>
+          <button class="btn full" id="blank-btn"><i class="fa-solid fa-eye-slash"></i> Blank Screen</button>
         </div>
-      </div>
-
-      <!-- Slide position -->
-      <div class="slide-pos-row" id="slide-pos-row">No slides loaded</div>
-
-      <!-- Prev / Next -->
-      <div class="nav-row">
-        <button class="nav-big-btn" id="prev-btn" onclick="sendNav(-1)" disabled>
-          <i class="fa-solid fa-chevron-left"></i> Prev
-        </button>
-        <button class="nav-big-btn" id="next-btn" onclick="sendNav(1)" disabled>
-          Next <i class="fa-solid fa-chevron-right"></i>
-        </button>
-      </div>
-
-      <!-- Blank toggle -->
-      <div class="blank-row">
-        <button class="blank-toggle-btn" id="blank-btn" onclick="toggleBlank()">
-          <i class="fa-solid fa-eye-slash"></i> Blank Screen
-        </button>
-      </div>
-
-      <!-- Slide list -->
-      <div class="slide-list" id="slide-list">
-        <div style="text-align:center;padding:20px;color:var(--muted);font-size:12px">
-          Slides will appear here when the operator projects content.
+        <div class="control-right">
+          <div class="label">Slides</div>
+          <div class="list-scroll" id="slide-list">
+            <div class="empty">Slides appear here when the operator projects content.</div>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- ── PROGRAM PANEL ── -->
+    <!-- PROGRAM -->
     <div class="panel" id="panel-program">
       <div class="panel-header">Program Order</div>
-      <div class="prog-panel-list" id="prog-panel-list">
-        <div style="text-align:center;padding:30px;color:var(--muted);font-size:12px">
-          Program will sync from the operator when available.
+      <div class="panel-inner">
+        <div class="card">
+          <div class="card-title"><i class="fa-solid fa-plus" style="color:var(--gold)"></i> Propose a program item</div>
+          <div class="card-sub">The operator must approve before it is added to the service.</div>
+          <div class="field"><label class="label">Item name</label>
+            <input class="input" id="pi-name" placeholder="e.g. Special Music" maxlength="80"></div>
+          <div class="row2">
+            <div class="field"><label class="label">Type</label>
+              <select class="select" id="pi-type">
+                <option value="song">Song</option><option value="bible">Bible</option>
+                <option value="prayer">Prayer</option><option value="sermon">Sermon</option>
+                <option value="choir">Choir</option><option value="offering">Offering</option>
+                <option value="announce">Announcement</option>
+              </select></div>
+            <div class="field"><label class="label">Time</label>
+              <input class="input" id="pi-time" placeholder="09:30" maxlength="8"></div>
+          </div>
+          <div class="field"><label class="label">Presenter</label>
+            <input class="input" id="pi-presenter" placeholder="e.g. Pastor Habimana" maxlength="60"></div>
+          <div class="field"><label class="label">Notes (optional)</label>
+            <textarea class="textarea" id="pi-notes" placeholder="Anything the operator should know…"></textarea></div>
+          <button class="btn primary full" id="pi-submit"><i class="fa-solid fa-paper-plane"></i> Send to operator</button>
+        </div>
+
+        <div class="label">Current program</div>
+        <div id="prog-list"><div class="empty">Program will sync from the operator.</div></div>
+      </div>
+    </div>
+
+    <!-- ANNOUNCEMENTS -->
+    <div class="panel" id="panel-announce">
+      <div class="panel-header">Announcements</div>
+      <div class="panel-inner">
+        <div class="card">
+          <div class="card-title"><i class="fa-solid fa-bullhorn" style="color:var(--gold)"></i> Propose an announcement</div>
+          <div class="card-sub">Sent to the operator for approval, then saved on the operator PC.</div>
+          <div class="field"><label class="label">Title</label>
+            <input class="input" id="an-title" placeholder="e.g. Youth Meeting" maxlength="80"></div>
+          <div class="row2">
+            <div class="field"><label class="label">Date</label>
+              <input class="input" id="an-date" placeholder="Sabbath 25 July" maxlength="40"></div>
+            <div class="field"><label class="label">Location</label>
+              <input class="input" id="an-loc" placeholder="Main hall" maxlength="40"></div>
+          </div>
+          <div class="field"><label class="label">Message</label>
+            <textarea class="textarea" id="an-text" placeholder="Details of the announcement…"></textarea></div>
+          <button class="btn primary full" id="an-submit"><i class="fa-solid fa-paper-plane"></i> Send to operator</button>
+        </div>
+
+        <div class="label">My requests</div>
+        <div id="req-list"><div class="empty">Nothing sent yet.</div></div>
+      </div>
+    </div>
+
+    <!-- SCREEN SHARE -->
+    <div class="panel" id="panel-share">
+      <div class="panel-header">Screen Share</div>
+      <div class="panel-inner">
+        <div class="card">
+          <div class="card-title"><i class="fa-solid fa-display" style="color:var(--gold)"></i> Share this device</div>
+          <div class="card-sub">
+            Sends your screen to the projector. On a phone, most browsers only allow
+            camera sharing — on a laptop you can pick a window or the whole screen.
+          </div>
+          <video class="share-video" id="share-video" autoplay muted playsinline></video>
+          <div class="share-status"><div class="conn-dot off" id="share-dot"></div><span id="share-label">Not sharing</span></div>
+          <div class="row2">
+            <button class="btn primary" id="share-start"><i class="fa-solid fa-play"></i> Start screen</button>
+            <button class="btn" id="share-cam"><i class="fa-solid fa-camera"></i> Camera</button>
+          </div>
+          <button class="btn danger full" id="share-stop" disabled><i class="fa-solid fa-stop"></i> Stop sharing</button>
         </div>
       </div>
     </div>
 
-    <!-- ── NOTES PANEL ── -->
-    <div class="panel" id="panel-notes">
-      <div class="panel-header">Sermon Notes</div>
-      <div class="notes-area">
-        <textarea class="notes-textarea" id="notes-ta"
-          placeholder="Type your sermon notes or reminders here…&#10;&#10;These are private — only visible on this device."></textarea>
-        <div class="notes-hint">Notes are saved locally on this device only.</div>
+    <!-- FILES -->
+    <div class="panel" id="panel-files">
+      <div class="panel-header">Files</div>
+      <div class="panel-inner">
+        <div class="card">
+          <div class="card-title"><i class="fa-solid fa-cloud-arrow-up" style="color:var(--gold)"></i> Upload image or video</div>
+          <div class="card-sub">Uploads to the worship server, then you can project it (max 500&nbsp;MB).</div>
+          <div class="drop-zone" id="drop-zone">
+            <i class="fa-solid fa-photo-film" style="font-size:22px;display:block;margin-bottom:8px"></i>
+            Tap to choose a file, or drag one here
+          </div>
+          <input type="file" id="file-input" accept="image/*,video/*" style="display:none">
+          <div class="progress" id="up-progress" style="display:none"><div class="progress-bar" id="up-bar"></div></div>
+          <div style="font-size:11px;color:var(--muted)" id="up-status"></div>
+        </div>
+
+        <div class="label">Available files</div>
+        <div id="file-list"><div class="empty">No files uploaded yet.</div></div>
       </div>
     </div>
 
-  </div><!-- /app-body -->
-
-  <!-- Mobile bottom tab bar -->
-  <div class="bottom-tabbar">
-    <button class="btab active" data-panel="control" onclick="switchPanel('control')">
-      <i class="fa-solid fa-sliders"></i>
-      <span>Control</span>
-    </button>
-    <button class="btab" data-panel="program" onclick="switchPanel('program')">
-      <i class="fa-solid fa-list-ol"></i>
-      <span>Program</span>
-    </button>
-    <button class="btab" data-panel="notes" onclick="switchPanel('notes')">
-      <i class="fa-solid fa-note-sticky"></i>
-      <span>Notes</span>
-    </button>
+    <!-- NOTES -->
+    <div class="panel" id="panel-notes">
+      <div class="panel-header">Sermon Notes</div>
+      <div class="panel-inner" style="flex:1">
+        <textarea class="textarea" id="notes-ta" style="flex:1;min-height:50vh"
+          placeholder="Private notes — stored only on this device…"></textarea>
+        <div style="font-size:11px;color:var(--muted);text-align:center">Saved locally on this device only.</div>
+      </div>
+    </div>
   </div>
 
-</div><!-- /app-screen -->
+  <div class="bottom-tabbar">
+    <button class="btab active" data-panel="control"><i class="fa-solid fa-sliders"></i><span>Control</span></button>
+    <button class="btab" data-panel="program"><i class="fa-solid fa-list-ol"></i><span>Program</span></button>
+    <button class="btab" data-panel="announce"><i class="fa-solid fa-bullhorn"></i><span>Notice</span></button>
+    <button class="btab" data-panel="share"><i class="fa-solid fa-display"></i><span>Share</span></button>
+    <button class="btab" data-panel="files"><i class="fa-solid fa-photo-film"></i><span>Files</span></button>
+    <button class="btab" data-panel="notes"><i class="fa-solid fa-note-sticky"></i><span>Notes</span></button>
+  </div>
+</div>
 
 <div class="toast" id="toast"></div>
 
 <script>
 'use strict';
 
-// ── STATE ─────────────────────────────────────────────────────────────────────
-let _ws         = null;
-let _myId       = null;
-let _idAdopted  = false;   // have we accepted an id for the CURRENT connection?
-let _myName     = '';
-let _myCode     = '';
-let _granted    = false;
-let _isBlank    = false;
-let _slideSet   = [];
-let _slideIdx   = 0;
+// ── STATE ────────────────────────────────────────────────────────────────────
+let _ws = null, _myId = null, _idAdopted = false;
+let _myName = '', _myCode = '';
+let _granted = false, _isBlank = false;
+let _slideSet = [], _slideIdx = 0;
+let _programData = [];
+let _requests = [];            // {reqId, kind, title, status}
+let _pc = null, _stream = null;
 
-// ── SCREEN SWITCHING ──────────────────────────────────────────────────────────
+const $ = id => document.getElementById(id);
+const esc = s => String(s == null ? '' : s)
+  .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+  .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,8);
+
+// ── SCREENS ──────────────────────────────────────────────────────────────────
 function showScreen(id) {
   ['join-screen','waiting-screen','denied-screen','app-screen'].forEach(s => {
-    const el = document.getElementById(s);
-    if (el) el.style.display = (s === id) ? 'flex' : 'none';
+    const el = $(s); if (el) el.style.display = (s === id) ? 'flex' : 'none';
   });
 }
-
 function showJoin() {
-  _granted = false; _ws && _ws.close(); _ws = null;
-  _myId = null; _idAdopted = false;
-  document.getElementById('join-error').textContent = '';
+  _granted = false; stopShare();
+  if (_ws) { try { _ws.close(); } catch(_) {} }
+  _ws = null; _myId = null; _idAdopted = false;
+  $('join-error').textContent = '';
+  $('join-btn').disabled = false;
   showScreen('join-screen');
 }
 
-function cancelJoin() { showJoin(); }
-
-// ── JOIN ──────────────────────────────────────────────────────────────────────
+// ── JOIN ─────────────────────────────────────────────────────────────────────
 function doJoin() {
-  const nameEl = document.getElementById('join-name');
-  const codeEl = document.getElementById('join-code');
-  const errEl  = document.getElementById('join-error');
-  const name   = nameEl.value.trim();
-  const code   = codeEl.value.trim().toUpperCase();
-
-  if (!name) { errEl.textContent = 'Please enter your name.'; nameEl.focus(); return; }
-  if (!code) { errEl.textContent = 'Please enter the session code.'; codeEl.focus(); return; }
-
-  errEl.textContent = '';
-  document.getElementById('join-btn').disabled = true;
-
+  const name = $('join-name').value.trim();
+  const code = $('join-code').value.trim().toUpperCase();
+  if (!name) { $('join-error').textContent = 'Please enter your name.'; $('join-name').focus(); return; }
+  if (!code) { $('join-error').textContent = 'Please enter the session code.'; $('join-code').focus(); return; }
+  $('join-error').textContent = '';
+  $('join-btn').disabled = true;
   _myName = name; _myCode = code;
-  document.getElementById('waiting-name').textContent = 'Joining as: ' + name;
-
+  try { localStorage.setItem('sda_presenter_name', name); } catch(_) {}
+  $('waiting-name').textContent = 'Joining as: ' + name;
   connectWS();
 }
 
-// ── WEBSOCKET ─────────────────────────────────────────────────────────────────
-function connectWS() {
+// ── WEBSOCKET ────────────────────────────────────────────────────────────────
+function wsUrl() {
   const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
-  // location.host includes the port ONLY when it's non-standard.
-  // On Render/Railway (https:443) there's no port to append — appending
-  // :4040 was the bug that made the server "unreachable".
-  const host  = location.host || 'localhost:4040';
-  const wsUrl = proto + '//' + host;
+  // location.host carries the port ONLY when non-standard. On Render (https:443)
+  // there is no port to append — appending :4040 was the "unreachable" bug.
+  return proto + '//' + (location.host || 'localhost:4040');
+}
 
-  // The server assigns a NEW id on every connection, so allow the first
-  // status of this connection to (re)establish our id.
-  _idAdopted = false;
-
-  try {
-    _ws = new WebSocket(wsUrl);
-  } catch(e) {
-    document.getElementById('join-btn').disabled = false;
-    document.getElementById('join-error').textContent = 'Cannot connect to server: ' + host;
+function connectWS() {
+  _idAdopted = false;          // server issues a new id per connection
+  let sock;
+  try { sock = new WebSocket(wsUrl()); }
+  catch (e) {
+    $('join-btn').disabled = false;
+    $('join-error').textContent = 'Cannot connect to server.';
     return;
   }
+  _ws = sock;
 
-  _ws.onopen = () => {
-    setConnDot(true);
-    // Send join with all required fields
-    wsSend({
-      type:  'presenter-join',
-      name:  _myName,
-      code:  _myCode,
-      id:    _myId || undefined,   // send existing id on reconnect
-    });
+  sock.onopen = () => {
+    setConn(true);
+    wsSend({ type:'presenter-join', name:_myName, code:_myCode });
     showScreen('waiting-screen');
+    fetchFiles();
   };
-
-  _ws.onmessage = e => {
-    try { handleMsg(JSON.parse(e.data)); } catch(_) {}
+  sock.onmessage = e => { try { handleMsg(JSON.parse(e.data)); } catch(_) {} };
+  sock.onclose = () => {
+    setConn(false);
+    if (_granted || _myId) { setTimeout(reconnect, 3000); if (_granted) toast('Connection lost — reconnecting…'); }
   };
-
-  _ws.onclose = () => {
-    setConnDot(false);
-    // If we were granted and working, auto-reconnect
-    if (_granted) {
-      setTimeout(reconnect, 3000);
-      showToast('Connection lost — reconnecting…');
-    } else if (_myId) {
-      // Was in waiting state — reconnect to check
-      setTimeout(reconnect, 3000);
-    }
-  };
-
-  _ws.onerror = () => {
-    document.getElementById('join-btn').disabled = false;
-    document.getElementById('join-error').textContent = 'Server unreachable. Check your network.';
-    showScreen('join-screen');
+  sock.onerror = () => {
+    $('join-btn').disabled = false;
+    $('join-error').textContent = 'Server unreachable. Check your network.';
+    if (!_granted) showScreen('join-screen');
   };
 }
-
-function reconnect() {
-  if (_ws && _ws.readyState === WebSocket.OPEN) return;
-  connectWS();
+function reconnect() { if (!_ws || _ws.readyState !== WebSocket.OPEN) connectWS(); }
+function wsSend(d) { if (_ws && _ws.readyState === WebSocket.OPEN) { try { _ws.send(JSON.stringify(d)); } catch(_) {} } }
+function setConn(on) {
+  const d = $('conn-dot'), l = $('conn-label');
+  if (d) d.className = 'conn-dot' + (on ? '' : ' off');
+  if (l) l.textContent = on ? 'Connected' : 'Disconnected';
 }
 
-function wsSend(data) {
-  if (_ws && _ws.readyState === WebSocket.OPEN) {
-    try { _ws.send(JSON.stringify(data)); } catch(_) {}
-  }
-}
-
-function setConnDot(on) {
-  const dot = document.getElementById('conn-dot');
-  const lbl = document.getElementById('conn-label');
-  if (dot) dot.className = 'conn-dot' + (on ? '' : ' off');
-  if (lbl) lbl.textContent = on ? 'Connected' : 'Disconnected';
-}
-
-// ── MESSAGE HANDLER ───────────────────────────────────────────────────────────
+// ── MESSAGES ─────────────────────────────────────────────────────────────────
 function handleMsg(msg) {
   if (!msg || !msg.type) return;
 
   switch (msg.type) {
-
-    // ── Server assigns us an id and tells us our status ──────────────────────
     case 'presenter-status': {
       const id = msg.id ?? msg.presId;
-
-      // Only apply status addressed to THIS presenter. The bridge relays some
-      // messages to every client; without this check, granting one presenter
-      // granted them all. The first status of a connection establishes our id
-      // (the server issues a new one on every reconnect).
+      // Apply only what's addressed to us. First status of a connection adopts
+      // the id (the server assigns a fresh one on every reconnect).
       if (id != null) {
-        if (!_idAdopted) {
-          _myId = String(id);
-          _idAdopted = true;
-        } else if (String(id) !== String(_myId)) {
-          break;   // meant for a different presenter — ignore
-        }
+        if (!_idAdopted) { _myId = String(id); _idAdopted = true; }
+        else if (String(id) !== String(_myId)) break;
       }
-
-      if (msg.status === 'granted') {
-        _granted = true;
-        // Store id for reconnect
-        try { localStorage.setItem('sda_presenter_id', String(_myId)); } catch(_) {}
-        activateApp();
-
-      } else if (msg.status === 'waiting') {
+      if (msg.status === 'granted') { _granted = true; activateApp(); }
+      else if (msg.status === 'waiting') { _granted = false; showScreen('waiting-screen'); }
+      else if (msg.status === 'denied') {
         _granted = false;
-        showScreen('waiting-screen');
-
-      } else if (msg.status === 'denied') {
-        _granted = false;
-        const titleEl = document.getElementById('denied-title');
-        const subEl   = document.getElementById('denied-sub');
-        if (titleEl) titleEl.textContent = 'Access Denied';
-        if (subEl)   subEl.textContent   = msg.message || 'The operator has not granted you access.';
+        $('denied-title').textContent = 'Access Denied';
+        $('denied-sub').textContent = msg.message || 'The operator has not granted you access.';
         showScreen('denied-screen');
-
       } else if (msg.status === 'kicked' || msg.status === 'revoked') {
-        _granted = false;
-        const titleEl = document.getElementById('denied-title');
-        const subEl   = document.getElementById('denied-sub');
-        if (titleEl) titleEl.textContent = msg.status === 'kicked' ? 'Access Removed' : 'Access Revoked';
-        if (subEl)   subEl.textContent   = 'The operator has removed your presenter access.';
-        showScreen('denied-screen');
-        showToast('Access ' + msg.status);
+        _granted = false; stopShare();
+        $('denied-title').textContent = msg.status === 'kicked' ? 'Access Removed' : 'Access Revoked';
+        $('denied-sub').textContent = 'The operator has removed your presenter access.';
+        showScreen('denied-screen'); toast('Access ' + msg.status);
       }
       break;
     }
 
-    // ── Slide update from operator ────────────────────────────────────────────
     case 'slide': {
-      const slideSet = msg.slideSet || (msg.slide ? [msg.slide] : []);
-      const idx      = typeof msg.slideIndex === 'number' ? msg.slideIndex : 0;
-      _slideSet = slideSet;
-      _slideIdx = idx;
-      updateSlideUI();
+      _slideSet = msg.slideSet || (msg.slide ? [msg.slide] : []);
+      _slideIdx = typeof msg.slideIndex === 'number' ? msg.slideIndex : 0;
+      renderSlides();
       break;
     }
+    case 'blank':   setBlankUI(true);  break;
+    case 'unblank': setBlankUI(false); break;
 
-    // ── Blank/unblank from operator ───────────────────────────────────────────
-    case 'blank': {
-      _isBlank = true;
-      const btn = document.getElementById('blank-btn');
-      if (btn) { btn.classList.add('active'); btn.innerHTML = '<i class="fa-solid fa-eye"></i> Show Screen'; }
-      break;
-    }
-    case 'unblank': {
-      _isBlank = false;
-      const btn = document.getElementById('blank-btn');
-      if (btn) { btn.classList.remove('active'); btn.innerHTML = '<i class="fa-solid fa-eye-slash"></i> Blank Screen'; }
-      break;
-    }
-
-    // ── Program sync from operator ────────────────────────────────────────────
     case 'program-sync':
-    case 'program': {
-      if (msg.program) renderProgram(msg.program);
+    case 'program': if (msg.program) renderProgram(msg.program); break;
+
+    case 'file-share': fetchFiles(); toast('New file available'); break;
+
+    case 'presenter-request-result': {
+      const r = _requests.find(x => x.reqId === msg.reqId);
+      if (r) { r.status = msg.approved ? 'approved' : 'rejected'; renderRequests(); }
+      toast(msg.approved ? '✓ Operator approved your request' : ('Rejected: ' + (msg.message || 'declined')));
+      break;
+    }
+
+    // WebRTC answer / ICE coming back from the projector side
+    case 'webrtc-answer': {
+      if (_pc && msg.answer) {
+        _pc.setRemoteDescription(new RTCSessionDescription(msg.answer)).catch(()=>{});
+      }
+      break;
+    }
+    case 'webrtc-ice': {
+      if (_pc && msg.candidate) _pc.addIceCandidate(new RTCIceCandidate(msg.candidate)).catch(()=>{});
       break;
     }
   }
 }
 
-// ── ACTIVATE APP (after grant) ────────────────────────────────────────────────
 function activateApp() {
   showScreen('app-screen');
-  document.getElementById('app-name-badge').textContent = _myName;
-  setConnDot(true);
-  updateSlideUI();
-  showToast('✓ Access granted — you can now control slides');
-  // Load saved notes
+  $('app-name-badge').textContent = _myName;
+  setConn(true);
+  renderSlides();
+  toast('✓ Access granted — you can now control slides');
   try {
-    const saved = localStorage.getItem('sda_presenter_notes');
-    if (saved) document.getElementById('notes-ta').value = saved;
+    const n = localStorage.getItem('sda_presenter_notes');
+    if (n) $('notes-ta').value = n;
   } catch(_) {}
+  fetchFiles();
 }
 
-// ── HTML ESCAPE (slide/program text comes from the network) ───────────────────
-function esc(s) {
-  return String(s == null ? '' : s)
-    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-}
+// ── SLIDES ───────────────────────────────────────────────────────────────────
+function renderSlides() {
+  const slide = _slideSet[_slideIdx], total = _slideSet.length;
+  $('prev-btn').disabled = _slideIdx <= 0;
+  $('next-btn').disabled = _slideIdx >= total - 1;
+  $('slide-pos').textContent = total ? `Slide ${_slideIdx + 1} of ${total}` : 'No slides loaded';
 
-// ── SLIDE UI ──────────────────────────────────────────────────────────────────
-function updateSlideUI() {
-  const slide    = _slideSet[_slideIdx];
-  const total    = _slideSet.length;
-  const prevBtn  = document.getElementById('prev-btn');
-  const nextBtn  = document.getElementById('next-btn');
-  const posRow   = document.getElementById('slide-pos-row');
-  const typeEl   = document.getElementById('prev-type');
-  const titleEl  = document.getElementById('prev-title');
-  const bodyEl   = document.getElementById('prev-body');
-  const listEl   = document.getElementById('slide-list');
-
-  if (prevBtn) prevBtn.disabled = (_slideIdx <= 0);
-  if (nextBtn) nextBtn.disabled = (_slideIdx >= total - 1);
-
-  if (posRow) posRow.textContent = total > 0
-    ? 'Slide ' + (_slideIdx + 1) + ' of ' + total
-    : 'No slides loaded';
-
+  const t = $('pv-type'), ti = $('pv-title'), b = $('pv-body');
   if (slide) {
-    if (typeEl)  typeEl.textContent  = slide.type  || '';
-    if (titleEl) {
-      titleEl.textContent  = slide.hymnTitle || slide.title || slide.ref || '';
-      titleEl.style.color  = '#fff';
-      titleEl.style.fontStyle = 'normal';
-    }
-    if (bodyEl) {
-      const body = slide.body || slide.verseLabel || '';
-      bodyEl.textContent = body.length > 80 ? body.slice(0, 80) + '…' : body;
-    }
+    t.textContent = slide.type || '';
+    ti.textContent = slide.hymnTitle || slide.title || slide.ref || '';
+    ti.style.color = '#fff'; ti.style.fontStyle = 'normal';
+    const body = slide.body || slide.verseLabel || '';
+    b.textContent = body.length > 160 ? body.slice(0,160) + '…' : body;
   } else {
-    if (typeEl)  typeEl.textContent  = '—';
-    if (titleEl) { titleEl.textContent = 'Nothing on screen'; titleEl.style.color = 'rgba(255,255,255,.2)'; titleEl.style.fontStyle = 'italic'; }
-    if (bodyEl)  bodyEl.textContent  = '';
+    t.textContent = '—';
+    ti.textContent = 'Nothing on screen';
+    ti.style.color = 'rgba(255,255,255,.2)'; ti.style.fontStyle = 'italic';
+    b.textContent = '';
   }
 
-  // Render slide list
-  if (listEl) {
-    if (!_slideSet.length) {
-      listEl.innerHTML = '<div style="text-align:center;padding:20px;color:var(--muted);font-size:12px">Slides will appear here when the operator projects content.</div>';
-    } else {
-      listEl.innerHTML = _slideSet.map((s, i) => `
-        <div class="slide-item${i === _slideIdx ? ' active' : ''}" data-slide-index="${i}">
-          <span class="slide-item-num">${i + 1}</span>
-          <div style="flex:1;min-width:0">
-            <div class="slide-item-label">${esc(s.verseLabel || s.type || '')}</div>
-            <div class="slide-item-text">${esc(s.hymnTitle || s.title || s.ref || (s.body ? s.body.split('\n')[0] : ''))}</div>
-          </div>
-        </div>`).join('');
-
-      listEl.querySelectorAll('[data-slide-index]').forEach(el => {
-        el.addEventListener('click', () => jumpToSlide(parseInt(el.dataset.slideIndex, 10)));
-      });
-    }
-  }
+  const list = $('slide-list');
+  if (!total) { list.innerHTML = '<div class="empty">Slides appear here when the operator projects content.</div>'; return; }
+  list.innerHTML = _slideSet.map((s,i) => `
+    <div class="slide-item${i === _slideIdx ? ' active' : ''}" data-i="${i}">
+      <span class="slide-num">${i+1}</span>
+      <div style="flex:1;min-width:0">
+        <div class="slide-label">${esc(s.verseLabel || s.type || '')}</div>
+        <div class="slide-text">${esc(s.hymnTitle || s.title || s.ref || (s.body ? s.body.split('\n')[0] : ''))}</div>
+      </div>
+    </div>`).join('');
+  list.querySelectorAll('[data-i]').forEach(el =>
+    el.addEventListener('click', () => jumpTo(parseInt(el.dataset.i,10))));
 }
 
-// ── NAVIGATION ────────────────────────────────────────────────────────────────
-function sendNav(dir) {
-  if (!_granted) { showToast('Waiting for operator approval'); return; }
-  const newIdx = _slideIdx + dir;
-  if (newIdx < 0 || newIdx >= _slideSet.length) return;
-  _slideIdx = newIdx;
-  updateSlideUI();
-  wsSend({ type: 'slide', slide: _slideSet[_slideIdx], slideSet: _slideSet, slideIndex: _slideIdx });
+function setBlankUI(on) {
+  _isBlank = on;
+  const b = $('blank-btn');
+  b.classList.toggle('danger', on);
+  b.innerHTML = on ? '<i class="fa-solid fa-eye"></i> Show Screen'
+                   : '<i class="fa-solid fa-eye-slash"></i> Blank Screen';
 }
-
-function jumpToSlide(idx) {
-  if (!_granted) { showToast('Waiting for operator approval'); return; }
-  if (isNaN(idx) || idx < 0 || idx >= _slideSet.length) return;
-  _slideIdx = idx;
-  updateSlideUI();
-  wsSend({ type: 'slide', slide: _slideSet[_slideIdx], slideSet: _slideSet, slideIndex: _slideIdx });
+function needGrant() {
+  if (!_granted) { toast('Waiting for operator approval'); return true; }
+  return false;
 }
-
+function nav(d) {
+  if (needGrant()) return;
+  const i = _slideIdx + d;
+  if (i < 0 || i >= _slideSet.length) return;
+  jumpTo(i);
+}
+function jumpTo(i) {
+  if (needGrant()) return;
+  if (isNaN(i) || i < 0 || i >= _slideSet.length) return;
+  _slideIdx = i; renderSlides();
+  wsSend({ type:'slide', slide:_slideSet[i], slideSet:_slideSet, slideIndex:i });
+}
 function toggleBlank() {
-  if (!_granted) { showToast('Waiting for operator approval'); return; }
-  _isBlank = !_isBlank;
-  const btn = document.getElementById('blank-btn');
-  if (_isBlank) {
-    wsSend({ type: 'blank' });
-    if (btn) { btn.classList.add('active'); btn.innerHTML = '<i class="fa-solid fa-eye"></i> Show Screen'; }
-  } else {
-    wsSend({ type: 'unblank' });
-    if (btn) { btn.classList.remove('active'); btn.innerHTML = '<i class="fa-solid fa-eye-slash"></i> Blank Screen'; }
-  }
+  if (needGrant()) return;
+  setBlankUI(!_isBlank);
+  wsSend({ type: _isBlank ? 'blank' : 'unblank' });
 }
 
-// ── PROGRAM PANEL ─────────────────────────────────────────────────────────────
+// ── PROGRAM ──────────────────────────────────────────────────────────────────
 const TYPE_COLORS = {
   song:'#c8902e', bible:'#4a90d9', prayer:'#9b59b6', sermon:'#e67e22',
   choir:'#2ecc71', offering:'#2ecc71', announce:'#3498db', default:'#95a5a6',
 };
 
-let _programData = [];
-
 function renderProgram(program) {
-  const list = document.getElementById('prog-panel-list');
-  if (!list || !program) return;
-  _programData = program;
-
+  _programData = program || [];
+  const list = $('prog-list');
   let html = '';
-  program.forEach((section, si) => {
-    html += `<div style="font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);padding:10px 0 5px">${esc(section.section)}</div>`;
-    (section.items || []).forEach((item, ii) => {
-      const color = TYPE_COLORS[item.type] || TYPE_COLORS.default;
+  _programData.forEach((sec, si) => {
+    html += `<div class="label" style="padding:10px 0 5px">${esc(sec.section || sec.title || '')}</div>`;
+    (sec.items || []).forEach((it, ii) => {
+      const c = TYPE_COLORS[it.type] || TYPE_COLORS.default;
       html += `
-        <div class="prog-item-row" data-sec="${si}" data-item="${ii}">
-          <div class="pir-dot" style="background:${esc(color)}"></div>
-          <div class="pir-info">
-            <div class="pir-name">${esc(item.nameEn || '')}</div>
-            <div class="pir-meta">${esc((item.time ? item.time + ' · ' : '') + (item.presenter || ''))}</div>
+        <div class="item-row" data-sec="${si}" data-item="${ii}" style="margin-bottom:5px;cursor:pointer">
+          <div class="dot" style="background:${esc(c)}"></div>
+          <div class="item-info">
+            <div class="item-name">${esc(it.nameEn || it.name || '')}</div>
+            <div class="item-meta">${esc((it.time ? it.time + ' · ' : '') + (it.presenter || ''))}</div>
           </div>
-          <button class="pir-go">Go</button>
+          <button class="btn" style="padding:5px 10px;font-size:11px">Go</button>
         </div>`;
     });
   });
-  list.innerHTML = html || '<div style="text-align:center;padding:20px;color:var(--muted);font-size:12px">Program not loaded yet.</div>';
-
-  // Bind by index instead of embedding JSON in an onclick attribute —
-  // item names containing quotes or apostrophes used to break the handler.
-  list.querySelectorAll('.prog-item-row').forEach(row => {
+  list.innerHTML = html || '<div class="empty">Program will sync from the operator.</div>';
+  list.querySelectorAll('[data-sec]').forEach(row => {
     row.addEventListener('click', () => {
-      const sec  = parseInt(row.dataset.sec, 10);
-      const idx  = parseInt(row.dataset.item, 10);
-      const item = _programData?.[sec]?.items?.[idx];
-      if (item) progGoTo(item);
+      if (needGrant()) return;
+      const it = _programData?.[+row.dataset.sec]?.items?.[+row.dataset.item];
+      if (it) wsSend({ type:'program-go', itemId: it._id ?? it.id, item: it });
     });
   });
 }
 
-function progGoTo(item) {
-  if (!_granted) { showToast('Waiting for operator approval'); return; }
-  // Signal operator to navigate to this program item
-  wsSend({ type: 'program-go', itemId: item.id, item });
+// ── REQUESTS (program item / announcement → operator approval) ────────────────
+function sendRequest(kind, title, payload) {
+  if (!_ws || _ws.readyState !== WebSocket.OPEN) { toast('Not connected'); return; }
+  const reqId = uid();
+  _requests.unshift({ reqId, kind, title, status:'pending' });
+  renderRequests();
+  wsSend({ type:'presenter-request', reqId, kind, action:'add', payload });
+  toast('Sent to operator for approval');
 }
 
-// ── PANEL SWITCHING ───────────────────────────────────────────────────────────
+function renderRequests() {
+  const el = $('req-list');
+  if (!_requests.length) { el.innerHTML = '<div class="empty">Nothing sent yet.</div>'; return; }
+  el.innerHTML = _requests.map(r => `
+    <div class="item-row" style="margin-bottom:5px">
+      <div class="item-info">
+        <div class="item-name">${esc(r.title)}</div>
+        <div class="item-meta">${r.kind === 'announcement' ? 'Announcement' : 'Program item'}</div>
+      </div>
+      <span class="badge ${r.status}">${r.status}</span>
+    </div>`).join('');
+}
+
+function submitProgramItem() {
+  const name = $('pi-name').value.trim();
+  if (!name) { toast('Enter an item name'); $('pi-name').focus(); return; }
+  sendRequest('program-item', name, {
+    nameEn:    name,
+    type:      $('pi-type').value,
+    time:      $('pi-time').value.trim(),
+    presenter: $('pi-presenter').value.trim(),
+    notes:     $('pi-notes').value.trim(),
+  });
+  ['pi-name','pi-time','pi-presenter','pi-notes'].forEach(id => $(id).value = '');
+}
+
+function submitAnnouncement() {
+  const title = $('an-title').value.trim();
+  const text  = $('an-text').value.trim();
+  if (!title) { toast('Enter a title'); $('an-title').focus(); return; }
+  sendRequest('announcement', title, {
+    title, text,
+    date:     $('an-date').value.trim(),
+    location: $('an-loc').value.trim(),
+    icon:     'fa-bell',
+  });
+  ['an-title','an-date','an-loc','an-text'].forEach(id => $(id).value = '');
+}
+
+// ── SCREEN SHARE (WebRTC) ────────────────────────────────────────────────────
+async function startShare(useCamera) {
+  if (needGrant()) return;
+  try {
+    _stream = useCamera
+      ? await navigator.mediaDevices.getUserMedia({ video:{ facingMode:'environment' }, audio:false })
+      : await navigator.mediaDevices.getDisplayMedia({ video:true, audio:false });
+  } catch (e) {
+    toast('Sharing cancelled or not permitted'); return;
+  }
+
+  $('share-video').srcObject = _stream;
+  _stream.getVideoTracks()[0].addEventListener('ended', stopShare);
+
+  _pc = new RTCPeerConnection({ iceServers:[{ urls:'stun:stun.l.google.com:19302' }] });
+  _stream.getTracks().forEach(t => _pc.addTrack(t, _stream));
+  _pc.onicecandidate = e => { if (e.candidate) wsSend({ type:'webrtc-ice', candidate:e.candidate }); };
+
+  const offer = await _pc.createOffer();
+  await _pc.setLocalDescription(offer);
+  wsSend({ type:'webrtc-offer', offer });
+
+  $('share-dot').className = 'conn-dot';
+  $('share-label').textContent = useCamera ? 'Sharing camera' : 'Sharing screen';
+  $('share-start').disabled = true; $('share-cam').disabled = true; $('share-stop').disabled = false;
+  toast('Sharing started');
+}
+
+function stopShare() {
+  if (_stream) { _stream.getTracks().forEach(t => { try { t.stop(); } catch(_) {} }); _stream = null; }
+  if (_pc) { try { _pc.close(); } catch(_) {} _pc = null; }
+  const v = $('share-video'); if (v) v.srcObject = null;
+  const d = $('share-dot'); if (d) d.className = 'conn-dot off';
+  const l = $('share-label'); if (l) l.textContent = 'Not sharing';
+  const s = $('share-start'), c = $('share-cam'), st = $('share-stop');
+  if (s) s.disabled = false; if (c) c.disabled = false; if (st) st.disabled = true;
+  wsSend({ type:'share-stop' });
+}
+
+// ── FILES ────────────────────────────────────────────────────────────────────
+function uploadFile(file) {
+  if (!file) return;
+  const xhr = new XMLHttpRequest();
+  xhr.open('POST', '/upload', true);
+  xhr.setRequestHeader('X-Filename', file.name);
+  xhr.setRequestHeader('X-Filetype', file.type || 'application/octet-stream');
+
+  $('up-progress').style.display = 'block';
+  $('up-status').textContent = 'Uploading ' + file.name + '…';
+
+  xhr.upload.onprogress = e => {
+    if (e.lengthComputable) $('up-bar').style.width = Math.round(e.loaded / e.total * 100) + '%';
+  };
+  xhr.onload = () => {
+    $('up-progress').style.display = 'none';
+    $('up-bar').style.width = '0%';
+    if (xhr.status >= 200 && xhr.status < 300) {
+      $('up-status').textContent = 'Uploaded: ' + file.name;
+      toast('Upload complete'); fetchFiles();
+    } else {
+      let m = 'Upload failed';
+      try { m = JSON.parse(xhr.responseText).error || m; } catch(_) {}
+      $('up-status').textContent = m; toast(m);
+    }
+  };
+  xhr.onerror = () => {
+    $('up-progress').style.display = 'none';
+    $('up-status').textContent = 'Upload failed';
+  };
+  xhr.send(file);
+}
+
+async function fetchFiles() {
+  try {
+    const r = await fetch('/uploads-list');
+    if (!r.ok) return;
+    renderFiles(await r.json());
+  } catch(_) {}
+}
+
+function renderFiles(files) {
+  const el = $('file-list');
+  if (!files || !files.length) { el.innerHTML = '<div class="empty">No files uploaded yet.</div>'; return; }
+  el.innerHTML = files.map(f => {
+    const isImg = /\.(png|jpe?g|gif|webp|bmp)$/i.test(f.name);
+    const kb = f.size > 1048576 ? (f.size/1048576).toFixed(1)+' MB' : Math.round(f.size/1024)+' KB';
+    return `
+      <div class="item-row" style="margin-bottom:5px">
+        ${isImg ? `<img class="file-thumb" src="${esc(f.url)}" alt="">`
+                : `<div class="file-thumb" style="display:flex;align-items:center;justify-content:center;color:var(--muted)"><i class="fa-solid fa-film"></i></div>`}
+        <div class="item-info">
+          <div class="item-name">${esc(f.name)}</div>
+          <div class="item-meta">${kb}</div>
+        </div>
+        <button class="btn" style="padding:6px 11px;font-size:11px"
+          data-project-url="${esc(f.url)}" data-project-img="${isImg ? '1' : '0'}">Project</button>
+      </div>`;
+  }).join('');
+
+  el.querySelectorAll('[data-project-url]').forEach(b => {
+    b.addEventListener('click', () => {
+      if (needGrant()) return;
+      const url = b.dataset.projectUrl;
+      const slide = b.dataset.projectImg === '1'
+        ? { type:'image', title:'', imageUrl:url, url }
+        : { type:'video', title:'', videoUrl:url, url };
+      wsSend({ type:'slide', slide, slideSet:[slide], slideIndex:0 });
+      toast('Sent to projector');
+    });
+  });
+}
+
+// ── PANELS ───────────────────────────────────────────────────────────────────
 function switchPanel(id) {
   document.querySelectorAll('.panel').forEach(p => p.classList.toggle('active', p.id === 'panel-' + id));
   document.querySelectorAll('.snav-btn, .btab').forEach(b => b.classList.toggle('active', b.dataset.panel === id));
 }
 
-// ── KEYBOARD SHORTCUTS ────────────────────────────────────────────────────────
-document.addEventListener('keydown', e => {
-  if (!_granted) return;
-  if (document.getElementById('notes-ta') === document.activeElement) return;
-  if (e.key === 'ArrowRight' || e.key === 'PageDown') { e.preventDefault(); sendNav(1); }
-  else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); sendNav(-1); }
-  else if (e.key === 'b' || e.key === 'B') { e.preventDefault(); toggleBlank(); }
-});
-
-// ── NOTES AUTO-SAVE ───────────────────────────────────────────────────────────
-document.getElementById('notes-ta').addEventListener('input', function() {
-  try { localStorage.setItem('sda_presenter_notes', this.value); } catch(_) {}
-});
-
-// ── TOAST ─────────────────────────────────────────────────────────────────────
+// ── TOAST ────────────────────────────────────────────────────────────────────
 let _toastTimer = null;
-function showToast(msg) {
-  const el = document.getElementById('toast');
-  if (!el) return;
-  el.textContent = msg;
-  el.classList.add('show');
+function toast(m) {
+  const el = $('toast'); if (!el) return;
+  el.textContent = m; el.classList.add('show');
   clearTimeout(_toastTimer);
   _toastTimer = setTimeout(() => el.classList.remove('show'), 2800);
 }
 
-// ── ENTER KEY ON JOIN FORM ────────────────────────────────────────────────────
-['join-name', 'join-code'].forEach(id => {
-  document.getElementById(id)?.addEventListener('keydown', e => {
-    if (e.key === 'Enter') doJoin();
+// ── BINDINGS ─────────────────────────────────────────────────────────────────
+$('join-btn').addEventListener('click', doJoin);
+$('cancel-join-btn').addEventListener('click', showJoin);
+$('back-join-btn').addEventListener('click', showJoin);
+['join-name','join-code'].forEach(id =>
+  $(id).addEventListener('keydown', e => { if (e.key === 'Enter') doJoin(); }));
+
+$('prev-btn').addEventListener('click', () => nav(-1));
+$('next-btn').addEventListener('click', () => nav(1));
+$('blank-btn').addEventListener('click', toggleBlank);
+
+$('pi-submit').addEventListener('click', submitProgramItem);
+$('an-submit').addEventListener('click', submitAnnouncement);
+
+$('share-start').addEventListener('click', () => startShare(false));
+$('share-cam').addEventListener('click', () => startShare(true));
+$('share-stop').addEventListener('click', stopShare);
+
+$('drop-zone').addEventListener('click', () => $('file-input').click());
+$('file-input').addEventListener('change', function() { uploadFile(this.files[0]); this.value = ''; });
+['dragover','dragleave','drop'].forEach(ev => {
+  $('drop-zone').addEventListener(ev, e => {
+    e.preventDefault();
+    $('drop-zone').classList.toggle('over', ev === 'dragover');
+    if (ev === 'drop' && e.dataTransfer.files.length) uploadFile(e.dataTransfer.files[0]);
   });
 });
 
-// ── INIT ──────────────────────────────────────────────────────────────────────
+document.querySelectorAll('.snav-btn, .btab').forEach(b =>
+  b.addEventListener('click', () => switchPanel(b.dataset.panel)));
+
+$('notes-ta').addEventListener('input', function() {
+  try { localStorage.setItem('sda_presenter_notes', this.value); } catch(_) {}
+});
+
+document.addEventListener('keydown', e => {
+  if (!_granted) return;
+  if (document.activeElement && ['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)) return;
+  if (e.key === 'ArrowRight' || e.key === 'PageDown') { e.preventDefault(); nav(1); }
+  else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); nav(-1); }
+  else if (e.key === 'b' || e.key === 'B') { e.preventDefault(); toggleBlank(); }
+});
+
+// ── INIT ─────────────────────────────────────────────────────────────────────
 (function init() {
-  // Pre-fill name if stored
   try {
-    const savedName = localStorage.getItem('sda_presenter_name');
-    if (savedName) document.getElementById('join-name').value = savedName;
+    const n = localStorage.getItem('sda_presenter_name');
+    if (n) $('join-name').value = n;
   } catch(_) {}
-  // Save name on change
-  document.getElementById('join-name').addEventListener('blur', function() {
-    try { localStorage.setItem('sda_presenter_name', this.value.trim()); } catch(_) {}
-  });
+  renderRequests();
 })();
 </script>
 </body>

@@ -486,7 +486,7 @@ let _myName='',_myCode='';
 let _granted=false,_isBlank=false;
 let _slideSet=[],_slideIdx=0;
 let _programData=[],_requests=[],_choirs=[];
-let _pc=null,_stream=null;
+let _pc=null,_stream=null,_offerTimer=null;
 
 let HYMNS=null, sLang='en';            // hymn library from /hymns_data.js
 let BIBLE=null, bLang='en', _bibleLoading=false;
@@ -594,6 +594,11 @@ function handleMsg(msg){
       toast(msg.approved?'✓ Operator approved your request':('Rejected: '+(msg.message||'declined')));
       break;
     }
+    case 'share-ready':
+      // A receiver (screenshare window) just came online. If we're already
+      // sharing, re-send the offer — it missed the original one.
+      if(_stream) sendOffer();
+      break;
     case 'webrtc-answer': if(_pc&&msg.answer) _pc.setRemoteDescription(new RTCSessionDescription(msg.answer)).catch(()=>{}); break;
     case 'webrtc-ice':
       // Only candidates addressed to the presenter (screenshare.html tags its
@@ -976,6 +981,15 @@ function submitAnnouncement(){
 }
 
 // ── SCREEN SHARE ─────────────────────────────────────────────────────────────
+async function sendOffer(){
+  if(!_pc||!_stream) return;
+  try{
+    const offer=await _pc.createOffer();
+    await _pc.setLocalDescription(offer);
+    wsSend({type:'webrtc-offer',offer});
+  }catch(_){}
+}
+
 async function startShare(useCamera){
   if(needGrant())return;
   try{
@@ -1008,9 +1022,17 @@ async function startShare(useCamera){
     if(st==='failed') { $('share-label').textContent='Connection failed'; toast('Screen share could not connect'); }
   };
 
-  const offer=await _pc.createOffer();
-  await _pc.setLocalDescription(offer);
-  wsSend({type:'webrtc-offer',offer});
+  await sendOffer();
+
+  // Keep offering until a receiver answers. The Screen Share window may not be
+  // open yet, and a single un-answered offer would otherwise be lost forever.
+  clearInterval(_offerTimer);
+  _offerTimer=setInterval(()=>{
+    if(!_stream){ clearInterval(_offerTimer); return; }
+    const st=_pc&&_pc.connectionState;
+    if(st==='connected'){ clearInterval(_offerTimer); return; }
+    sendOffer();
+  },6000);
 
   // Mirror the live share into the Control panel preview
   const mini=$('share-mini'); if(mini){ mini.srcObject=_stream; mini.style.display=''; }
@@ -1022,6 +1044,7 @@ async function startShare(useCamera){
   toast('Sharing started');
 }
 function stopShare(){
+  clearInterval(_offerTimer); _offerTimer=null;
   if(_stream){ _stream.getTracks().forEach(t=>{try{t.stop();}catch(_){}}); _stream=null; }
   if(_pc){ try{_pc.close();}catch(_){} _pc=null; }
   const v=$('share-video'); if(v) v.srcObject=null;

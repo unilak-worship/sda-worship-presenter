@@ -441,14 +441,15 @@ html, body { height: 100%; overflow: hidden; font-family: var(--font); backgroun
 'use strict';
 
 // ── STATE ─────────────────────────────────────────────────────────────────────
-let _ws       = null;
-let _myId     = null;
-let _myName   = '';
-let _myCode   = '';
-let _granted  = false;
-let _isBlank  = false;
-let _slideSet = [];
-let _slideIdx = 0;
+let _ws         = null;
+let _myId       = null;
+let _idAdopted  = false;   // have we accepted an id for the CURRENT connection?
+let _myName     = '';
+let _myCode     = '';
+let _granted    = false;
+let _isBlank    = false;
+let _slideSet   = [];
+let _slideIdx   = 0;
 
 // ── SCREEN SWITCHING ──────────────────────────────────────────────────────────
 function showScreen(id) {
@@ -459,7 +460,8 @@ function showScreen(id) {
 }
 
 function showJoin() {
-  _granted = false; _ws && _ws.close(); _ws = null; _myId = null;
+  _granted = false; _ws && _ws.close(); _ws = null;
+  _myId = null; _idAdopted = false;
   document.getElementById('join-error').textContent = '';
   showScreen('join-screen');
 }
@@ -492,8 +494,12 @@ function connectWS() {
   // location.host includes the port ONLY when it's non-standard.
   // On Render/Railway (https:443) there's no port to append — appending
   // :4040 was the bug that made the server "unreachable".
-  const host = location.host || 'localhost:4040';
+  const host  = location.host || 'localhost:4040';
   const wsUrl = proto + '//' + host;
+
+  // The server assigns a NEW id on every connection, so allow the first
+  // status of this connection to (re)establish our id.
+  _idAdopted = false;
 
   try {
     _ws = new WebSocket(wsUrl);
@@ -565,7 +571,19 @@ function handleMsg(msg) {
     // ── Server assigns us an id and tells us our status ──────────────────────
     case 'presenter-status': {
       const id = msg.id ?? msg.presId;
-      if (id != null) _myId = String(id);
+
+      // Only apply status addressed to THIS presenter. The bridge relays some
+      // messages to every client; without this check, granting one presenter
+      // granted them all. The first status of a connection establishes our id
+      // (the server issues a new one on every reconnect).
+      if (id != null) {
+        if (!_idAdopted) {
+          _myId = String(id);
+          _idAdopted = true;
+        } else if (String(id) !== String(_myId)) {
+          break;   // meant for a different presenter — ignore
+        }
+      }
 
       if (msg.status === 'granted') {
         _granted = true;
@@ -576,6 +594,14 @@ function handleMsg(msg) {
       } else if (msg.status === 'waiting') {
         _granted = false;
         showScreen('waiting-screen');
+
+      } else if (msg.status === 'denied') {
+        _granted = false;
+        const titleEl = document.getElementById('denied-title');
+        const subEl   = document.getElementById('denied-sub');
+        if (titleEl) titleEl.textContent = 'Access Denied';
+        if (subEl)   subEl.textContent   = msg.message || 'The operator has not granted you access.';
+        showScreen('denied-screen');
 
       } else if (msg.status === 'kicked' || msg.status === 'revoked') {
         _granted = false;
@@ -636,6 +662,13 @@ function activateApp() {
   } catch(_) {}
 }
 
+// ── HTML ESCAPE (slide/program text comes from the network) ───────────────────
+function esc(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
 // ── SLIDE UI ──────────────────────────────────────────────────────────────────
 function updateSlideUI() {
   const slide    = _slideSet[_slideIdx];
@@ -678,13 +711,17 @@ function updateSlideUI() {
       listEl.innerHTML = '<div style="text-align:center;padding:20px;color:var(--muted);font-size:12px">Slides will appear here when the operator projects content.</div>';
     } else {
       listEl.innerHTML = _slideSet.map((s, i) => `
-        <div class="slide-item${i === _slideIdx ? ' active' : ''}" onclick="jumpToSlide(${i})">
+        <div class="slide-item${i === _slideIdx ? ' active' : ''}" data-slide-index="${i}">
           <span class="slide-item-num">${i + 1}</span>
           <div style="flex:1;min-width:0">
-            <div class="slide-item-label">${s.verseLabel || s.type || ''}</div>
-            <div class="slide-item-text">${s.hymnTitle || s.title || s.ref || s.body?.split('\n')[0] || ''}</div>
+            <div class="slide-item-label">${esc(s.verseLabel || s.type || '')}</div>
+            <div class="slide-item-text">${esc(s.hymnTitle || s.title || s.ref || (s.body ? s.body.split('\n')[0] : ''))}</div>
           </div>
         </div>`).join('');
+
+      listEl.querySelectorAll('[data-slide-index]').forEach(el => {
+        el.addEventListener('click', () => jumpToSlide(parseInt(el.dataset.slideIndex, 10)));
+      });
     }
   }
 }
@@ -701,7 +738,7 @@ function sendNav(dir) {
 
 function jumpToSlide(idx) {
   if (!_granted) { showToast('Waiting for operator approval'); return; }
-  if (idx < 0 || idx >= _slideSet.length) return;
+  if (isNaN(idx) || idx < 0 || idx >= _slideSet.length) return;
   _slideIdx = idx;
   updateSlideUI();
   wsSend({ type: 'slide', slide: _slideSet[_slideIdx], slideSet: _slideSet, slideIndex: _slideIdx });
@@ -726,26 +763,41 @@ const TYPE_COLORS = {
   choir:'#2ecc71', offering:'#2ecc71', announce:'#3498db', default:'#95a5a6',
 };
 
+let _programData = [];
+
 function renderProgram(program) {
   const list = document.getElementById('prog-panel-list');
   if (!list || !program) return;
+  _programData = program;
+
   let html = '';
-  program.forEach(section => {
-    html += `<div style="font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);padding:10px 0 5px">${section.section}</div>`;
-    (section.items || []).forEach((item, i) => {
+  program.forEach((section, si) => {
+    html += `<div style="font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);padding:10px 0 5px">${esc(section.section)}</div>`;
+    (section.items || []).forEach((item, ii) => {
       const color = TYPE_COLORS[item.type] || TYPE_COLORS.default;
       html += `
-        <div class="prog-item-row" onclick="progGoTo(${JSON.stringify(item).replace(/"/g,'&quot;')})">
-          <div class="pir-dot" style="background:${color}"></div>
+        <div class="prog-item-row" data-sec="${si}" data-item="${ii}">
+          <div class="pir-dot" style="background:${esc(color)}"></div>
           <div class="pir-info">
-            <div class="pir-name">${item.nameEn || ''}</div>
-            <div class="pir-meta">${item.time ? item.time + ' · ' : ''}${item.presenter || ''}</div>
+            <div class="pir-name">${esc(item.nameEn || '')}</div>
+            <div class="pir-meta">${esc((item.time ? item.time + ' · ' : '') + (item.presenter || ''))}</div>
           </div>
           <button class="pir-go">Go</button>
         </div>`;
     });
   });
   list.innerHTML = html || '<div style="text-align:center;padding:20px;color:var(--muted);font-size:12px">Program not loaded yet.</div>';
+
+  // Bind by index instead of embedding JSON in an onclick attribute —
+  // item names containing quotes or apostrophes used to break the handler.
+  list.querySelectorAll('.prog-item-row').forEach(row => {
+    row.addEventListener('click', () => {
+      const sec  = parseInt(row.dataset.sec, 10);
+      const idx  = parseInt(row.dataset.item, 10);
+      const item = _programData?.[sec]?.items?.[idx];
+      if (item) progGoTo(item);
+    });
+  });
 }
 
 function progGoTo(item) {

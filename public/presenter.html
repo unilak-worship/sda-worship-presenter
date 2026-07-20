@@ -17,12 +17,10 @@
   --green:#2ecc71; --red:#ef4444; --blue:#4a90d9;
   --radius:8px; --font:'Lato',sans-serif;
 }
-
 html,body { height:100%; font-family:var(--font); background:var(--bg); color:var(--text); }
 body { overflow:hidden; }
 button,input,select,textarea { font-family:var(--font); }
 
-/* ── Generic ── */
 .btn {
   font-size:13px; font-weight:700; background:var(--surface2);
   border:1px solid var(--border); border-radius:var(--radius); color:var(--text);
@@ -35,9 +33,10 @@ button,input,select,textarea { font-family:var(--font); }
 .btn:disabled { opacity:.35; pointer-events:none; }
 .btn.primary { background:var(--gold); color:#fff; border-color:var(--gold); }
 .btn.primary:hover { background:var(--gold-lt); color:#fff; }
-.btn.danger  { background:rgba(239,68,68,.15); border-color:var(--red); color:var(--red); }
+.btn.danger { background:rgba(239,68,68,.15); border-color:var(--red); color:var(--red); }
+.btn.sm { padding:6px 11px; font-size:11px; }
 .btn.full { width:100%; }
-.input, .select, .textarea {
+.input,.select,.textarea {
   width:100%; font-size:14px; background:var(--surface2);
   border:1px solid var(--border); border-radius:var(--radius);
   color:var(--text); padding:11px 13px; outline:none; transition:border-color .2s;
@@ -47,214 +46,191 @@ button,input,select,textarea { font-family:var(--font); }
 .label { font-size:11px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--muted); }
 .field { display:flex; flex-direction:column; gap:6px; }
 .row2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.row3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; }
 
-/* ── Centred screens ── */
 .screen-center {
   display:none; flex-direction:column; align-items:center; justify-content:center;
   min-height:100vh; padding:24px; gap:18px; text-align:center;
 }
-.join-logo {
-  width:60px; height:60px; background:var(--gold); border-radius:12px;
-  display:flex; align-items:center; justify-content:center; font-size:28px; color:#fff;
-}
+.join-logo { width:60px;height:60px;background:var(--gold);border-radius:12px;
+  display:flex;align-items:center;justify-content:center;font-size:28px;color:#fff; }
 .join-title { font-size:22px; font-weight:900; }
 .join-sub { font-size:13px; color:var(--muted); max-width:320px; line-height:1.5; }
-.join-card {
-  background:var(--surface); border:1px solid var(--border); border-radius:14px;
-  padding:24px; width:100%; max-width:380px; display:flex; flex-direction:column; gap:14px; text-align:left;
-}
+.join-card { background:var(--surface); border:1px solid var(--border); border-radius:14px;
+  padding:24px; width:100%; max-width:380px; display:flex; flex-direction:column; gap:14px; text-align:left; }
 .join-error { font-size:12px; color:var(--red); text-align:center; min-height:16px; }
-.spinner {
-  width:56px; height:56px; border-radius:50%;
-  border:4px solid var(--border); border-top-color:var(--gold);
-  animation:spin 1s linear infinite;
-}
+.spinner { width:56px;height:56px;border-radius:50%;border:4px solid var(--border);
+  border-top-color:var(--gold); animation:spin 1s linear infinite; }
 @keyframes spin { to { transform:rotate(360deg); } }
 
-/* ── App shell ── */
 #app-screen { display:none; height:100vh; flex-direction:column; overflow:hidden; }
-.app-topbar {
-  display:flex; align-items:center; justify-content:space-between; gap:10px;
-  padding:0 14px; height:52px; background:var(--surface);
-  border-bottom:1px solid var(--border); flex-shrink:0;
-}
+.app-topbar { display:flex; align-items:center; justify-content:space-between; gap:10px;
+  padding:0 14px; height:52px; background:var(--surface); border-bottom:1px solid var(--border); flex-shrink:0; }
 .app-logo { display:flex; align-items:center; gap:8px; font-size:13px; font-weight:700; }
-.app-logo-icon {
-  width:26px; height:26px; background:var(--gold); border-radius:5px;
-  display:flex; align-items:center; justify-content:center; font-size:13px; color:#fff;
-}
-.conn-dot { width:7px; height:7px; border-radius:50%; background:var(--green); box-shadow:0 0 5px var(--green); }
+.app-logo-icon { width:26px;height:26px;background:var(--gold);border-radius:5px;
+  display:flex;align-items:center;justify-content:center;font-size:13px;color:#fff; }
+.conn-dot { width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 5px var(--green); }
 .conn-dot.off { background:var(--red); box-shadow:0 0 5px var(--red); }
 
 .app-body { flex:1; display:flex; overflow:hidden; }
-
-/* Sidebar (desktop) */
-.sidebar-nav {
-  width:64px; background:var(--surface); border-right:1px solid var(--border);
-  display:flex; flex-direction:column; align-items:center; padding:8px 0; gap:4px; flex-shrink:0;
-}
-.snav-btn {
-  width:48px; height:46px; border-radius:var(--radius); display:flex;
-  flex-direction:column; align-items:center; justify-content:center; gap:3px;
-  font-size:15px; color:var(--muted); background:transparent; border:none; cursor:pointer;
-  transition:all .15s;
-}
-.snav-btn span { font-size:8px; font-weight:700; letter-spacing:.3px; text-transform:uppercase; }
+.sidebar-nav { width:64px; background:var(--surface); border-right:1px solid var(--border);
+  display:flex; flex-direction:column; align-items:center; padding:6px 0; gap:2px; flex-shrink:0; overflow-y:auto; }
+.snav-btn { width:52px; height:44px; border-radius:var(--radius); display:flex;
+  flex-direction:column; align-items:center; justify-content:center; gap:2px;
+  font-size:14px; color:var(--muted); background:transparent; border:none; cursor:pointer; transition:all .15s; flex-shrink:0; }
+.snav-btn span { font-size:7.5px; font-weight:700; letter-spacing:.2px; text-transform:uppercase; }
 .snav-btn:hover { background:var(--surface2); color:var(--text); }
 .snav-btn.active { background:rgba(200,144,46,.15); color:var(--gold); }
 
-/* Panels */
 .panel { display:none; flex:1; overflow-y:auto; flex-direction:column; }
 .panel.active { display:flex; }
-.panel-header {
-  padding:12px 16px 8px; font-size:10px; font-weight:700; letter-spacing:2px;
-  text-transform:uppercase; color:var(--gold); flex-shrink:0;
-}
+.panel-header { padding:12px 16px 8px; font-size:10px; font-weight:700; letter-spacing:2px;
+  text-transform:uppercase; color:var(--gold); flex-shrink:0; }
 .panel-inner { padding:0 16px 20px; display:flex; flex-direction:column; gap:12px; }
 
-/* ── CONTROL: two columns on wide screens ── */
+/* CONTROL grid */
 .control-grid { display:flex; flex-direction:column; gap:12px; padding:0 16px 20px; }
 @media (min-width:900px) {
-  .control-grid {
-    display:grid; grid-template-columns:minmax(0,1.35fr) minmax(300px,1fr);
-    gap:16px; align-items:start;
-  }
-  .control-left  { display:flex; flex-direction:column; gap:12px; min-width:0; }
-  .control-right { display:flex; flex-direction:column; gap:10px; min-width:0; }
+  .control-grid { display:grid; grid-template-columns:minmax(0,1.35fr) minmax(300px,1fr); gap:16px; align-items:start; }
+  .control-left,.control-right { display:flex; flex-direction:column; gap:10px; min-width:0; }
 }
 
+/* ── PROJECTOR-ACCURATE PREVIEW ── */
 .preview-screen {
-  background:#06060e; border:1px solid var(--border); border-radius:10px;
-  aspect-ratio:16/9; position:relative; overflow:hidden;
-  max-height:42vh;
+  background:#04040e; border:1px solid var(--border); border-radius:10px;
+  aspect-ratio:16/9; position:relative; overflow:hidden; width:100%;
 }
 .preview-content {
   position:absolute; inset:0; display:flex; flex-direction:column;
-  align-items:center; justify-content:center; padding:16px; text-align:center; gap:4px;
+  align-items:center; justify-content:center; text-align:center;
+  padding:5% 7%; gap:.6em;
 }
-.pv-type  { font-size:9px; letter-spacing:2px; text-transform:uppercase; color:rgba(200,144,46,.7); }
-.pv-title { font-family:'Playfair Display',serif; font-size:clamp(15px,2.4vw,22px); font-weight:600; color:#fff; line-height:1.3; }
-.pv-body  { font-size:clamp(10px,1.4vw,13px); color:rgba(255,255,255,.72); line-height:1.5; font-style:italic; max-width:90%; }
+.pv-type { font-size:.85em; letter-spacing:.22em; text-transform:uppercase; color:rgba(200,144,46,.75); }
+.pv-title { font-family:'Playfair Display',serif; font-size:1.9em; font-weight:600; color:#fff; line-height:1.25; }
+.pv-sub { font-size:.85em; color:rgba(200,144,46,.65); letter-spacing:.08em; }
+.pv-body {
+  font-size:1.15em; color:rgba(255,255,255,.92); line-height:1.5;
+  font-style:italic; white-space:pre-wrap; max-width:100%;
+}
+.pv-ref { font-size:.8em; color:rgba(255,255,255,.4); margin-top:.3em; }
 
 .nav-row { display:flex; gap:10px; }
 .nav-row .btn { flex:1; font-size:15px; padding:14px; }
 .slide-pos { text-align:center; font-size:11px; color:var(--muted); }
 
 .list-scroll { display:flex; flex-direction:column; gap:5px; }
-@media (min-width:900px) { .list-scroll { max-height:calc(100vh - 190px); overflow-y:auto; padding-right:4px; } }
+@media (min-width:900px) { .list-scroll { max-height:calc(100vh - 200px); overflow-y:auto; padding-right:4px; } }
 
-.slide-item {
-  background:var(--surface2); border:1px solid var(--border); border-radius:var(--radius);
-  padding:10px 12px; cursor:pointer; transition:all .13s;
-  display:flex; align-items:center; gap:10px; -webkit-tap-highlight-color:transparent;
-}
+.slide-item { background:var(--surface2); border:1px solid var(--border); border-radius:var(--radius);
+  padding:10px 12px; cursor:pointer; transition:all .13s; display:flex; align-items:center; gap:10px;
+  -webkit-tap-highlight-color:transparent; }
 .slide-item:hover { border-color:rgba(200,144,46,.4); }
 .slide-item.active { background:rgba(200,144,46,.12); border-color:var(--gold); }
 .slide-num { font-size:10px; font-weight:700; color:var(--gold); min-width:20px; }
 .slide-label { font-size:11px; font-weight:700; color:var(--muted); margin-bottom:2px; }
 .slide-text { font-size:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 
-/* ── Cards / rows ── */
-.card {
-  background:var(--surface); border:1px solid var(--border);
-  border-radius:12px; padding:14px; display:flex; flex-direction:column; gap:12px;
-}
+.card { background:var(--surface); border:1px solid var(--border); border-radius:12px;
+  padding:14px; display:flex; flex-direction:column; gap:12px; }
 .card-title { font-size:13px; font-weight:700; display:flex; align-items:center; gap:8px; }
 .card-sub { font-size:11px; color:var(--muted); line-height:1.5; }
 
-.item-row {
-  display:flex; align-items:center; gap:10px;
-  background:var(--surface2); border:1px solid var(--border);
-  border-radius:var(--radius); padding:10px 12px;
-}
+.item-row { display:flex; align-items:center; gap:10px; background:var(--surface2);
+  border:1px solid var(--border); border-radius:var(--radius); padding:10px 12px; }
 .dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
 .item-info { flex:1; min-width:0; }
 .item-name { font-size:13px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .item-meta { font-size:10px; color:var(--muted); margin-top:1px; }
-
 .empty { text-align:center; padding:24px; color:var(--muted); font-size:12px; }
 
-.badge {
-  font-size:9px; font-weight:800; padding:2px 7px; border-radius:10px;
-  text-transform:uppercase; letter-spacing:.5px;
-}
-.badge.pending  { background:rgba(230,126,34,.18); color:#e67e22; }
+.badge { font-size:9px; font-weight:800; padding:2px 7px; border-radius:10px;
+  text-transform:uppercase; letter-spacing:.5px; }
+.badge.pending { background:rgba(230,126,34,.18); color:#e67e22; }
 .badge.approved { background:rgba(46,204,113,.18); color:var(--green); }
 .badge.rejected { background:rgba(239,68,68,.18); color:var(--red); }
 
-/* ── Screen share ── */
-.share-video {
-  width:100%; background:#06060e; border:1px solid var(--border);
-  border-radius:10px; aspect-ratio:16/9; object-fit:contain;
-}
+/* Language pills */
+.pills { display:flex; gap:6px; }
+.pill { flex:1; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.5px;
+  background:var(--surface2); border:1px solid var(--border); border-radius:var(--radius);
+  color:var(--muted); padding:8px; cursor:pointer; transition:all .15s; }
+.pill.active { background:rgba(200,144,46,.15); border-color:var(--gold); color:var(--gold); }
+
+/* Hymn / choir rows */
+.lib-row { background:var(--surface2); border:1px solid var(--border); border-radius:var(--radius);
+  overflow:hidden; transition:border-color .15s; }
+.lib-row.open { border-color:var(--gold); }
+.lib-head { display:flex; align-items:center; gap:10px; padding:10px 12px; cursor:pointer; }
+.lib-num { font-size:11px; font-weight:800; color:var(--gold); min-width:34px; }
+.lib-title { font-size:13px; font-weight:700; flex:1; min-width:0;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.verse-rows { display:none; flex-direction:column; gap:4px; padding:0 10px 10px; }
+.lib-row.open .verse-rows { display:flex; }
+.verse-row { display:flex; align-items:center; gap:9px; background:rgba(255,255,255,.03);
+  border:1px solid var(--border); border-radius:6px; padding:8px 10px; cursor:pointer; }
+.verse-row:hover { border-color:var(--gold); }
+.verse-lbl { font-size:10px; font-weight:700; color:var(--gold); min-width:62px; }
+.verse-txt { font-size:11px; color:var(--muted); flex:1; min-width:0;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+/* Bible verse grid */
+.bv-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(46px,1fr)); gap:5px; }
+.bv { background:var(--surface2); border:1px solid var(--border); border-radius:6px;
+  padding:9px 4px; text-align:center; font-size:12px; font-weight:700; cursor:pointer; transition:all .13s; }
+.bv:hover { border-color:var(--gold); color:var(--gold); }
+.bv.cur { background:rgba(200,144,46,.18); border-color:var(--gold); color:var(--gold); }
+
+.share-video { width:100%; background:#06060e; border:1px solid var(--border);
+  border-radius:10px; aspect-ratio:16/9; object-fit:contain; }
 .share-status { font-size:12px; color:var(--muted); display:flex; align-items:center; gap:8px; }
 
-/* ── Files ── */
-.drop-zone {
-  border:2px dashed var(--border); border-radius:12px; padding:26px 16px;
-  text-align:center; color:var(--muted); font-size:12px; cursor:pointer; transition:all .15s;
-}
-.drop-zone:hover, .drop-zone.over { border-color:var(--gold); color:var(--gold); background:rgba(200,144,46,.05); }
+.drop-zone { border:2px dashed var(--border); border-radius:12px; padding:26px 16px;
+  text-align:center; color:var(--muted); font-size:12px; cursor:pointer; transition:all .15s; }
+.drop-zone:hover,.drop-zone.over { border-color:var(--gold); color:var(--gold); background:rgba(200,144,46,.05); }
 .progress { height:5px; background:var(--surface2); border-radius:3px; overflow:hidden; }
 .progress-bar { height:100%; width:0%; background:var(--gold); transition:width .2s; }
 .file-thumb { width:44px; height:32px; object-fit:cover; border-radius:4px; flex-shrink:0; background:#000; }
 
-/* ── Mobile bottom tabs ── */
-.bottom-tabbar { display:none; background:var(--surface); border-top:1px solid var(--border); flex-shrink:0; }
-.btab {
-  flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;
-  gap:3px; padding:8px 2px; font-size:8px; font-weight:700; letter-spacing:.3px;
+.bottom-tabbar { display:none; background:var(--surface); border-top:1px solid var(--border);
+  flex-shrink:0; overflow-x:auto; }
+.btab { flex:0 0 auto; min-width:64px; display:flex; flex-direction:column; align-items:center;
+  justify-content:center; gap:3px; padding:8px 6px; font-size:8px; font-weight:700;
   text-transform:uppercase; color:var(--muted); background:none; border:none; cursor:pointer;
-  -webkit-tap-highlight-color:transparent;
-}
+  -webkit-tap-highlight-color:transparent; }
 .btab i { font-size:16px; }
 .btab.active { color:var(--gold); }
 @media (max-width:767px) {
   .sidebar-nav { display:none; }
   .bottom-tabbar { display:flex; }
-  .panel { padding-bottom:6px; }
-  .preview-screen { max-height:32vh; }
 }
 
-/* Toast */
-.toast {
-  position:fixed; bottom:88px; left:50%; transform:translateX(-50%) translateY(10px);
+.toast { position:fixed; bottom:88px; left:50%; transform:translateX(-50%) translateY(10px);
   background:var(--surface); border:1px solid var(--gold); border-radius:var(--radius);
   padding:9px 16px; font-size:12px; font-weight:700; color:var(--gold);
-  z-index:1000; opacity:0; transition:all .3s; pointer-events:none;
-  max-width:90vw; text-align:center;
-}
+  z-index:1000; opacity:0; transition:all .3s; pointer-events:none; max-width:90vw; text-align:center; }
 .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
 </style>
 </head>
 <body>
 
-<!-- ── JOIN ── -->
 <div class="screen-center" id="join-screen" style="display:flex">
   <div class="join-logo"><i class="fa-solid fa-cross"></i></div>
   <div class="join-title">SDA Worship — Presenter</div>
   <div class="join-sub">Enter your name and the session code to join the service.</div>
   <div class="join-card">
-    <div class="field">
-      <label class="label" for="join-name">Your Name</label>
-      <input class="input" id="join-name" type="text" placeholder="e.g. Elder Kamanzi" autocomplete="off" maxlength="40">
-    </div>
-    <div class="field">
-      <label class="label" for="join-code">Session Code</label>
-      <input class="input" id="join-code" type="text" placeholder="e.g. SDA-WXYZ"
-        autocomplete="off" maxlength="12" style="letter-spacing:3px;text-transform:uppercase">
-    </div>
+    <div class="field"><label class="label" for="join-name">Your Name</label>
+      <input class="input" id="join-name" type="text" placeholder="e.g. Elder Kamanzi" autocomplete="off" maxlength="40"></div>
+    <div class="field"><label class="label" for="join-code">Session Code</label>
+      <input class="input" id="join-code" type="text" placeholder="e.g. SDA-WXYZ" autocomplete="off"
+        maxlength="12" style="letter-spacing:3px;text-transform:uppercase"></div>
     <div class="join-error" id="join-error"></div>
-    <button class="btn primary full" id="join-btn">
-      <i class="fa-solid fa-arrow-right-to-bracket"></i> Join Session
-    </button>
+    <button class="btn primary full" id="join-btn"><i class="fa-solid fa-arrow-right-to-bracket"></i> Join Session</button>
   </div>
   <div style="font-size:11px;color:var(--muted);line-height:1.6">
     Ask the operator for the session code.<br>You need approval before controlling slides.
   </div>
 </div>
 
-<!-- ── WAITING ── -->
 <div class="screen-center" id="waiting-screen">
   <div class="spinner"></div>
   <div style="font-size:18px;font-weight:700">Waiting for approval</div>
@@ -263,7 +239,6 @@ button,input,select,textarea { font-family:var(--font); }
   <button class="btn full" style="max-width:200px" id="cancel-join-btn"><i class="fa-solid fa-xmark"></i> Cancel</button>
 </div>
 
-<!-- ── DENIED ── -->
 <div class="screen-center" id="denied-screen">
   <i class="fa-solid fa-ban" style="font-size:48px;color:var(--red)"></i>
   <div style="font-size:20px;font-weight:700" id="denied-title">Access Denied</div>
@@ -271,13 +246,9 @@ button,input,select,textarea { font-family:var(--font); }
   <button class="btn primary" id="back-join-btn"><i class="fa-solid fa-rotate-left"></i> Back to Join</button>
 </div>
 
-<!-- ── APP ── -->
 <div id="app-screen">
   <div class="app-topbar">
-    <div class="app-logo">
-      <div class="app-logo-icon"><i class="fa-solid fa-cross"></i></div>
-      <span>SDA Worship</span>
-    </div>
+    <div class="app-logo"><div class="app-logo-icon"><i class="fa-solid fa-cross"></i></div><span>SDA Worship</span></div>
     <span style="font-size:11px;font-weight:700;color:var(--muted)" id="app-name-badge"></span>
     <div style="display:flex;align-items:center;gap:6px">
       <div class="conn-dot" id="conn-dot"></div>
@@ -288,6 +259,9 @@ button,input,select,textarea { font-family:var(--font); }
   <div class="app-body">
     <div class="sidebar-nav">
       <button class="snav-btn active" data-panel="control"><i class="fa-solid fa-sliders"></i><span>Control</span></button>
+      <button class="snav-btn" data-panel="songs"><i class="fa-solid fa-music"></i><span>Songs</span></button>
+      <button class="snav-btn" data-panel="bible"><i class="fa-solid fa-book-bible"></i><span>Bible</span></button>
+      <button class="snav-btn" data-panel="choir"><i class="fa-solid fa-users"></i><span>Choir</span></button>
       <button class="snav-btn" data-panel="program"><i class="fa-solid fa-list-ol"></i><span>Program</span></button>
       <button class="snav-btn" data-panel="announce"><i class="fa-solid fa-bullhorn"></i><span>Notice</span></button>
       <button class="snav-btn" data-panel="share"><i class="fa-solid fa-display"></i><span>Share</span></button>
@@ -300,11 +274,13 @@ button,input,select,textarea { font-family:var(--font); }
       <div class="panel-header">Slide Control</div>
       <div class="control-grid">
         <div class="control-left">
-          <div class="preview-screen">
-            <div class="preview-content">
+          <div class="preview-screen" id="preview-screen">
+            <div class="preview-content" id="preview-content">
               <div class="pv-type"  id="pv-type">—</div>
               <div class="pv-title" id="pv-title" style="color:rgba(255,255,255,.2);font-style:italic">Nothing on screen</div>
+              <div class="pv-sub"   id="pv-sub"></div>
               <div class="pv-body"  id="pv-body"></div>
+              <div class="pv-ref"   id="pv-ref"></div>
             </div>
           </div>
           <div class="slide-pos" id="slide-pos">No slides loaded</div>
@@ -317,9 +293,55 @@ button,input,select,textarea { font-family:var(--font); }
         <div class="control-right">
           <div class="label">Slides</div>
           <div class="list-scroll" id="slide-list">
-            <div class="empty">Slides appear here when the operator projects content.</div>
+            <div class="empty">Slides appear here when content is projected.</div>
           </div>
         </div>
+      </div>
+    </div>
+
+    <!-- SONGS -->
+    <div class="panel" id="panel-songs">
+      <div class="panel-header">Hymnal</div>
+      <div class="panel-inner">
+        <div class="pills" id="song-langs">
+          <button class="pill active" data-slang="en">English</button>
+          <button class="pill" data-slang="rw">Kinyarwanda</button>
+          <button class="pill" data-slang="fr">Français</button>
+        </div>
+        <input class="input" id="song-search" placeholder="Search by title or hymn number…">
+        <div class="label" id="song-count">Loading hymns…</div>
+        <div class="list-scroll" id="song-list"></div>
+      </div>
+    </div>
+
+    <!-- BIBLE -->
+    <div class="panel" id="panel-bible">
+      <div class="panel-header">Scripture</div>
+      <div class="panel-inner">
+        <div class="pills" id="bible-langs">
+          <button class="pill active" data-blang="en">KJV</button>
+          <button class="pill" data-blang="rw">Kinyarwanda</button>
+          <button class="pill" data-blang="fr">Français</button>
+        </div>
+        <div class="row2">
+          <div class="field"><label class="label">Book</label>
+            <select class="select" id="b-book"><option value="">— Book —</option></select></div>
+          <div class="field"><label class="label">Chapter</label>
+            <select class="select" id="b-chap"><option value="">— Chapter —</option></select></div>
+        </div>
+        <input class="input" id="bible-search" placeholder="Or search verse text / type 'John 3:16'…">
+        <div class="label" id="bible-meta">Select a book to begin</div>
+        <div id="bible-body"><div class="empty">Loading Bible…</div></div>
+      </div>
+    </div>
+
+    <!-- CHOIR -->
+    <div class="panel" id="panel-choir">
+      <div class="panel-header">Choir &amp; Special Music</div>
+      <div class="panel-inner">
+        <input class="input" id="choir-search" placeholder="Search choir or song…">
+        <div class="label" id="choir-count">Waiting for operator sync…</div>
+        <div class="list-scroll" id="choir-list"></div>
       </div>
     </div>
 
@@ -329,7 +351,7 @@ button,input,select,textarea { font-family:var(--font); }
       <div class="panel-inner">
         <div class="card">
           <div class="card-title"><i class="fa-solid fa-plus" style="color:var(--gold)"></i> Propose a program item</div>
-          <div class="card-sub">The operator must approve before it is added to the service.</div>
+          <div class="card-sub">The operator must approve before it is added.</div>
           <div class="field"><label class="label">Item name</label>
             <input class="input" id="pi-name" placeholder="e.g. Special Music" maxlength="80"></div>
           <div class="row2">
@@ -346,10 +368,9 @@ button,input,select,textarea { font-family:var(--font); }
           <div class="field"><label class="label">Presenter</label>
             <input class="input" id="pi-presenter" placeholder="e.g. Pastor Habimana" maxlength="60"></div>
           <div class="field"><label class="label">Notes (optional)</label>
-            <textarea class="textarea" id="pi-notes" placeholder="Anything the operator should know…"></textarea></div>
+            <textarea class="textarea" id="pi-notes"></textarea></div>
           <button class="btn primary full" id="pi-submit"><i class="fa-solid fa-paper-plane"></i> Send to operator</button>
         </div>
-
         <div class="label">Current program</div>
         <div id="prog-list"><div class="empty">Program will sync from the operator.</div></div>
       </div>
@@ -371,25 +392,22 @@ button,input,select,textarea { font-family:var(--font); }
               <input class="input" id="an-loc" placeholder="Main hall" maxlength="40"></div>
           </div>
           <div class="field"><label class="label">Message</label>
-            <textarea class="textarea" id="an-text" placeholder="Details of the announcement…"></textarea></div>
+            <textarea class="textarea" id="an-text"></textarea></div>
           <button class="btn primary full" id="an-submit"><i class="fa-solid fa-paper-plane"></i> Send to operator</button>
         </div>
-
         <div class="label">My requests</div>
         <div id="req-list"><div class="empty">Nothing sent yet.</div></div>
       </div>
     </div>
 
-    <!-- SCREEN SHARE -->
+    <!-- SHARE -->
     <div class="panel" id="panel-share">
       <div class="panel-header">Screen Share</div>
       <div class="panel-inner">
         <div class="card">
           <div class="card-title"><i class="fa-solid fa-display" style="color:var(--gold)"></i> Share this device</div>
-          <div class="card-sub">
-            Sends your screen to the projector. On a phone, most browsers only allow
-            camera sharing — on a laptop you can pick a window or the whole screen.
-          </div>
+          <div class="card-sub">Sends your screen to the projector. Phones usually allow camera only;
+            laptops can share a window or the whole screen.</div>
           <video class="share-video" id="share-video" autoplay muted playsinline></video>
           <div class="share-status"><div class="conn-dot off" id="share-dot"></div><span id="share-label">Not sharing</span></div>
           <div class="row2">
@@ -416,7 +434,6 @@ button,input,select,textarea { font-family:var(--font); }
           <div class="progress" id="up-progress" style="display:none"><div class="progress-bar" id="up-bar"></div></div>
           <div style="font-size:11px;color:var(--muted)" id="up-status"></div>
         </div>
-
         <div class="label">Available files</div>
         <div id="file-list"><div class="empty">No files uploaded yet.</div></div>
       </div>
@@ -435,6 +452,9 @@ button,input,select,textarea { font-family:var(--font); }
 
   <div class="bottom-tabbar">
     <button class="btab active" data-panel="control"><i class="fa-solid fa-sliders"></i><span>Control</span></button>
+    <button class="btab" data-panel="songs"><i class="fa-solid fa-music"></i><span>Songs</span></button>
+    <button class="btab" data-panel="bible"><i class="fa-solid fa-book-bible"></i><span>Bible</span></button>
+    <button class="btab" data-panel="choir"><i class="fa-solid fa-users"></i><span>Choir</span></button>
     <button class="btab" data-panel="program"><i class="fa-solid fa-list-ol"></i><span>Program</span></button>
     <button class="btab" data-panel="announce"><i class="fa-solid fa-bullhorn"></i><span>Notice</span></button>
     <button class="btab" data-panel="share"><i class="fa-solid fa-display"></i><span>Share</span></button>
@@ -449,495 +469,660 @@ button,input,select,textarea { font-family:var(--font); }
 'use strict';
 
 // ── STATE ────────────────────────────────────────────────────────────────────
-let _ws = null, _myId = null, _idAdopted = false;
-let _myName = '', _myCode = '';
-let _granted = false, _isBlank = false;
-let _slideSet = [], _slideIdx = 0;
-let _programData = [];
-let _requests = [];            // {reqId, kind, title, status}
-let _pc = null, _stream = null;
+let _ws=null,_myId=null,_idAdopted=false;
+let _myName='',_myCode='';
+let _granted=false,_isBlank=false;
+let _slideSet=[],_slideIdx=0;
+let _programData=[],_requests=[],_choirs=[];
+let _pc=null,_stream=null;
+
+let HYMNS=null, sLang='en';            // hymn library from /hymns_data.js
+let BIBLE=null, bLang='en', _bibleLoading=false;
+let curBook=null, curChap=null;
 
 const $ = id => document.getElementById(id);
-const esc = s => String(s == null ? '' : s)
+const esc = s => String(s==null?'':s)
   .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
   .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,8);
+const uid = () => Date.now().toString(36)+Math.random().toString(36).slice(2,8);
 
 // ── SCREENS ──────────────────────────────────────────────────────────────────
-function showScreen(id) {
-  ['join-screen','waiting-screen','denied-screen','app-screen'].forEach(s => {
-    const el = $(s); if (el) el.style.display = (s === id) ? 'flex' : 'none';
+function showScreen(id){
+  ['join-screen','waiting-screen','denied-screen','app-screen'].forEach(s=>{
+    const el=$(s); if(el) el.style.display=(s===id)?'flex':'none';
   });
 }
-function showJoin() {
-  _granted = false; stopShare();
-  if (_ws) { try { _ws.close(); } catch(_) {} }
-  _ws = null; _myId = null; _idAdopted = false;
-  $('join-error').textContent = '';
-  $('join-btn').disabled = false;
+function showJoin(){
+  _granted=false; stopShare();
+  if(_ws){ try{_ws.close();}catch(_){} }
+  _ws=null; _myId=null; _idAdopted=false;
+  $('join-error').textContent=''; $('join-btn').disabled=false;
   showScreen('join-screen');
 }
 
 // ── JOIN ─────────────────────────────────────────────────────────────────────
-function doJoin() {
-  const name = $('join-name').value.trim();
-  const code = $('join-code').value.trim().toUpperCase();
-  if (!name) { $('join-error').textContent = 'Please enter your name.'; $('join-name').focus(); return; }
-  if (!code) { $('join-error').textContent = 'Please enter the session code.'; $('join-code').focus(); return; }
-  $('join-error').textContent = '';
-  $('join-btn').disabled = true;
-  _myName = name; _myCode = code;
-  try { localStorage.setItem('sda_presenter_name', name); } catch(_) {}
-  $('waiting-name').textContent = 'Joining as: ' + name;
+function doJoin(){
+  const name=$('join-name').value.trim(), code=$('join-code').value.trim().toUpperCase();
+  if(!name){ $('join-error').textContent='Please enter your name.'; $('join-name').focus(); return; }
+  if(!code){ $('join-error').textContent='Please enter the session code.'; $('join-code').focus(); return; }
+  $('join-error').textContent=''; $('join-btn').disabled=true;
+  _myName=name; _myCode=code;
+  try{ localStorage.setItem('sda_presenter_name',name); }catch(_){}
+  $('waiting-name').textContent='Joining as: '+name;
   connectWS();
 }
 
 // ── WEBSOCKET ────────────────────────────────────────────────────────────────
-function wsUrl() {
-  const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
+function wsUrl(){
+  const proto=location.protocol==='https:'?'wss:':'ws:';
   // location.host carries the port ONLY when non-standard. On Render (https:443)
   // there is no port to append — appending :4040 was the "unreachable" bug.
-  return proto + '//' + (location.host || 'localhost:4040');
+  return proto+'//'+(location.host||'localhost:4040');
 }
-
-function connectWS() {
-  _idAdopted = false;          // server issues a new id per connection
+function connectWS(){
+  _idAdopted=false;
   let sock;
-  try { sock = new WebSocket(wsUrl()); }
-  catch (e) {
-    $('join-btn').disabled = false;
-    $('join-error').textContent = 'Cannot connect to server.';
-    return;
-  }
-  _ws = sock;
-
-  sock.onopen = () => {
-    setConn(true);
-    wsSend({ type:'presenter-join', name:_myName, code:_myCode });
-    showScreen('waiting-screen');
-    fetchFiles();
-  };
-  sock.onmessage = e => { try { handleMsg(JSON.parse(e.data)); } catch(_) {} };
-  sock.onclose = () => {
-    setConn(false);
-    if (_granted || _myId) { setTimeout(reconnect, 3000); if (_granted) toast('Connection lost — reconnecting…'); }
-  };
-  sock.onerror = () => {
-    $('join-btn').disabled = false;
-    $('join-error').textContent = 'Server unreachable. Check your network.';
-    if (!_granted) showScreen('join-screen');
-  };
+  try{ sock=new WebSocket(wsUrl()); }
+  catch(e){ $('join-btn').disabled=false; $('join-error').textContent='Cannot connect to server.'; return; }
+  _ws=sock;
+  sock.onopen=()=>{ setConn(true); wsSend({type:'presenter-join',name:_myName,code:_myCode});
+    showScreen('waiting-screen'); fetchFiles(); };
+  sock.onmessage=e=>{ try{ handleMsg(JSON.parse(e.data)); }catch(_){} };
+  sock.onclose=()=>{ setConn(false);
+    if(_granted||_myId){ setTimeout(reconnect,3000); if(_granted) toast('Connection lost — reconnecting…'); } };
+  sock.onerror=()=>{ $('join-btn').disabled=false;
+    $('join-error').textContent='Server unreachable. Check your network.';
+    if(!_granted) showScreen('join-screen'); };
 }
-function reconnect() { if (!_ws || _ws.readyState !== WebSocket.OPEN) connectWS(); }
-function wsSend(d) { if (_ws && _ws.readyState === WebSocket.OPEN) { try { _ws.send(JSON.stringify(d)); } catch(_) {} } }
-function setConn(on) {
-  const d = $('conn-dot'), l = $('conn-label');
-  if (d) d.className = 'conn-dot' + (on ? '' : ' off');
-  if (l) l.textContent = on ? 'Connected' : 'Disconnected';
+function reconnect(){ if(!_ws||_ws.readyState!==WebSocket.OPEN) connectWS(); }
+function wsSend(d){ if(_ws&&_ws.readyState===WebSocket.OPEN){ try{_ws.send(JSON.stringify(d));}catch(_){} } }
+function setConn(on){
+  const d=$('conn-dot'),l=$('conn-label');
+  if(d) d.className='conn-dot'+(on?'':' off');
+  if(l) l.textContent=on?'Connected':'Disconnected';
 }
 
 // ── MESSAGES ─────────────────────────────────────────────────────────────────
-function handleMsg(msg) {
-  if (!msg || !msg.type) return;
-
-  switch (msg.type) {
-    case 'presenter-status': {
-      const id = msg.id ?? msg.presId;
-      // Apply only what's addressed to us. First status of a connection adopts
-      // the id (the server assigns a fresh one on every reconnect).
-      if (id != null) {
-        if (!_idAdopted) { _myId = String(id); _idAdopted = true; }
-        else if (String(id) !== String(_myId)) break;
+function handleMsg(msg){
+  if(!msg||!msg.type) return;
+  switch(msg.type){
+    case 'presenter-status':{
+      const id=msg.id??msg.presId;
+      if(id!=null){
+        if(!_idAdopted){ _myId=String(id); _idAdopted=true; }
+        else if(String(id)!==String(_myId)) break;
       }
-      if (msg.status === 'granted') { _granted = true; activateApp(); }
-      else if (msg.status === 'waiting') { _granted = false; showScreen('waiting-screen'); }
-      else if (msg.status === 'denied') {
-        _granted = false;
-        $('denied-title').textContent = 'Access Denied';
-        $('denied-sub').textContent = msg.message || 'The operator has not granted you access.';
+      if(msg.status==='granted'){ _granted=true; activateApp(); }
+      else if(msg.status==='waiting'){ _granted=false; showScreen('waiting-screen'); }
+      else if(msg.status==='denied'){
+        _granted=false; $('denied-title').textContent='Access Denied';
+        $('denied-sub').textContent=msg.message||'The operator has not granted you access.';
         showScreen('denied-screen');
-      } else if (msg.status === 'kicked' || msg.status === 'revoked') {
-        _granted = false; stopShare();
-        $('denied-title').textContent = msg.status === 'kicked' ? 'Access Removed' : 'Access Revoked';
-        $('denied-sub').textContent = 'The operator has removed your presenter access.';
-        showScreen('denied-screen'); toast('Access ' + msg.status);
+      } else if(msg.status==='kicked'||msg.status==='revoked'){
+        _granted=false; stopShare();
+        $('denied-title').textContent=msg.status==='kicked'?'Access Removed':'Access Revoked';
+        $('denied-sub').textContent='The operator has removed your presenter access.';
+        showScreen('denied-screen'); toast('Access '+msg.status);
       }
       break;
     }
-
-    case 'slide': {
-      _slideSet = msg.slideSet || (msg.slide ? [msg.slide] : []);
-      _slideIdx = typeof msg.slideIndex === 'number' ? msg.slideIndex : 0;
-      renderSlides();
-      break;
+    case 'slide':{
+      _slideSet=msg.slideSet||(msg.slide?[msg.slide]:[]);
+      _slideIdx=typeof msg.slideIndex==='number'?msg.slideIndex:0;
+      renderSlides(); break;
     }
-    case 'blank':   setBlankUI(true);  break;
+    case 'blank': setBlankUI(true); break;
     case 'unblank': setBlankUI(false); break;
-
-    case 'program-sync':
-    case 'program': if (msg.program) renderProgram(msg.program); break;
-
+    case 'program-sync': case 'program': if(msg.program) renderProgram(msg.program); break;
+    case 'choir-sync': _choirs=msg.choirs||[]; renderChoirs(); break;
     case 'file-share': fetchFiles(); toast('New file available'); break;
-
-    case 'presenter-request-result': {
-      const r = _requests.find(x => x.reqId === msg.reqId);
-      if (r) { r.status = msg.approved ? 'approved' : 'rejected'; renderRequests(); }
-      toast(msg.approved ? '✓ Operator approved your request' : ('Rejected: ' + (msg.message || 'declined')));
+    case 'presenter-request-result':{
+      const r=_requests.find(x=>x.reqId===msg.reqId);
+      if(r){ r.status=msg.approved?'approved':'rejected'; renderRequests(); }
+      toast(msg.approved?'✓ Operator approved your request':('Rejected: '+(msg.message||'declined')));
       break;
     }
-
-    // WebRTC answer / ICE coming back from the projector side
-    case 'webrtc-answer': {
-      if (_pc && msg.answer) {
-        _pc.setRemoteDescription(new RTCSessionDescription(msg.answer)).catch(()=>{});
-      }
-      break;
-    }
-    case 'webrtc-ice': {
-      if (_pc && msg.candidate) _pc.addIceCandidate(new RTCIceCandidate(msg.candidate)).catch(()=>{});
-      break;
-    }
+    case 'webrtc-answer': if(_pc&&msg.answer) _pc.setRemoteDescription(new RTCSessionDescription(msg.answer)).catch(()=>{}); break;
+    case 'webrtc-ice': if(_pc&&msg.candidate) _pc.addIceCandidate(new RTCIceCandidate(msg.candidate)).catch(()=>{}); break;
   }
 }
 
-function activateApp() {
+function activateApp(){
   showScreen('app-screen');
-  $('app-name-badge').textContent = _myName;
-  setConn(true);
-  renderSlides();
+  $('app-name-badge').textContent=_myName;
+  setConn(true); renderSlides();
   toast('✓ Access granted — you can now control slides');
-  try {
-    const n = localStorage.getItem('sda_presenter_notes');
-    if (n) $('notes-ta').value = n;
-  } catch(_) {}
-  fetchFiles();
+  try{ const n=localStorage.getItem('sda_presenter_notes'); if(n) $('notes-ta').value=n; }catch(_){}
+  fetchFiles(); loadHymns();
 }
 
-// ── SLIDES ───────────────────────────────────────────────────────────────────
-function renderSlides() {
-  const slide = _slideSet[_slideIdx], total = _slideSet.length;
-  $('prev-btn').disabled = _slideIdx <= 0;
-  $('next-btn').disabled = _slideIdx >= total - 1;
-  $('slide-pos').textContent = total ? `Slide ${_slideIdx + 1} of ${total}` : 'No slides loaded';
+// ── PREVIEW: render the slide exactly as the projector will show it ──────────
+function renderSlides(){
+  const slide=_slideSet[_slideIdx], total=_slideSet.length;
+  $('prev-btn').disabled=_slideIdx<=0;
+  $('next-btn').disabled=_slideIdx>=total-1;
+  $('slide-pos').textContent=total?`Slide ${_slideIdx+1} of ${total}`:'No slides loaded';
 
-  const t = $('pv-type'), ti = $('pv-title'), b = $('pv-body');
-  if (slide) {
-    t.textContent = slide.type || '';
-    ti.textContent = slide.hymnTitle || slide.title || slide.ref || '';
-    ti.style.color = '#fff'; ti.style.fontStyle = 'normal';
-    const body = slide.body || slide.verseLabel || '';
-    b.textContent = body.length > 160 ? body.slice(0,160) + '…' : body;
+  const t=$('pv-type'),ti=$('pv-title'),sb=$('pv-sub'),b=$('pv-body'),rf=$('pv-ref');
+  if(slide){
+    t.textContent=slide.type||'';
+    ti.textContent=slide.hymnTitle||slide.title||slide.ref||'';
+    ti.style.color='#fff'; ti.style.fontStyle='normal';
+    sb.textContent=slide.sub||slide.verseLabel||'';
+    // FULL body — no truncation, newlines preserved, exactly like the projector
+    b.textContent=slide.body||'';
+    rf.textContent=slide.ref&&slide.ref!==ti.textContent?slide.ref:'';
+    [sb,b,rf].forEach(el=>el.style.display=el.textContent?'':'none');
   } else {
-    t.textContent = '—';
-    ti.textContent = 'Nothing on screen';
-    ti.style.color = 'rgba(255,255,255,.2)'; ti.style.fontStyle = 'italic';
-    b.textContent = '';
+    t.textContent='—';
+    ti.textContent='Nothing on screen';
+    ti.style.color='rgba(255,255,255,.2)'; ti.style.fontStyle='italic';
+    sb.textContent=''; b.textContent=''; rf.textContent='';
+    [sb,b,rf].forEach(el=>el.style.display='none');
   }
+  fitPreview();
 
-  const list = $('slide-list');
-  if (!total) { list.innerHTML = '<div class="empty">Slides appear here when the operator projects content.</div>'; return; }
-  list.innerHTML = _slideSet.map((s,i) => `
-    <div class="slide-item${i === _slideIdx ? ' active' : ''}" data-i="${i}">
+  const list=$('slide-list');
+  if(!total){ list.innerHTML='<div class="empty">Slides appear here when content is projected.</div>'; return; }
+  list.innerHTML=_slideSet.map((s,i)=>`
+    <div class="slide-item${i===_slideIdx?' active':''}" data-i="${i}">
       <span class="slide-num">${i+1}</span>
       <div style="flex:1;min-width:0">
-        <div class="slide-label">${esc(s.verseLabel || s.type || '')}</div>
-        <div class="slide-text">${esc(s.hymnTitle || s.title || s.ref || (s.body ? s.body.split('\n')[0] : ''))}</div>
+        <div class="slide-label">${esc(s.sub||s.verseLabel||s.type||'')}</div>
+        <div class="slide-text">${esc(s.hymnTitle||s.title||s.ref||(s.body?s.body.split('\n')[0]:''))}</div>
       </div>
     </div>`).join('');
-  list.querySelectorAll('[data-i]').forEach(el =>
-    el.addEventListener('click', () => jumpTo(parseInt(el.dataset.i,10))));
+  list.querySelectorAll('[data-i]').forEach(el=>
+    el.addEventListener('click',()=>jumpTo(parseInt(el.dataset.i,10))));
 }
 
-function setBlankUI(on) {
-  _isBlank = on;
-  const b = $('blank-btn');
-  b.classList.toggle('danger', on);
-  b.innerHTML = on ? '<i class="fa-solid fa-eye"></i> Show Screen'
-                   : '<i class="fa-solid fa-eye-slash"></i> Blank Screen';
+// Scale the whole preview down until the full slide fits the 16:9 box —
+// so what you see is what the projector shows, never clipped.
+function fitPreview(){
+  const box=$('preview-screen'), content=$('preview-content');
+  if(!box||!content) return;
+  let size=Math.max(10, box.clientWidth/34);   // base em, scales with box width
+  content.style.fontSize=size+'px';
+  let guard=0;
+  while(content.scrollHeight>box.clientHeight && size>4 && guard++<60){
+    size-=0.6; content.style.fontSize=size+'px';
+  }
 }
-function needGrant() {
-  if (!_granted) { toast('Waiting for operator approval'); return true; }
-  return false;
+window.addEventListener('resize',fitPreview);
+
+function setBlankUI(on){
+  _isBlank=on;
+  const b=$('blank-btn');
+  b.classList.toggle('danger',on);
+  b.innerHTML=on?'<i class="fa-solid fa-eye"></i> Show Screen':'<i class="fa-solid fa-eye-slash"></i> Blank Screen';
 }
-function nav(d) {
-  if (needGrant()) return;
-  const i = _slideIdx + d;
-  if (i < 0 || i >= _slideSet.length) return;
-  jumpTo(i);
+function needGrant(){ if(!_granted){ toast('Waiting for operator approval'); return true; } return false; }
+function nav(d){ if(needGrant())return; const i=_slideIdx+d; if(i<0||i>=_slideSet.length)return; jumpTo(i); }
+function jumpTo(i){
+  if(needGrant())return;
+  if(isNaN(i)||i<0||i>=_slideSet.length)return;
+  _slideIdx=i; renderSlides();
+  wsSend({type:'slide',slide:_slideSet[i],slideSet:_slideSet,slideIndex:i});
 }
-function jumpTo(i) {
-  if (needGrant()) return;
-  if (isNaN(i) || i < 0 || i >= _slideSet.length) return;
-  _slideIdx = i; renderSlides();
-  wsSend({ type:'slide', slide:_slideSet[i], slideSet:_slideSet, slideIndex:i });
+function toggleBlank(){ if(needGrant())return; setBlankUI(!_isBlank); wsSend({type:_isBlank?'blank':'unblank'}); }
+
+// Project an arbitrary slide set (from hymnal / bible / choir)
+function projectSet(set,idx){
+  if(needGrant())return;
+  if(!set||!set.length)return;
+  _slideSet=set; _slideIdx=idx||0;
+  renderSlides();
+  wsSend({type:'slide',slide:set[_slideIdx],slideSet:set,slideIndex:_slideIdx});
+  switchPanel('control');
 }
-function toggleBlank() {
-  if (needGrant()) return;
-  setBlankUI(!_isBlank);
-  wsSend({ type: _isBlank ? 'blank' : 'unblank' });
+
+// ── HYMNAL ───────────────────────────────────────────────────────────────────
+function loadHymns(){
+  if(HYMNS||document.getElementById('hymns-script')) return;
+  const s=document.createElement('script');
+  s.id='hymns-script'; s.src='/hymns_data.js?v='+Date.now();
+  s.onload=()=>{
+    const D=window.HYMN_LIBRARY_DATA||{};
+    HYMNS={en:D.en||[],rw:D.rw||[],fr:D.fr||[]};
+    renderHymns();
+  };
+  s.onerror=()=>{ $('song-count').textContent='Could not load hymn library.'; };
+  document.head.appendChild(s);
+}
+
+function renderHymns(){
+  const list=$('song-list'), cnt=$('song-count');
+  if(!HYMNS){ cnt.textContent='Loading hymns…'; return; }
+  const all=HYMNS[sLang]||[];
+  const q=$('song-search').value.trim().toLowerCase();
+  const f=q?all.filter(h=>String(h.title||'').toLowerCase().includes(q)||String(h.number).includes(q)):all;
+  cnt.textContent=`${f.length} hymn${f.length===1?'':'s'}`;
+  if(!f.length){ list.innerHTML='<div class="empty">No hymns found.</div>'; return; }
+
+  list.innerHTML=f.slice(0,300).map(h=>`
+    <div class="lib-row" data-num="${esc(h.number)}">
+      <div class="lib-head">
+        <span class="lib-num">#${esc(h.number)}</span>
+        <span class="lib-title">${esc(h.title)}</span>
+        <button class="btn sm" data-play-hymn="${esc(h.number)}">Project</button>
+      </div>
+      <div class="verse-rows">
+        ${(h.verses||[]).map((v,vi)=>`
+          <div class="verse-row" data-hymn="${esc(h.number)}" data-vi="${vi}">
+            <span class="verse-lbl">${esc(v.label||('Verse '+(vi+1)))}</span>
+            <span class="verse-txt">${esc((v.text||'').split('\n')[0])}</span>
+          </div>`).join('')}
+      </div>
+    </div>`).join('');
+
+  list.querySelectorAll('.lib-head').forEach(h=>{
+    h.addEventListener('click',e=>{
+      if(e.target.closest('[data-play-hymn]'))return;
+      h.parentElement.classList.toggle('open');
+    });
+  });
+  list.querySelectorAll('[data-play-hymn]').forEach(b=>
+    b.addEventListener('click',()=>playHymn(b.dataset.playHymn,0)));
+  list.querySelectorAll('.verse-row').forEach(r=>
+    r.addEventListener('click',()=>playHymn(r.dataset.hymn,parseInt(r.dataset.vi,10))));
+}
+
+function hymnSet(h){
+  return (h.verses||[]).map(v=>({
+    type:'Song · Hymn '+h.number, title:h.title,
+    sub:v.label||'', body:v.text||'', ref:'',
+  }));
+}
+function playHymn(num,vi){
+  const h=(HYMNS?.[sLang]||[]).find(x=>String(x.number)===String(num));
+  if(!h)return;
+  const set=hymnSet(h);
+  if(!set.length)return;
+  projectSet(set,Math.max(0,Math.min(vi||0,set.length-1)));
+  toast('▶ '+h.title);
+}
+
+// ── BIBLE ────────────────────────────────────────────────────────────────────
+async function loadBible(){
+  if(BIBLE||_bibleLoading)return;
+  _bibleLoading=true;
+  $('bible-body').innerHTML='<div class="empty">Loading Bible… (large file, first time only)</div>';
+  try{
+    const r=await fetch('/bible_data.json');
+    if(!r.ok) throw new Error('http '+r.status);
+    BIBLE=await r.json();
+    fillBooks();
+    $('bible-body').innerHTML='<div class="empty">Choose a book and chapter.</div>';
+  }catch(e){
+    $('bible-body').innerHTML='<div class="empty">Could not load the Bible.</div>';
+  }
+  _bibleLoading=false;
+}
+function bibleBooks(){ return (BIBLE?.books?.[bLang])||BIBLE?.books?.en||[]; }
+function bibleData(){ return (BIBLE?.[bLang])||BIBLE?.en||[]; }
+
+function fillBooks(){
+  const books=bibleBooks(), sel=$('b-book');
+  sel.innerHTML='<option value="">— Book —</option>'+
+    books.map((b,i)=>`<option value="${i+1}">${esc(b)}</option>`).join('');
+  $('b-chap').innerHTML='<option value="">— Chapter —</option>';
+}
+function onBook(){
+  curBook=parseInt($('b-book').value,10)||null; curChap=null;
+  const bd=bibleData()[curBook-1];
+  if(!curBook||!bd){ $('b-chap').innerHTML='<option value="">— Chapter —</option>'; return; }
+  $('b-chap').innerHTML='<option value="">— Chapter —</option>'+
+    bd.map((_,i)=>`<option value="${i+1}">${i+1}</option>`).join('');
+  $('bible-meta').textContent=bibleBooks()[curBook-1]+' — '+bd.length+' chapters';
+}
+function onChap(){
+  curChap=parseInt($('b-chap').value,10)||null;
+  if(!curBook||!curChap)return;
+  const verses=bibleData()[curBook-1]?.[curChap-1]||[];
+  const name=bibleBooks()[curBook-1]||'';
+  $('bible-meta').textContent=`${name} ${curChap} — ${verses.length} verses`;
+  $('bible-body').innerHTML=`<div class="bv-grid">`+
+    verses.map((_,i)=>`<div class="bv" data-v="${i+1}">${i+1}</div>`).join('')+`</div>`;
+  $('bible-body').querySelectorAll('.bv').forEach(el=>
+    el.addEventListener('click',()=>projVerse(curBook,curChap,parseInt(el.dataset.v,10))));
+}
+const BIBLE_VER={en:'KJV',fr:'LSG',rw:'BYH'};
+function projVerse(bn,cn,vn){
+  const t=bibleData()[bn-1]?.[cn-1]?.[vn-1];
+  if(!t)return;
+  const ver=BIBLE_VER[bLang]||'KJV';
+  const ref=(bibleBooks()[bn-1]||'')+' '+cn+':'+vn;
+  const verses=bibleData()[bn-1]?.[cn-1]||[];
+  // Whole chapter as the slide set so Prev/Next walks verses
+  const set=verses.map((txt,i)=>({
+    type:'Scripture · '+ver,
+    title:(bibleBooks()[bn-1]||'')+' '+cn+':'+(i+1),
+    sub:ver, body:'"'+txt+'"', ref:'',
+  }));
+  projectSet(set,vn-1);
+  toast('▶ '+ref);
+  $('bible-body').querySelectorAll('.bv').forEach(c=>c.classList.toggle('cur',+c.dataset.v===vn));
+}
+function bibleSearch(){
+  const q=$('bible-search').value.trim();
+  if(!q||!BIBLE)return;
+  // "John 3:16" style reference
+  const m=q.match(/^\s*([1-3]?\s*[A-Za-zÀ-ɏ ]+?)\s+(\d+)(?::(\d+))?\s*$/);
+  if(m){
+    const books=bibleBooks();
+    const bi=books.findIndex(b=>b.toLowerCase().startsWith(m[1].trim().toLowerCase()));
+    if(bi>=0){
+      $('b-book').value=String(bi+1); onBook();
+      $('b-chap').value=String(parseInt(m[2],10)); onChap();
+      if(m[3]) projVerse(bi+1,parseInt(m[2],10),parseInt(m[3],10));
+      return;
+    }
+  }
+  // Full-text search
+  const lc=q.toLowerCase(), ld=bibleData(), books=bibleBooks(), res=[];
+  for(let b=0;b<ld.length&&res.length<40;b++)
+    for(let c=0;c<ld[b].length&&res.length<40;c++)
+      for(let v=0;v<ld[b][c].length&&res.length<40;v++){
+        const t=ld[b][c][v];
+        if(t&&t.toLowerCase().includes(lc)) res.push({bn:b+1,cn:c+1,vn:v+1,text:t,bName:books[b]});
+      }
+  if(!res.length){ $('bible-body').innerHTML='<div class="empty">No verses found.</div>'; return; }
+  $('bible-body').innerHTML=res.map(r=>`
+    <div class="item-row" style="margin-bottom:5px;cursor:pointer" data-bn="${r.bn}" data-cn="${r.cn}" data-vn="${r.vn}">
+      <div class="item-info">
+        <div class="item-name">${esc(r.bName)} ${r.cn}:${r.vn}</div>
+        <div class="item-meta" style="white-space:normal">${esc(r.text.slice(0,120))}…</div>
+      </div>
+      <button class="btn sm">Project</button>
+    </div>`).join('');
+  $('bible-body').querySelectorAll('[data-bn]').forEach(el=>
+    el.addEventListener('click',()=>projVerse(+el.dataset.bn,+el.dataset.cn,+el.dataset.vn)));
+}
+
+// ── CHOIR (synced from the operator) ─────────────────────────────────────────
+function renderChoirs(){
+  const list=$('choir-list'), cnt=$('choir-count');
+  const q=$('choir-search').value.trim().toLowerCase();
+  const f=q?_choirs.filter(c=>(c.name||'').toLowerCase().includes(q)||(c.song||'').toLowerCase().includes(q)):_choirs;
+  cnt.textContent=_choirs.length?`${f.length} of ${_choirs.length} choir item${_choirs.length===1?'':'s'}`
+                               :'Waiting for operator sync…';
+  if(!f.length){ list.innerHTML='<div class="empty">No choir items yet.</div>'; return; }
+  list.innerHTML=f.map(c=>`
+    <div class="lib-row" data-cid="${esc(c.id)}">
+      <div class="lib-head">
+        <span class="lib-num">${esc(c.emoji||'🎵')}</span>
+        <span class="lib-title">${esc(c.name)} — ${esc(c.song||'')}</span>
+        <button class="btn sm" data-play-choir="${esc(c.id)}">Project</button>
+      </div>
+      <div class="verse-rows">
+        ${(c.stanzas||[]).map((s,i)=>`
+          <div class="verse-row" data-choir="${esc(c.id)}" data-si="${i}">
+            <span class="verse-lbl">Stanza ${i+1}</span>
+            <span class="verse-txt">${esc(String(s||'').split('\n')[0])}</span>
+          </div>`).join('')}
+      </div>
+    </div>`).join('');
+  list.querySelectorAll('.lib-head').forEach(h=>{
+    h.addEventListener('click',e=>{
+      if(e.target.closest('[data-play-choir]'))return;
+      h.parentElement.classList.toggle('open');
+    });
+  });
+  list.querySelectorAll('[data-play-choir]').forEach(b=>
+    b.addEventListener('click',()=>playChoir(b.dataset.playChoir,0)));
+  list.querySelectorAll('.verse-row').forEach(r=>
+    r.addEventListener('click',()=>playChoir(r.dataset.choir,parseInt(r.dataset.si,10))));
+}
+function playChoir(id,si){
+  const c=_choirs.find(x=>String(x.id)===String(id));
+  if(!c)return;
+  const set=(c.stanzas||[]).map((s,i)=>({
+    type:'Special Music — Lyrics', title:c.song||c.name,
+    sub:`${c.name} · Stanza ${i+1}`, body:s||'', ref:'',
+  }));
+  if(!set.length)return;
+  projectSet(set,Math.max(0,Math.min(si||0,set.length-1)));
+  toast('▶ '+c.name);
 }
 
 // ── PROGRAM ──────────────────────────────────────────────────────────────────
-const TYPE_COLORS = {
-  song:'#c8902e', bible:'#4a90d9', prayer:'#9b59b6', sermon:'#e67e22',
-  choir:'#2ecc71', offering:'#2ecc71', announce:'#3498db', default:'#95a5a6',
-};
+const TYPE_COLORS={song:'#c8902e',bible:'#4a90d9',prayer:'#9b59b6',sermon:'#e67e22',
+  choir:'#2ecc71',offering:'#2ecc71',announce:'#3498db',default:'#95a5a6'};
 
-function renderProgram(program) {
-  _programData = program || [];
-  const list = $('prog-list');
-  let html = '';
-  _programData.forEach((sec, si) => {
-    html += `<div class="label" style="padding:10px 0 5px">${esc(sec.section || sec.title || '')}</div>`;
-    (sec.items || []).forEach((it, ii) => {
-      const c = TYPE_COLORS[it.type] || TYPE_COLORS.default;
-      html += `
+function renderProgram(program){
+  _programData=program||[];
+  const list=$('prog-list');
+  let html='';
+  _programData.forEach((sec,si)=>{
+    html+=`<div class="label" style="padding:10px 0 5px">${esc(sec.section||sec.title||'')}</div>`;
+    (sec.items||[]).forEach((it,ii)=>{
+      const c=TYPE_COLORS[it.type]||TYPE_COLORS.default;
+      html+=`
         <div class="item-row" data-sec="${si}" data-item="${ii}" style="margin-bottom:5px;cursor:pointer">
           <div class="dot" style="background:${esc(c)}"></div>
           <div class="item-info">
-            <div class="item-name">${esc(it.nameEn || it.name || '')}</div>
-            <div class="item-meta">${esc((it.time ? it.time + ' · ' : '') + (it.presenter || ''))}</div>
+            <div class="item-name">${esc(it.nameEn||it.name||'')}</div>
+            <div class="item-meta">${esc((it.time?it.time+' · ':'')+(it.presenter||''))}</div>
           </div>
-          <button class="btn" style="padding:5px 10px;font-size:11px">Go</button>
+          <button class="btn sm">Go</button>
         </div>`;
     });
   });
-  list.innerHTML = html || '<div class="empty">Program will sync from the operator.</div>';
-  list.querySelectorAll('[data-sec]').forEach(row => {
-    row.addEventListener('click', () => {
-      if (needGrant()) return;
-      const it = _programData?.[+row.dataset.sec]?.items?.[+row.dataset.item];
-      if (it) wsSend({ type:'program-go', itemId: it._id ?? it.id, item: it });
+  list.innerHTML=html||'<div class="empty">Program will sync from the operator.</div>';
+  list.querySelectorAll('[data-sec]').forEach(row=>{
+    row.addEventListener('click',()=>{
+      if(needGrant())return;
+      const it=_programData?.[+row.dataset.sec]?.items?.[+row.dataset.item];
+      if(it) wsSend({type:'program-go',itemId:it._id??it.id,item:it});
     });
   });
 }
 
-// ── REQUESTS (program item / announcement → operator approval) ────────────────
-function sendRequest(kind, title, payload) {
-  if (!_ws || _ws.readyState !== WebSocket.OPEN) { toast('Not connected'); return; }
-  const reqId = uid();
-  _requests.unshift({ reqId, kind, title, status:'pending' });
+// ── REQUESTS ─────────────────────────────────────────────────────────────────
+function sendRequest(kind,title,payload){
+  if(!_ws||_ws.readyState!==WebSocket.OPEN){ toast('Not connected'); return; }
+  const reqId=uid();
+  _requests.unshift({reqId,kind,title,status:'pending'});
   renderRequests();
-  wsSend({ type:'presenter-request', reqId, kind, action:'add', payload });
+  wsSend({type:'presenter-request',reqId,kind,action:'add',payload});
   toast('Sent to operator for approval');
 }
-
-function renderRequests() {
-  const el = $('req-list');
-  if (!_requests.length) { el.innerHTML = '<div class="empty">Nothing sent yet.</div>'; return; }
-  el.innerHTML = _requests.map(r => `
+function renderRequests(){
+  const el=$('req-list');
+  if(!_requests.length){ el.innerHTML='<div class="empty">Nothing sent yet.</div>'; return; }
+  el.innerHTML=_requests.map(r=>`
     <div class="item-row" style="margin-bottom:5px">
       <div class="item-info">
         <div class="item-name">${esc(r.title)}</div>
-        <div class="item-meta">${r.kind === 'announcement' ? 'Announcement' : 'Program item'}</div>
+        <div class="item-meta">${r.kind==='announcement'?'Announcement':'Program item'}</div>
       </div>
       <span class="badge ${r.status}">${r.status}</span>
     </div>`).join('');
 }
-
-function submitProgramItem() {
-  const name = $('pi-name').value.trim();
-  if (!name) { toast('Enter an item name'); $('pi-name').focus(); return; }
-  sendRequest('program-item', name, {
-    nameEn:    name,
-    type:      $('pi-type').value,
-    time:      $('pi-time').value.trim(),
-    presenter: $('pi-presenter').value.trim(),
-    notes:     $('pi-notes').value.trim(),
+function submitProgramItem(){
+  const name=$('pi-name').value.trim();
+  if(!name){ toast('Enter an item name'); $('pi-name').focus(); return; }
+  sendRequest('program-item',name,{
+    nameEn:name, type:$('pi-type').value, time:$('pi-time').value.trim(),
+    presenter:$('pi-presenter').value.trim(), notes:$('pi-notes').value.trim(),
   });
-  ['pi-name','pi-time','pi-presenter','pi-notes'].forEach(id => $(id).value = '');
+  ['pi-name','pi-time','pi-presenter','pi-notes'].forEach(id=>$(id).value='');
+}
+function submitAnnouncement(){
+  const title=$('an-title').value.trim();
+  if(!title){ toast('Enter a title'); $('an-title').focus(); return; }
+  sendRequest('announcement',title,{
+    title, text:$('an-text').value.trim(), date:$('an-date').value.trim(),
+    location:$('an-loc').value.trim(), icon:'fa-bell',
+  });
+  ['an-title','an-date','an-loc','an-text'].forEach(id=>$(id).value='');
 }
 
-function submitAnnouncement() {
-  const title = $('an-title').value.trim();
-  const text  = $('an-text').value.trim();
-  if (!title) { toast('Enter a title'); $('an-title').focus(); return; }
-  sendRequest('announcement', title, {
-    title, text,
-    date:     $('an-date').value.trim(),
-    location: $('an-loc').value.trim(),
-    icon:     'fa-bell',
-  });
-  ['an-title','an-date','an-loc','an-text'].forEach(id => $(id).value = '');
-}
+// ── SCREEN SHARE ─────────────────────────────────────────────────────────────
+async function startShare(useCamera){
+  if(needGrant())return;
+  try{
+    _stream=useCamera
+      ? await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'},audio:false})
+      : await navigator.mediaDevices.getDisplayMedia({video:true,audio:false});
+  }catch(e){ toast('Sharing cancelled or not permitted'); return; }
 
-// ── SCREEN SHARE (WebRTC) ────────────────────────────────────────────────────
-async function startShare(useCamera) {
-  if (needGrant()) return;
-  try {
-    _stream = useCamera
-      ? await navigator.mediaDevices.getUserMedia({ video:{ facingMode:'environment' }, audio:false })
-      : await navigator.mediaDevices.getDisplayMedia({ video:true, audio:false });
-  } catch (e) {
-    toast('Sharing cancelled or not permitted'); return;
-  }
+  $('share-video').srcObject=_stream;
+  _stream.getVideoTracks()[0].addEventListener('ended',stopShare);
 
-  $('share-video').srcObject = _stream;
-  _stream.getVideoTracks()[0].addEventListener('ended', stopShare);
+  _pc=new RTCPeerConnection({iceServers:[{urls:'stun:stun.l.google.com:19302'}]});
+  _stream.getTracks().forEach(t=>_pc.addTrack(t,_stream));
+  _pc.onicecandidate=e=>{ if(e.candidate) wsSend({type:'webrtc-ice',candidate:e.candidate}); };
 
-  _pc = new RTCPeerConnection({ iceServers:[{ urls:'stun:stun.l.google.com:19302' }] });
-  _stream.getTracks().forEach(t => _pc.addTrack(t, _stream));
-  _pc.onicecandidate = e => { if (e.candidate) wsSend({ type:'webrtc-ice', candidate:e.candidate }); };
-
-  const offer = await _pc.createOffer();
+  const offer=await _pc.createOffer();
   await _pc.setLocalDescription(offer);
-  wsSend({ type:'webrtc-offer', offer });
+  wsSend({type:'webrtc-offer',offer});
 
-  $('share-dot').className = 'conn-dot';
-  $('share-label').textContent = useCamera ? 'Sharing camera' : 'Sharing screen';
-  $('share-start').disabled = true; $('share-cam').disabled = true; $('share-stop').disabled = false;
+  $('share-dot').className='conn-dot';
+  $('share-label').textContent=useCamera?'Sharing camera':'Sharing screen';
+  $('share-start').disabled=true; $('share-cam').disabled=true; $('share-stop').disabled=false;
   toast('Sharing started');
 }
-
-function stopShare() {
-  if (_stream) { _stream.getTracks().forEach(t => { try { t.stop(); } catch(_) {} }); _stream = null; }
-  if (_pc) { try { _pc.close(); } catch(_) {} _pc = null; }
-  const v = $('share-video'); if (v) v.srcObject = null;
-  const d = $('share-dot'); if (d) d.className = 'conn-dot off';
-  const l = $('share-label'); if (l) l.textContent = 'Not sharing';
-  const s = $('share-start'), c = $('share-cam'), st = $('share-stop');
-  if (s) s.disabled = false; if (c) c.disabled = false; if (st) st.disabled = true;
-  wsSend({ type:'share-stop' });
+function stopShare(){
+  if(_stream){ _stream.getTracks().forEach(t=>{try{t.stop();}catch(_){}}); _stream=null; }
+  if(_pc){ try{_pc.close();}catch(_){} _pc=null; }
+  const v=$('share-video'); if(v) v.srcObject=null;
+  const d=$('share-dot'); if(d) d.className='conn-dot off';
+  const l=$('share-label'); if(l) l.textContent='Not sharing';
+  const s=$('share-start'),c=$('share-cam'),st=$('share-stop');
+  if(s)s.disabled=false; if(c)c.disabled=false; if(st)st.disabled=true;
+  wsSend({type:'share-stop'});
 }
 
 // ── FILES ────────────────────────────────────────────────────────────────────
-function uploadFile(file) {
-  if (!file) return;
-  const xhr = new XMLHttpRequest();
-  xhr.open('POST', '/upload', true);
-  xhr.setRequestHeader('X-Filename', file.name);
-  xhr.setRequestHeader('X-Filetype', file.type || 'application/octet-stream');
-
-  $('up-progress').style.display = 'block';
-  $('up-status').textContent = 'Uploading ' + file.name + '…';
-
-  xhr.upload.onprogress = e => {
-    if (e.lengthComputable) $('up-bar').style.width = Math.round(e.loaded / e.total * 100) + '%';
+function uploadFile(file){
+  if(!file)return;
+  const xhr=new XMLHttpRequest();
+  xhr.open('POST','/upload',true);
+  xhr.setRequestHeader('X-Filename',file.name);
+  xhr.setRequestHeader('X-Filetype',file.type||'application/octet-stream');
+  $('up-progress').style.display='block';
+  $('up-status').textContent='Uploading '+file.name+'…';
+  xhr.upload.onprogress=e=>{ if(e.lengthComputable) $('up-bar').style.width=Math.round(e.loaded/e.total*100)+'%'; };
+  xhr.onload=()=>{
+    $('up-progress').style.display='none'; $('up-bar').style.width='0%';
+    if(xhr.status>=200&&xhr.status<300){ $('up-status').textContent='Uploaded: '+file.name; toast('Upload complete'); fetchFiles(); }
+    else { let m='Upload failed'; try{ m=JSON.parse(xhr.responseText).error||m; }catch(_){}
+      $('up-status').textContent=m; toast(m); }
   };
-  xhr.onload = () => {
-    $('up-progress').style.display = 'none';
-    $('up-bar').style.width = '0%';
-    if (xhr.status >= 200 && xhr.status < 300) {
-      $('up-status').textContent = 'Uploaded: ' + file.name;
-      toast('Upload complete'); fetchFiles();
-    } else {
-      let m = 'Upload failed';
-      try { m = JSON.parse(xhr.responseText).error || m; } catch(_) {}
-      $('up-status').textContent = m; toast(m);
-    }
-  };
-  xhr.onerror = () => {
-    $('up-progress').style.display = 'none';
-    $('up-status').textContent = 'Upload failed';
-  };
+  xhr.onerror=()=>{ $('up-progress').style.display='none'; $('up-status').textContent='Upload failed'; };
   xhr.send(file);
 }
-
-async function fetchFiles() {
-  try {
-    const r = await fetch('/uploads-list');
-    if (!r.ok) return;
-    renderFiles(await r.json());
-  } catch(_) {}
+async function fetchFiles(){
+  try{ const r=await fetch('/uploads-list'); if(!r.ok)return; renderFiles(await r.json()); }catch(_){}
 }
-
-function renderFiles(files) {
-  const el = $('file-list');
-  if (!files || !files.length) { el.innerHTML = '<div class="empty">No files uploaded yet.</div>'; return; }
-  el.innerHTML = files.map(f => {
-    const isImg = /\.(png|jpe?g|gif|webp|bmp)$/i.test(f.name);
-    const kb = f.size > 1048576 ? (f.size/1048576).toFixed(1)+' MB' : Math.round(f.size/1024)+' KB';
-    return `
-      <div class="item-row" style="margin-bottom:5px">
-        ${isImg ? `<img class="file-thumb" src="${esc(f.url)}" alt="">`
-                : `<div class="file-thumb" style="display:flex;align-items:center;justify-content:center;color:var(--muted)"><i class="fa-solid fa-film"></i></div>`}
-        <div class="item-info">
-          <div class="item-name">${esc(f.name)}</div>
-          <div class="item-meta">${kb}</div>
-        </div>
-        <button class="btn" style="padding:6px 11px;font-size:11px"
-          data-project-url="${esc(f.url)}" data-project-img="${isImg ? '1' : '0'}">Project</button>
-      </div>`;
+function renderFiles(files){
+  const el=$('file-list');
+  if(!files||!files.length){ el.innerHTML='<div class="empty">No files uploaded yet.</div>'; return; }
+  el.innerHTML=files.map(f=>{
+    const isImg=/\.(png|jpe?g|gif|webp|bmp)$/i.test(f.name);
+    const kb=f.size>1048576?(f.size/1048576).toFixed(1)+' MB':Math.round(f.size/1024)+' KB';
+    return `<div class="item-row" style="margin-bottom:5px">
+      ${isImg?`<img class="file-thumb" src="${esc(f.url)}" alt="">`
+             :`<div class="file-thumb" style="display:flex;align-items:center;justify-content:center;color:var(--muted)"><i class="fa-solid fa-film"></i></div>`}
+      <div class="item-info"><div class="item-name">${esc(f.name)}</div><div class="item-meta">${kb}</div></div>
+      <button class="btn sm" data-project-url="${esc(f.url)}" data-project-img="${isImg?'1':'0'}">Project</button>
+    </div>`;
   }).join('');
-
-  el.querySelectorAll('[data-project-url]').forEach(b => {
-    b.addEventListener('click', () => {
-      if (needGrant()) return;
-      const url = b.dataset.projectUrl;
-      const slide = b.dataset.projectImg === '1'
-        ? { type:'image', title:'', imageUrl:url, url }
-        : { type:'video', title:'', videoUrl:url, url };
-      wsSend({ type:'slide', slide, slideSet:[slide], slideIndex:0 });
+  el.querySelectorAll('[data-project-url]').forEach(b=>{
+    b.addEventListener('click',()=>{
+      if(needGrant())return;
+      const url=b.dataset.projectUrl;
+      const slide=b.dataset.projectImg==='1'
+        ? {type:'image',title:'',imageUrl:url,url}
+        : {type:'video',title:'',videoUrl:url,url};
+      wsSend({type:'slide',slide,slideSet:[slide],slideIndex:0});
       toast('Sent to projector');
     });
   });
 }
 
 // ── PANELS ───────────────────────────────────────────────────────────────────
-function switchPanel(id) {
-  document.querySelectorAll('.panel').forEach(p => p.classList.toggle('active', p.id === 'panel-' + id));
-  document.querySelectorAll('.snav-btn, .btab').forEach(b => b.classList.toggle('active', b.dataset.panel === id));
+function switchPanel(id){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active',p.id==='panel-'+id));
+  document.querySelectorAll('.snav-btn, .btab').forEach(b=>b.classList.toggle('active',b.dataset.panel===id));
+  if(id==='songs') loadHymns();
+  if(id==='bible') loadBible();
+  if(id==='control') setTimeout(fitPreview,30);
 }
 
-// ── TOAST ────────────────────────────────────────────────────────────────────
-let _toastTimer = null;
-function toast(m) {
-  const el = $('toast'); if (!el) return;
-  el.textContent = m; el.classList.add('show');
+let _toastTimer=null;
+function toast(m){
+  const el=$('toast'); if(!el)return;
+  el.textContent=m; el.classList.add('show');
   clearTimeout(_toastTimer);
-  _toastTimer = setTimeout(() => el.classList.remove('show'), 2800);
+  _toastTimer=setTimeout(()=>el.classList.remove('show'),2800);
 }
 
 // ── BINDINGS ─────────────────────────────────────────────────────────────────
-$('join-btn').addEventListener('click', doJoin);
-$('cancel-join-btn').addEventListener('click', showJoin);
-$('back-join-btn').addEventListener('click', showJoin);
-['join-name','join-code'].forEach(id =>
-  $(id).addEventListener('keydown', e => { if (e.key === 'Enter') doJoin(); }));
+$('join-btn').addEventListener('click',doJoin);
+$('cancel-join-btn').addEventListener('click',showJoin);
+$('back-join-btn').addEventListener('click',showJoin);
+['join-name','join-code'].forEach(id=>
+  $(id).addEventListener('keydown',e=>{ if(e.key==='Enter') doJoin(); }));
 
-$('prev-btn').addEventListener('click', () => nav(-1));
-$('next-btn').addEventListener('click', () => nav(1));
-$('blank-btn').addEventListener('click', toggleBlank);
+$('prev-btn').addEventListener('click',()=>nav(-1));
+$('next-btn').addEventListener('click',()=>nav(1));
+$('blank-btn').addEventListener('click',toggleBlank);
 
-$('pi-submit').addEventListener('click', submitProgramItem);
-$('an-submit').addEventListener('click', submitAnnouncement);
+$('song-search').addEventListener('input',renderHymns);
+document.querySelectorAll('[data-slang]').forEach(b=>b.addEventListener('click',()=>{
+  sLang=b.dataset.slang;
+  document.querySelectorAll('[data-slang]').forEach(x=>x.classList.toggle('active',x===b));
+  renderHymns();
+}));
 
-$('share-start').addEventListener('click', () => startShare(false));
-$('share-cam').addEventListener('click', () => startShare(true));
-$('share-stop').addEventListener('click', stopShare);
+document.querySelectorAll('[data-blang]').forEach(b=>b.addEventListener('click',()=>{
+  bLang=b.dataset.blang;
+  document.querySelectorAll('[data-blang]').forEach(x=>x.classList.toggle('active',x===b));
+  if(BIBLE){ fillBooks(); $('bible-body').innerHTML='<div class="empty">Choose a book and chapter.</div>'; }
+}));
+$('b-book').addEventListener('change',onBook);
+$('b-chap').addEventListener('change',onChap);
+$('bible-search').addEventListener('keydown',e=>{ if(e.key==='Enter') bibleSearch(); });
 
-$('drop-zone').addEventListener('click', () => $('file-input').click());
-$('file-input').addEventListener('change', function() { uploadFile(this.files[0]); this.value = ''; });
-['dragover','dragleave','drop'].forEach(ev => {
-  $('drop-zone').addEventListener(ev, e => {
+$('choir-search').addEventListener('input',renderChoirs);
+
+$('pi-submit').addEventListener('click',submitProgramItem);
+$('an-submit').addEventListener('click',submitAnnouncement);
+
+$('share-start').addEventListener('click',()=>startShare(false));
+$('share-cam').addEventListener('click',()=>startShare(true));
+$('share-stop').addEventListener('click',stopShare);
+
+$('drop-zone').addEventListener('click',()=>$('file-input').click());
+$('file-input').addEventListener('change',function(){ uploadFile(this.files[0]); this.value=''; });
+['dragover','dragleave','drop'].forEach(ev=>{
+  $('drop-zone').addEventListener(ev,e=>{
     e.preventDefault();
-    $('drop-zone').classList.toggle('over', ev === 'dragover');
-    if (ev === 'drop' && e.dataTransfer.files.length) uploadFile(e.dataTransfer.files[0]);
+    $('drop-zone').classList.toggle('over',ev==='dragover');
+    if(ev==='drop'&&e.dataTransfer.files.length) uploadFile(e.dataTransfer.files[0]);
   });
 });
 
-document.querySelectorAll('.snav-btn, .btab').forEach(b =>
-  b.addEventListener('click', () => switchPanel(b.dataset.panel)));
+document.querySelectorAll('.snav-btn, .btab').forEach(b=>
+  b.addEventListener('click',()=>switchPanel(b.dataset.panel)));
 
-$('notes-ta').addEventListener('input', function() {
-  try { localStorage.setItem('sda_presenter_notes', this.value); } catch(_) {}
+$('notes-ta').addEventListener('input',function(){
+  try{ localStorage.setItem('sda_presenter_notes',this.value); }catch(_){}
 });
 
-document.addEventListener('keydown', e => {
-  if (!_granted) return;
-  if (document.activeElement && ['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)) return;
-  if (e.key === 'ArrowRight' || e.key === 'PageDown') { e.preventDefault(); nav(1); }
-  else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); nav(-1); }
-  else if (e.key === 'b' || e.key === 'B') { e.preventDefault(); toggleBlank(); }
+document.addEventListener('keydown',e=>{
+  if(!_granted)return;
+  if(document.activeElement&&['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName))return;
+  if(e.key==='ArrowRight'||e.key==='PageDown'){ e.preventDefault(); nav(1); }
+  else if(e.key==='ArrowLeft'||e.key==='PageUp'){ e.preventDefault(); nav(-1); }
+  else if(e.key==='b'||e.key==='B'){ e.preventDefault(); toggleBlank(); }
 });
 
-// ── INIT ─────────────────────────────────────────────────────────────────────
-(function init() {
-  try {
-    const n = localStorage.getItem('sda_presenter_name');
-    if (n) $('join-name').value = n;
-  } catch(_) {}
-  renderRequests();
+(function init(){
+  try{ const n=localStorage.getItem('sda_presenter_name'); if(n) $('join-name').value=n; }catch(_){}
+  renderRequests(); renderChoirs();
 })();
 </script>
 </body>

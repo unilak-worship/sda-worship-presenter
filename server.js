@@ -1,4 +1,3 @@
-
 /**
  * SDA Worship System — Server
  * - Serves presenter.html, bible_data.json, hymns_data.js
@@ -9,23 +8,23 @@
  * repo. Commit it there as `server.js` (not to be confused with the Electron
  * desktop app's own server.js).
  */
- 
+
 const express = require('express');
 const http    = require('http');
 const { WebSocketServer } = require('ws');
 const path    = require('path');
 const fs      = require('fs');
 const os      = require('os');
- 
+
 const PORT       = process.env.PORT || 4040;
 const UPLOAD_DIR = path.join(__dirname, 'public', 'uploads');
- 
+
 if (!fs.existsSync(UPLOAD_DIR)) fs.mkdirSync(UPLOAD_DIR, { recursive: true });
- 
+
 const app    = express();
 const server = http.createServer(app);
 const wss    = new WebSocketServer({ server });
- 
+
 // ── CORS ─────────────────────────────────────────────────────────────────────
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -34,7 +33,7 @@ app.use((req, res, next) => {
   if (req.method === 'OPTIONS') { res.sendStatus(200); return; }
   next();
 });
- 
+
 // ── Static files ──────────────────────────────────────────────────────────────
 app.use(express.static(path.join(__dirname, 'public'), {
   setHeaders: (res, fp) => {
@@ -45,7 +44,7 @@ app.use(express.static(path.join(__dirname, 'public'), {
   }
 }));
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'public', 'presenter.html')));
- 
+
 // ── File Upload ───────────────────────────────────────────────────────────────
 app.post('/upload', (req, res) => {
   const rawName  = req.headers['x-filename'] || ('file_' + Date.now());
@@ -57,7 +56,7 @@ app.post('/upload', (req, res) => {
   const filePath = path.join(UPLOAD_DIR, safeFile);
   const writeStream = fs.createWriteStream(filePath);
   let size = 0;
- 
+
   req.on('data', chunk => {
     size += chunk.length;
     if (size > 500 * 1024 * 1024) {
@@ -80,7 +79,7 @@ app.post('/upload', (req, res) => {
     if (!res.headersSent) res.status(500).json({ error: err.message });
   });
 });
- 
+
 app.get('/uploads-list', (req, res) => {
   try {
     const files = fs.readdirSync(UPLOAD_DIR)
@@ -92,17 +91,17 @@ app.get('/uploads-list', (req, res) => {
     res.json(files);
   } catch(e) { res.json([]); }
 });
- 
+
 app.get('/status', (req, res) => {
   const presenterList = [...presenterMap.values()].map(p => ({
     id: p.id, name: p.name, role: p.role, granted: p.granted, joinedAt: p.joinedAt
   }));
   res.json({ status:'running', clients:wss.clients.size, uptime:Math.floor(process.uptime())+'s', presenters: presenterList });
 });
- 
+
 // ── WebSocket hub ─────────────────────────────────────────────────────────────
 let lastSlideState = { type: 'blank' };
- 
+
 // Message types that are transport/control only — never projector state.
 // Without this, any unrecognised message (e.g. the operator's 5s heartbeat)
 // became the "current slide" and was replayed to every newly-connected client.
@@ -111,12 +110,13 @@ const NON_STATE_TYPES = new Set([
   'get-presenter-list', 'operator-join', 'presenter-join',
   'presenter-grant', 'presenter-deny', 'presenter-kick',
   'presenter-status', 'presenter-list', 'program-go', 'file-share',
+  'presenter-request', 'presenter-request-result', 'share-stop',
 ]);
- 
+
 // Presenter registry: wsId → { ws, id, name, role, granted, joinedAt }
 const presenterMap = new Map();
 let wsIdCounter = 0;
- 
+
 // Find the operator connection (role === 'operator')
 function getOperatorWs() {
   for (const p of presenterMap.values()) {
@@ -124,7 +124,7 @@ function getOperatorWs() {
   }
   return null;
 }
- 
+
 // Broadcast to ALL connected clients
 function broadcastAll(msg, excludeWs = null) {
   const str = JSON.stringify(msg);
@@ -132,7 +132,7 @@ function broadcastAll(msg, excludeWs = null) {
     if (c !== excludeWs && c.readyState === 1) try { c.send(str); } catch(_) {}
   });
 }
- 
+
 // Send updated presenter list to operator
 function notifyOperatorPresenterList() {
   const op = getOperatorWs();
@@ -142,7 +142,7 @@ function notifyOperatorPresenterList() {
     .map(p => ({ id: p.id, name: p.name, granted: p.granted, joinedAt: p.joinedAt }));
   try { op.send(JSON.stringify({ type: 'presenter-list', presenters: list })); } catch(_) {}
 }
- 
+
 // Resolve a target presenter from a message, tolerating string/number ids.
 // Browser dataset values are always strings, so `p.id === msg.presenterId`
 // ("137" === 137) silently failed. Compare as strings instead.
@@ -151,25 +151,25 @@ function findPresenter(msg) {
   if (!tid) return null;
   return [...presenterMap.values()].find(p => String(p.id) === tid) || null;
 }
- 
+
 // Is this socket a registered operator?
 function isOperator(wsId) {
   const sender = presenterMap.get(wsId);
   return !!sender && sender.role === 'operator';
 }
- 
+
 wss.on('connection', (ws) => {
   const wsId = ++wsIdCounter;
   console.log(`[WS] Client ${wsId} connected (${wss.clients.size} total)`);
- 
+
   // Send current slide state immediately
   try { ws.send(JSON.stringify(lastSlideState)); } catch(_) {}
- 
+
   ws.on('message', raw => {
     let msg;
     try { msg = JSON.parse(raw); } catch(_) { return; }
     if (!msg || !msg.type) return;
- 
+
     // ── Presenter announces itself ──────────────────────────────────────────
     if (msg.type === 'presenter-join') {
       presenterMap.set(wsId, {
@@ -191,7 +191,7 @@ wss.on('connection', (ws) => {
       })); } catch(_) {}
       return;
     }
- 
+
     // ── Operator registers itself ───────────────────────────────────────────
     // Idempotent: the operator re-announces every 5s as a heartbeat, which both
     // re-registers it after a reconnect and refreshes its presenter list.
@@ -200,19 +200,19 @@ wss.on('connection', (ws) => {
       notifyOperatorPresenterList();
       return;
     }
- 
+
     // ── Operator requests the current presenter list ────────────────────────
     if (msg.type === 'get-presenter-list') {
       notifyOperatorPresenterList();
       return;
     }
- 
+
     // ── Operator grants/denies presenter (operator only) ────────────────────
     if (msg.type === 'presenter-grant' || msg.type === 'presenter-deny') {
       if (!isOperator(wsId)) return;
       const entry = findPresenter(msg);
       if (!entry) return;
- 
+
       const granted = msg.type === 'presenter-grant';
       entry.granted = granted;
       try { entry.ws.send(JSON.stringify({
@@ -227,13 +227,13 @@ wss.on('connection', (ws) => {
       notifyOperatorPresenterList();
       return;
     }
- 
+
     // ── Operator removes/kicks a presenter (operator only) ──────────────────
     if (msg.type === 'presenter-kick') {
       if (!isOperator(wsId)) return;
       const entry = findPresenter(msg);
       if (!entry) return;
- 
+
       entry.granted = false;
       try { entry.ws.send(JSON.stringify({
         type:    'presenter-status',
@@ -245,7 +245,7 @@ wss.on('connection', (ws) => {
       notifyOperatorPresenterList();
       return;
     }
- 
+
     // ── Operator sets a presenter's status (operator only, targeted) ────────
     // Previously this fell through to the catch-all and was broadcast to every
     // client — and the presenter page applied it without checking the id, so
@@ -254,10 +254,10 @@ wss.on('connection', (ws) => {
       if (!isOperator(wsId)) return;
       const entry = findPresenter(msg);
       if (!entry) return;
- 
+
       if (msg.status === 'granted') entry.granted = true;
       if (msg.status === 'revoked' || msg.status === 'kicked') entry.granted = false;
- 
+
       try { entry.ws.send(JSON.stringify({
         type:   'presenter-status',
         id:     entry.id,
@@ -267,7 +267,42 @@ wss.on('connection', (ws) => {
       notifyOperatorPresenterList();
       return;
     }
- 
+
+    // ── Presenter proposes a program/announcement change ────────────────────
+    // Routed ONLY to the operator, who approves or rejects it. Presenters may
+    // never write to the operator's data directly.
+    if (msg.type === 'presenter-request') {
+      const sender = presenterMap.get(wsId);
+      if (!sender || sender.role !== 'presenter') return;
+
+      const op = getOperatorWs();
+      if (!op) {
+        try { ws.send(JSON.stringify({
+          type: 'presenter-request-result',
+          reqId: msg.reqId,
+          approved: false,
+          message: 'Operator is not connected — try again shortly.',
+        })); } catch (_) {}
+        return;
+      }
+
+      try { op.send(JSON.stringify({
+        ...msg,
+        fromId:   sender.id,
+        fromName: sender.name,
+      })); } catch (_) {}
+      return;
+    }
+
+    // ── Operator's verdict on a presenter request (operator only) ───────────
+    if (msg.type === 'presenter-request-result') {
+      if (!isOperator(wsId)) return;
+      const entry = [...presenterMap.values()].find(p => String(p.id) === String(msg.toId));
+      if (!entry) return;
+      try { entry.ws.send(JSON.stringify(msg)); } catch (_) {}
+      return;
+    }
+
     // ── Slide/blank from GRANTED presenter or operator ──────────────────────
     if (msg.type === 'slide' || msg.type === 'blank' || msg.type === 'unblank') {
       const sender = presenterMap.get(wsId);
@@ -281,15 +316,15 @@ wss.on('connection', (ws) => {
       broadcastAll(msg, ws);
       return;
     }
- 
+
     // ── Ping / keepalive ────────────────────────────────────────────────────
     if (msg.type === 'ping') return;
- 
+
     // ── All other messages (WebRTC signaling, file-share) — relay freely ────
     if (!NON_STATE_TYPES.has(msg.type)) lastSlideState = msg;
     broadcastAll(msg, ws);
   });
- 
+
   ws.on('close', () => {
     presenterMap.delete(wsId);
     notifyOperatorPresenterList();
@@ -297,7 +332,7 @@ wss.on('connection', (ws) => {
   });
   ws.on('error', err => console.error('[WS] Error:', err.message));
 });
- 
+
 // ── Start ─────────────────────────────────────────────────────────────────────
 server.listen(PORT, '0.0.0.0', () => {
   const nets = os.networkInterfaces();
@@ -310,6 +345,5 @@ server.listen(PORT, '0.0.0.0', () => {
   console.log(`  Local:   http://${ip}:${PORT}`);
   console.log(`  Uploads: ${UPLOAD_DIR}\n`);
 });
- 
+
 module.exports = { server, wss, PORT };
- 
